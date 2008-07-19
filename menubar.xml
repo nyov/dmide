@@ -1,0 +1,48 @@
+<menu_list>
+	<menu_bar title="File">
+		<menu id="ID_FILE_NEW"    title="New"     macro="Ctrl+N"       desc="Create a new file." />
+		<menu id="ID_FILE_OPEN"   title="Open"    macro="Ctrl+O"       desc="Open an environment or file." />
+		<menu id="ID_FILE_CLOSE"  title="Close"   macro="Ctrl+Shift+C"       desc="Close the current file." />
+		<menu id="ID_FILE_SAVE"   title="Save"    macro="Ctrl+S"       desc="Save the current file." />
+		<menu id="ID_FILE_SAVEAS" title="Save As" macro="Ctrl+Shift+S" desc="Save the current file in a different title." />
+		<menu type="separator" />
+		<menu id="ID_EXIT"        title="Exit"    macro="Ctrl+Q"       desc="Exit DMIDE." />
+	</menu_bar>
+
+	<menu_bar title="Edit">
+		<menu id="ID_EDIT_UNDO"      title="Undo"       macro="Ctrl+Z" desc="Undo last change." />
+		<menu id="ID_EDIT_REDO"      title="Redo"       macro="Ctrl+Y" desc="Redo last undo change." />
+		<menu type="separator" />
+		<menu id="ID_EDIT_CUT"       title="Cut"        macro="Ctrl+X" desc="Cut the selected text." />
+		<menu id="ID_EDIT_COPY"      title="Copy"       macro="Ctrl+C" desc="Copy the selected text." />
+		<menu id="ID_EDIT_PASTE"     title="Paste"      macro="Ctrl+V" desc="Paste the text in clipboard." />
+		<menu id="ID_EDIT_DELETE"    title="Delete"     macro="Del"    desc="Delete the selected text." />
+		<menu type="separator" />
+		<menu id="ID_EDIT_FIND"      title="Find"       macro="Alt+F3" desc="Find text in this document." />
+		<menu id="ID_EDIT_FINDNEXT"  title="Find Next"  macro="F3"     desc="Find the next text in this document." />
+		<menu id="ID_EDIT_REPLACE"   title="Replace"    macro="Ctrl+H" desc="Replace text in this document." />
+		<menu type="separator" />
+		<menu id="ID_EDIT_GOTOLINE"  title="Goto Line"  macro="Ctrl+G" desc="Go to specified line." />
+		<menu id="ID_EDIT_SELECTALL" title="Select All" macro="Ctrl+A" desc="Select all text in this document." />
+	</menu_bar>
+
+	<menu_bar title="View">
+		<menu id="ID_VIEW_FILETOOLBAR" title="File Toolbar" desc="Toggle view of the file toolbar." flags="ID_ITEM_CHECK" />
+		<menu type="separator" />
+		<menu id="ID_VIEW_FILETREE"    title="File Tree"    desc="Toggle view of the file tree."    flags="ID_ITEM_CHECK" />
+		<menu id="ID_VIEW_CODEEDITOR"  title="Code Editor"  desc="Toggle view of the code editor."  flags="ID_ITEM_CHECK" />
+		<menu id="ID_VIEW_BUILDINFORMATION" title="Build Information" desc="Toggle view of the build information" flags="ID_ITEM_CHECK" />
+	</menu_bar>
+
+	<menu_bar title="Perspective">
+		<menu id="ID_PERSPECTIVE_DEFAULT" title="Default" desc="Load default perspective." />
+		<menu id="ID_PERSPECTIVE_SAVE"    title="Save"    desc="Save perspective." />
+		<menu id="ID_PERSPECTIVE_LOAD"    title="Load"    desc="Load perspective." />
+		<menu type="separator" />
+	</menu_bar>
+
+	<menu_bar title="Help">
+		<menu type="separator" />
+		<menu id="ID_HELP_ABOUT" title="About" desc="About DMIDE." />
+	</menu_bar>
+</menu_list>
