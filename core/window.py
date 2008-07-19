@@ -25,14 +25,6 @@ class Window(wx.Frame):
 		self.aui_manager.AddPane(self.main_notebook, aui.AuiPaneInfo().CenterPane())
 
 		self.aui_manager.Update()
-		
-
-		'''
-		sizer=wx.BoxSizer(wx.VERTICAL)
-		self.main_notebook=MainNotebook(self)
-		sizer.Add(self.main_notebook, 1, wx.ALL|wx.EXPAND)
-		self.SetSizer(sizer)
-		'''
 
 		self.Bindings()
 
@@ -48,13 +40,13 @@ class Window(wx.Frame):
 		self.main_notebook.OnFileNew(event)
 
 	def OnFileOpen(self, event):
-		pass
+		self.main_notebook.OnFileOpen(event)
 
 	def OnFileClose(self, event):
-		pass
+		self.main_notebook.OnFileClose(event)
 
 	def OnFileSave(self, event):
-		pass
+		self.main_notebook.OnFileSave(event)
 
 	def OnFileSaveAs(self, event):
-		pass
+		self.main_notebook.OnFileSaveAs(event)
