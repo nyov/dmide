@@ -1,13 +1,14 @@
  
 from id import *
 import wx.stc as stc
+import os
 
 class CodePage(wx.TextCtrl):
-  def __init__(self, parent):
+  def __init__(self, parent, notebook_page):
     wx.TextCtrl.__init__(self, parent, -1, style = wx.TE_MULTILINE | wx.TE_RICH2)
 
     self.original_content = ''
-    self.auinotebook = None
+    self.notebook_page = notebook_page
 
     self.Bindings()
 
@@ -22,13 +23,9 @@ class CodePage(wx.TextCtrl):
     self.CheckChange()
 
   def CheckChange(self):
-    name = self.auinotebook.GetPageText(self.auinotebook.GetSelection())
-  
     if self.GetValue() != self.original_content:
-      if name[-2:] != ' *':
-        self.auinotebook.SetPageText(self.auinotebook.GetSelection(), '%s *' % name)
+      self.notebook_page.OnChange(True)
       return 0
     else:
-      if name[-2:] == ' *':
-        self.auinotebook.SetPageText(self.auinotebook.GetSelection(), name[:-2])
+      self.notebook_page.OnChange(False)
       return 1
