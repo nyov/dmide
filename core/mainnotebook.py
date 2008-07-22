@@ -25,10 +25,8 @@ class MainNotebook(aui.AuiNotebook):
 
 		self.Bindings()
 
-		self.OnFileNew(None)
-
 	def Bindings(self):
-		pass
+		self.Bind(aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.OnFileClose)
 
 	def OnFileNew(self, event):
 		dialog = wx.FileDialog(self, message = 'Save file where...', defaultDir = os.getcwd(),
@@ -93,32 +91,48 @@ class MainNotebook(aui.AuiNotebook):
 			if not new_page.page:
 				return
 
-			new_page.page.SetValue(open(path, 'r').read())
+			content = open(path, 'r').read()
+			new_page.page.SetValue(content)
+			new_page.page.original_content = content
 			self.AddPage(new_page.page, name)
 			self.pages.append(new_page)
 
-	def OnFileClose(self, event):
-		page = self.GetPage(self.GetSelection())
+	def OnFileClose(self, event, page = None, veto = True):
+		if not page:
+			try:
+				page = self.GetPage(self.GetSelection())
+			except Exception, e:
+				print 'no found %s' % page.auinotebook.path
+				return
 
 		if not page.CheckChange():
 			dialog = wx.MessageDialog(self, '%s has been modified. Save changes?' % os.path.split(page.notebook_page.path)[1],
 									  'Save Changes', wx.YES_NO | wx.YES_DEFAULT | wx.CANCEL | wx.ICON_QUESTION)
 			result = dialog.ShowModal()
 			dialog.Destroy()
+			print 'fin %s' % page.auinotebook.path
 
 			if result == wx.ID_YES:
 				self.OnFileSave(None, page.notebook_page)
+				if veto: event.Veto()
 			elif result == wx.ID_NO:
-				pass
+				if veto: event.Veto()
 			elif result == wx.ID_CANCEL:
-				return
+				if veto: event.Veto()
+				return -1
+		else:
+			print 'no change %s' % page.auinotebook.path
 
 		self.pages.remove(page.notebook_page)
-		self.DeletePage(self.GetSelection())
+		if self.GetPage(self.GetSelection()) == page:
+			self.DeletePage(self.GetSelection())
 
 	def OnFileSave(self, event, page = None):
 		if not page:
-			page = self.GetPage(self.GetSelection()).notebook_page
+			try:
+				page = self.GetPage(self.GetSelection()).notebook_page
+			except Exception, e:
+				return
 
 		if page:
 			open(page.path, 'w').write(page.page.GetValue())
@@ -126,7 +140,30 @@ class MainNotebook(aui.AuiNotebook):
 			
 
 	def OnFileSaveAs(self, event):
-		pass
+		try:
+			page = self.GetPage(self.GetSelection()).notebook_page
+		except Exception, e:
+			return
+
+		dialog = wx.FileDialog(self, message = 'Save file', defaultDir = os.path.split(page.path)[0],
+							   defaultFile = os.path.split(page.path)[1], wildcard = dmfiles_wildcard, style = wx.SAVE)
+		if dialog.ShowModal() == wx.ID_OK:
+			path = dialog.GetPath()
+			dialog.Destroy()
+
+			if os.path.exists(path):
+				dialog = wx.MessageDialog(self, '%s already exists. Overwrite?' % path,
+										  'Overwrite?', wx.YES_NO | wx.YES_DEFAULT | wx.CANCEL | wx.ICON_QUESTION)
+				result = dialog.ShowModal()
+				dialog.Destroy()
+
+				if result == wx.ID_NO:
+					return
+				elif result == wx.ID_CANCEL:
+					return
+
+			page.path = path
+			self.OnFileSave(event, page)
 
 
 class NotebookPage:

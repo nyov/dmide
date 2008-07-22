@@ -10,13 +10,17 @@ class CodePage(wx.TextCtrl):
     self.original_content = ''
     self.notebook_page = notebook_page
 
-    self.Bindings()
+    wx.CallLater(1000, self.OnChange)
 
-  def Bindings(self):
-    self.Bind(wx.EVT_TEXT, self.OnChange)
-
-  def OnChange(self, event):
+  def OnChange(self, event = None):
     self.CheckChange()
+    if event:
+      event.Skip()
+    x, y = self.PositionToXY(self.GetInsertionPoint())
+    self.GetParent().GetParent().statusbar.SetStatusText('%.4i' % x, 1)
+    self.GetParent().GetParent().statusbar.SetStatusText('%.4i' % (y + 1), 2)
+
+    wx.CallLater(25, self.OnChange)
 
   def OnSave(self, event):
     self.original_content = self.GetValue()
