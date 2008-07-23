@@ -27,6 +27,7 @@ class MainNotebook(aui.AuiNotebook):
 
 	def Bindings(self):
 		self.Bind(aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.OnFileClose)
+		self.Bind(aui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
 
 	def OnFileNew(self, event):
 		dialog = wx.FileDialog(self, message = 'Save file where...', defaultDir = os.getcwd(),
@@ -159,6 +160,10 @@ class MainNotebook(aui.AuiNotebook):
 
 			page.path = path
 			self.OnFileSave(event, page)
+
+	def OnPageChanged(self, event):
+		page = self.GetPage(self.GetSelection()).notebook_page
+		self.GetParent().SetTitle('DMIDE - %s' % page.path)
 
 
 class NotebookPage:
