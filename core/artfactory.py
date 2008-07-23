@@ -2,7 +2,7 @@ from wx import ImageFromStream, BitmapFromImage, EmptyIcon
 import cStringIO, zlib
 
 def getBYONDData():
-    return zlib.decompress(
+	return zlib.decompress(
 'x\xda\x01\xc1\x07>\xf8\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00 \x00\
 \x00\x00 \x08\x06\x00\x00\x00szz\xf4\x00\x00\x00\x04sBIT\x08\x08\x08\x08|\
 \x08d\x88\x00\x00\x07xIDATX\x85\x9d\x97]h\x1c\xd7\x15\xc7\x7fk\xcbp\x97$p/\
@@ -83,6 +83,6 @@ n=\x07\xc7\x0f$\xb2[co\x84\x9c:\xfd\xf2m\xafS\'&\x9eKtO\x91\xeaR\x8e\xeaBjqa\
 \x00IEND\xaeB`\x82M\xaa\xb1\x85')
 
 def getBYONDIcon():
-    icon=EmptyIcon()
-    icon.CopyFromBitmap(BitmapFromImage((ImageFromStream(cStringIO.StringIO(getBYONDData())))))
-    return icon
+	icon=EmptyIcon()
+	icon.CopyFromBitmap(BitmapFromImage((ImageFromStream(cStringIO.StringIO(getBYONDData())))))
+	return icon
