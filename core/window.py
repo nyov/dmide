@@ -36,6 +36,7 @@ class Window(wx.Frame):
 		self.Bind(wx.EVT_MENU, self.OnFileSave, id = ID_FILE_SAVE)
 		self.Bind(wx.EVT_MENU, self.OnFileSaveAs, id = ID_FILE_SAVEAS)
 		self.Bind(wx.EVT_MENU, self.OnClose, id = ID_EXIT)
+		self.Bind(wx.EVT_CLOSE, self.OnClose)
 
 	def OnFileNew(self, event):
 		self.main_notebook.OnFileNew(event)
@@ -53,7 +54,10 @@ class Window(wx.Frame):
 		self.main_notebook.OnFileSaveAs(event)
 
 	def OnClose(self, event):
-		for page in self.main_notebook.pages:
+		while len(self.main_notebook.pages):
+			page = self.main_notebook.pages[0]
+
 			if self.main_notebook.OnFileClose(None, page.page, False) == -1:
 				return
-		self.Close(True)
+
+		self.Destroy()

@@ -102,7 +102,6 @@ class MainNotebook(aui.AuiNotebook):
 			try:
 				page = self.GetPage(self.GetSelection())
 			except Exception, e:
-				print 'no found %s' % page.auinotebook.path
 				return
 
 		if not page.CheckChange():
@@ -110,7 +109,6 @@ class MainNotebook(aui.AuiNotebook):
 									  'Save Changes', wx.YES_NO | wx.YES_DEFAULT | wx.CANCEL | wx.ICON_QUESTION)
 			result = dialog.ShowModal()
 			dialog.Destroy()
-			print 'fin %s' % page.auinotebook.path
 
 			if result == wx.ID_YES:
 				self.OnFileSave(None, page.notebook_page)
@@ -120,12 +118,9 @@ class MainNotebook(aui.AuiNotebook):
 			elif result == wx.ID_CANCEL:
 				if veto: event.Veto()
 				return -1
-		else:
-			print 'no change %s' % page.auinotebook.path
 
 		self.pages.remove(page.notebook_page)
-		if self.GetPage(self.GetSelection()) == page:
-			self.DeletePage(self.GetSelection())
+		self.DeletePage(self.GetPageIndex(page))
 
 	def OnFileSave(self, event, page = None):
 		if not page:
