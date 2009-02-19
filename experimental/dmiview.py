@@ -19,6 +19,7 @@ class IconView(wx.ListCtrl):
 		self.icons = None
 		self.images = None
 		self.image_list = None
+		self.select_callback = None
 
 	def initBinds(self):
 		self.Bind(wx.EVT_SIZE, self.OnSize)
@@ -62,7 +63,8 @@ class IconView(wx.ListCtrl):
 	def OnIconSelect(self, event):
 		index = event.GetIndex()
 
-		self.GetParent().icon_preview.previewIcon(self.icons[index])
+		if self.select_callback:
+			self.select_callback.selected(self.icons[index])
 
 	def loadDMI(self, DMI):
 		self.icons = dmi.DMIREAD(DMI)
@@ -98,6 +100,7 @@ class IconPreview(wx.Panel):
 		self.showAll(False)
 
 	def initAll(self):
+		self.load_dmi_callback = None
 		self.empty_icon = wx.BitmapFromImage(wx.EmptyImage(128, 128, True))
 
 		self.icon = wx.StaticBitmap(self, wx.ID_ANY, self.empty_icon, style = wx.SIMPLE_BORDER)
@@ -110,6 +113,7 @@ class IconPreview(wx.Panel):
 
 		self.static_directions = wx.StaticText(self, wx.ID_ANY, 'Directions:')
 		self.directions = wx.ComboBox(self, wx.ID_ANY, size = (75, -1), value = 'One', choices = ['One', 'Four', 'Eight'])
+		self.directions.SetEditable(False)
 
 		self.static_frames = wx.StaticText(self, wx.ID_ANY, 'Frames:')
 		self.frames = wx.SpinCtrl(self, wx.ID_ANY, size = (75, -1), min = 1, max = 99, initial = 1, style = wx.SP_VERTICAL)
@@ -170,7 +174,7 @@ class IconPreview(wx.Panel):
 			else:
 				self.GetSizer().Hide(hide, True)
 
-	def previewIcon(self, icon):
+	def selected(self, icon):
 		self.Freeze()
 
 		if icon == 0:
@@ -221,8 +225,9 @@ class IconPreview(wx.Panel):
 		if dlg.ShowModal() == wx.ID_OK:
 			path = str(dlg.GetPaths()[0])
 
-			self.previewIcon(0)
-			self.GetParent().icon_view.loadDMI(path)
+			if self.load_dmi_callback:
+				self.selected(0)
+				self.load_dmi_callback.loadDMI(path)
 
 	def OnIconStateLeftDown(self, event):
 		self.GetSizer().Hide(self.icon_state, True)
@@ -264,6 +269,9 @@ class DMIViewer(wx.Frame):
 	def initAll(self):
 		self.icon_view = IconView(self)
 		self.icon_preview = IconPreview(self)
+
+		self.icon_preview.load_dmi_callback = self.icon_view
+		self.icon_view.select_callback = self.icon_preview
 
 	def initConstraints(self):
 		sizer = wx.BoxSizer(wx.HORIZONTAL)
