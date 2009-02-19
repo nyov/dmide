@@ -275,7 +275,9 @@ class DMIViewer(wx.Frame):
 
 	def initConstraints(self):
 		sizer = wx.BoxSizer(wx.HORIZONTAL)
-		sizer.Add(self.icon_preview, 0, wx.ALL | wx.EXPAND, 4)
+
+		flag = wx.SizerFlags(0).Expand().Border(wx.LEFT | wx.TOP | wx.BOTTOM, 4)
+		sizer.AddF(self.icon_preview, flag)
 		sizer.Add(self.icon_view, 1, wx.ALL | wx.EXPAND, 4)
 		self.SetSizerAndFit(sizer)
 
