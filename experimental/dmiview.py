@@ -49,10 +49,15 @@ class IconView(wx.ListCtrl):
 			self.Refresh(False)
 
 	def OnIconStateEdit(self, event):
+		if event.IsEditCancelled():
+			event.Veto()
+			return
+
 		state, index = event.GetText(), event.GetIndex()
 
 		self.icons[index].state = state
 		self.RefreshItem(index)
+		self.OnIconSelect(event)
 
 	def OnIconSelect(self, event):
 		index = event.GetIndex()
