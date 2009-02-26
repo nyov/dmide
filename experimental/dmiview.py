@@ -4,6 +4,7 @@ import sys, os
 import wx
 import dmi
 import Image
+from extend import IconExtendedPreview
 
 # --------------------------------------------------------------------
 
@@ -269,6 +270,7 @@ class DMIViewer(wx.Frame):
 	def initAll(self):
 		self.icon_view = IconView(self)
 		self.icon_preview = IconPreview(self)
+		self.icon_extend = IconExtendedPreview(self)
 
 		self.icon_preview.load_dmi_callback = self.icon_view
 		self.icon_view.select_callback = self.icon_preview
@@ -279,6 +281,8 @@ class DMIViewer(wx.Frame):
 		flag = wx.SizerFlags(0).Expand().Border(wx.LEFT | wx.TOP | wx.BOTTOM, 4)
 		sizer.AddF(self.icon_preview, flag)
 		sizer.Add(self.icon_view, 1, wx.ALL | wx.EXPAND, 4)
+		sizer.Add(self.icon_extend, 1, wx.ALL | wx.EXPAND, 4)
+		sizer.Hide(self.icon_extend)
 		self.SetSizerAndFit(sizer)
 
 		self.SetSize(self.GetSize() + (360, 0))
@@ -290,6 +294,20 @@ class DMIViewer(wx.Frame):
 		self.GetSizer().Clear(True)
 		self.Destroy()
 		event.Skip()
+
+	def SwapPreviews(self):
+		sizer = self.GetSizer()
+
+		if sizer.IsShown(self.icon_view):
+			sizer.Hide(self.icon_view, True)
+			sizer.Show(self.icon_extend, True, True)
+			icon = self.icon_view.selected.icon
+			self.icon_extend.displayIcon(icon)
+		else:
+			sizer.Hide(self.icon_extend, True)
+			sizer.Show(self.icon_view, True, True)
+
+		self.Layout()
 
 # --------------------------------------------------------------------
 
