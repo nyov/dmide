@@ -62,6 +62,19 @@ class Icon:
         return 'State: "%s", dirs: %i, frames: %i, icons: %i,\n  delays: %s, loops: %i, rewind: %i' % (self.state, self.dirs, self.frames, len(flatten_array(self.icons)),
                                                                                                                                               self.delays, self.loops, self.rewind)
 
+    def populate(self):
+        # call this if you manually change the dirs or frames num
+
+        while self.dirs > len(self.icons):
+            self.icons.append([])
+
+        for dir in xrange(self.dirs):
+            while self.frames > len(self.icons[dir]):
+                self.icons[dir].append(Image.new('RGBA', (32, 32)))
+
+        while self.frames > len(self.delays):
+            self.delays.append(1)
+
 
 def DMIREAD(path):
     # Takes a path to a dmi file and splits it up into multiple Icon objects

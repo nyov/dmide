@@ -88,10 +88,10 @@ class DMICanvas(wx.Panel):
 		if zoom_width >= 128 and zoom_height >= 128 and 1:
 			# big enough to draw a grid!
 
-			for x in xrange(0, zoom_width, zoom_width / width):
+			for x in xrange(0, zoom_width, round(zoom_width / float(width))):
 				if x == 0: continue
 				dc.DrawLine(x, 0, x, zoom_height)
-			for y in xrange(0, zoom_height, zoom_height / height):
+			for y in xrange(0, zoom_height, round(zoom_height / float(height))):
 				if y == 0: continue
 				dc.DrawLine(0, y, zoom_width, y)
 
@@ -113,6 +113,7 @@ class DMICanvas(wx.Panel):
 
 		self.zoom_level = zoom_level
 		self.SetMinSize((self.buffer.GetWidth() * self.zoom_level + 2, self.buffer.GetHeight() * self.zoom_level + 2))
+		self.GetParent().Layout()
 		self.Refresh(True)
 
 	def OnMouseAction(self, event):
