@@ -47,8 +47,8 @@ class DMICanvas(wx.Panel):
 		self.initBinds()
 
 	def init(self):
-		self.buffer = wx.Bitmap('example.png')
-		self.background = wx.Bitmap('bg.png')
+		self.buffer = wx.Bitmap('./imgs/dmieditor/example.png')
+		self.background = wx.Bitmap('./imgs/dmieditor/bg.png')
 
 		self.action_mouse_position = (-1, -1)
 		self.current_mouse_position = (-1, -1)
