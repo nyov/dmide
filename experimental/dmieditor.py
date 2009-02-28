@@ -85,7 +85,7 @@ class DMICanvas(wx.Panel):
 		dc.DrawBitmap(temp, 0, 0)
 		dc.SetUserScale(1.0, 1.0)
 
-		if zoom_width >= 128 and zoom_height >= 128 and 1:
+		if zoom_width >= 128 and zoom_height >= 128 and 0:
 			# big enough to draw a grid!
 
 			for x in xrange(0, zoom_width, zoom_width / width):
@@ -101,6 +101,7 @@ class DMICanvas(wx.Panel):
 
 		dc = wx.MemoryDC(self.buffer)
 		if self.action_mouse_position != (-1, -1):
+			dc.SetPen(wx.BLACK_PEN)
 			pos1, pos2 = self.TrueCoords(self.action_mouse_position), self.TrueCoords(self.current_mouse_position)
 			dc.DrawLine(pos1[0], pos1[1], pos2[0], pos2[1])
 		dc.SelectObject(wx.NullBitmap)
@@ -114,7 +115,7 @@ class DMICanvas(wx.Panel):
 		self.zoom_level = zoom_level
 		self.SetMinSize((self.buffer.GetWidth() * self.zoom_level + 2, self.buffer.GetHeight() * self.zoom_level + 2))
 		self.GetParent().Layout()
-		self.Refresh(True)
+		self.Refresh(False)
 
 	def OnMouseAction(self, event):
 		self.current_mouse_position = event.GetPosition()
@@ -133,7 +134,7 @@ class DMICanvas(wx.Panel):
 
 		elif event.LeftUp():
 			# finish action
-			#self.Commit()
+			self.Commit()
 			self.action_mouse_position = (-1, -1)
 			self.Refresh(False)
 			if self.GetCapture() == self:
