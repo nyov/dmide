@@ -32,7 +32,7 @@ class DMIEditor(wx.Frame):
 		action = self.dmi_canvas.TrueCoords(self.dmi_canvas.action_mouse_position)
 		mouse = self.dmi_canvas.TrueCoords(self.dmi_canvas.current_mouse_position)
 
-		self.SetStatusText('Size: %i, %i' % (size[0], size[1]), 0)
+		self.SetStatusText('Size: %ix%i' % (size[0], size[1]), 0)
 		self.SetStatusText('Zoom: %ix' % zoom, 1)
 		self.SetStatusText('Mouse: %i, %i' % (mouse[0] + 1, mouse[1] + 1), 2)
 		self.SetStatusText('Action: %i, %i' % (action[0] + 1, action[1] + 1), 3)
@@ -47,7 +47,7 @@ class DMICanvas(wx.Panel):
 		self.initBinds()
 
 	def init(self):
-		self.buffer = wx.Bitmap('./imgs/dmieditor/example.png')
+		self.buffer = wx.Bitmap('./imgs/images/test.png')
 		self.background = wx.Bitmap('./imgs/dmieditor/bg.png')
 
 		self.action_mouse_position = (-1, -1)
@@ -85,6 +85,26 @@ class DMICanvas(wx.Panel):
 		dc.DrawBitmap(temp, 0, 0)
 		dc.SetUserScale(1.0, 1.0)
 
+		if zoom_width >= 128 and zoom_height >= 128 and 1:
+			# big enough to draw a grid!
+
+			for x in xrange(0, zoom_width, zoom_width / width):
+				if x == 0: continue
+				dc.DrawLine(x, 0, x, zoom_height)
+			for y in xrange(0, zoom_height, zoom_height / height):
+				if y == 0: continue
+				dc.DrawLine(0, y, zoom_width, y)
+
+
+	def Commit(self):
+		# commit a change to the buffer
+
+		dc = wx.MemoryDC(self.buffer)
+		if self.action_mouse_position != (-1, -1):
+			pos1, pos2 = self.TrueCoords(self.action_mouse_position), self.TrueCoords(self.current_mouse_position)
+			dc.DrawLine(pos1[0], pos1[1], pos2[0], pos2[1])
+		dc.SelectObject(wx.NullBitmap)
+
 
 	def SetZoom(self, zoom_level):
 		# avoid extra calcs
@@ -112,6 +132,7 @@ class DMICanvas(wx.Panel):
 
 		elif event.LeftUp():
 			# finish action
+			#self.Commit()
 			self.action_mouse_position = (-1, -1)
 			self.Refresh(False)
 			if self.GetCapture() == self:
