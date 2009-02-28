@@ -114,7 +114,8 @@ class DMICanvas(wx.Panel):
 			# finish action
 			self.action_mouse_position = (-1, -1)
 			self.Refresh(False)
-			self.ReleaseMouse()
+			if self.GetCapture() == self:
+				self.ReleaseMouse()
 
 		elif event.Dragging() and event.LeftIsDown():
 			# update action
