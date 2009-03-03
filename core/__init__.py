@@ -25,7 +25,6 @@ dmfiles_wildcard = 'DM Code File (*.dm)|*.dm|' \
 				   'DM Environment File (*.dme)|*.dme|' \
 				   'All Files (*.*)|*.*'
 
-
 environment_wildcard = 'DM Environment (*.dme)|*.dme|' \
 					   'All Files (*.*)|*.*'
 
