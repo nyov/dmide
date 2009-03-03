@@ -22,7 +22,7 @@ class DMWindow(wx.Frame):
 		installMenuService(self)
 		self.SetIcon(wx.GetApp().dm_art.getFromExt('byond'))
 		self.updateViewMenu()
-		#self.OnDefaultPerspective(None)
+		self.OnDefaultPerspective(None)
 		self.Show(True)
 		self.Center()
 		self.Thaw()
