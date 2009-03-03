@@ -29,7 +29,7 @@ class DMConsole(wx.Panel):
 		self.style_2 = wx.TextAttr('PURPLE', wx.NullColour, wx.Font(8, wx.TELETYPE, wx.NORMAL, wx.BOLD))
 		self.style_3 = wx.TextAttr('RED', wx.NullColour, wx.Font(8, wx.ROMAN, wx.NORMAL, wx.BOLD))
 
-		self.message('INTERACTIVE DEVELOPER CONSOLE. USE CAUTION.', self.style_3)
+		self.message('INTERACTIVE DEVELOPER CONSOLE. USE WITH CAUTION.', self.style_3)
 		self.message('', self.style_3)
 		uname = platform.uname()
 		self.message('system\n\t%s %s %s' % (uname[0], uname[2], uname[3]), self.style_1)
