@@ -53,6 +53,9 @@ class DMArtFactory(object):
 	def getFromExt(self, extension, size = (16, 16)):
 		""" Grab art associated with the extension if possible """
 
+		if not len(extension):
+			return 0
+
 		if extension in self.icons:
 			return self.icons[extension]
 
@@ -64,7 +67,10 @@ class DMArtFactory(object):
 		if not filetype.GetMimeType() in self.mimes:
 			return -1 # not found
 
+		log = wx.LogNull() # disable those GUI errors temporarily
 		info = filetype.GetIconInfo()
+		del log
+
 		if not info:
 			return -2 # no icon info
 
