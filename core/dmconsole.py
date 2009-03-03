@@ -31,7 +31,8 @@ class DMConsole(wx.Panel):
 
 		self.message('INTERACTIVE DEVELOPER CONSOLE. USE CAUTION.', self.style_3)
 		self.message('', self.style_3)
-		self.message('system\n\t%s' % sys.platform, self.style_1)
+		uname = platform.uname()
+		self.message('system\n\t%s %s %s' % (uname[0], uname[2], uname[3]), self.style_1)
 		self.message('python\n\t%s' % sys.version, self.style_1)
 		self.message('wx\n\t%s' % wx.__version__, self.style_1)
 		self.message('', self.style_3)

@@ -4,6 +4,7 @@
 import sys
 import os
 import wx
+import platform
 from wx import aui as wxAui
 
 #-------------------------------------------------------------------
