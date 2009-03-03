@@ -31,7 +31,8 @@
 		<menu type="separator" />
 		<menu id="ID_VIEW_FILETREE"    title="File Tree"    desc="Toggle view of the file tree."    flags="ID_ITEM_CHECK" />
 		<menu id="ID_VIEW_EDITOR"  title="Main Editor"  desc="Toggle view of the main editor."  flags="ID_ITEM_CHECK" />
-		<menu id="ID_VIEW_BUILDINFORMATION" title="Build Information" desc="Toggle view of the build information" flags="ID_ITEM_CHECK" />
+		<menu id="ID_VIEW_BUILDINFORMATION" title="Build Information" desc="Toggle view of the build information." flags="ID_ITEM_CHECK" />
+		<menu id="ID_VIEW_CONSOLE" title="Console" desc="Toggle view of the developer console." flags="ID_ITEM_CHECK" />
 	</menu_bar>
 
 	<menu_bar title="Perspective">
@@ -39,10 +40,6 @@
 		<menu id="ID_PERSPECTIVE_SAVE"    title="Save"    desc="Save perspective." />
 		<menu id="ID_PERSPECTIVE_LOAD"    title="Load"    desc="Load perspective." />
 		<menu type="separator" />
-	</menu_bar>
-
-	<menu_bar title="Build">
-		<menu id="ID_BUILD_CONSOLE" title="Console" desc="Open a developer console." />
 	</menu_bar>
 
 	<menu_bar title="Options">

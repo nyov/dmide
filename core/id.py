@@ -30,16 +30,13 @@ ID_VIEW_FILETOOLBAR = wx.NewId()
 ID_VIEW_FILETREE = wx.NewId()
 ID_VIEW_EDITOR = wx.NewId()
 ID_VIEW_BUILDINFORMATION = wx.NewId()
+ID_VIEW_CONSOLE = wx.NewId()
 
 ###### Perspective Menu ID ###########################################################################################
 
 ID_PERSPECTIVE_DEFAULT = wx.NewId()
 ID_PERSPECTIVE_SAVE = wx.NewId()
 ID_PERSPECTIVE_LOAD = wx.NewId()
-
-###### Build Menu ID #################################################################################################
-
-ID_BUILD_CONSOLE = wx.NewId()
 
 ###### Options Menu ID ###############################################################################################
 
@@ -60,6 +57,7 @@ ID_WINDOW = wx.NewId()
 ID_FILETREE = wx.NewId()
 ID_EDITOR = wx.NewId()
 ID_BUILDINFORMATION = wx.NewId()
+ID_CONSOLE = wx.NewId()
 
 ID_FILETOOLBAR = wx.NewId()
 
@@ -69,6 +67,7 @@ NAME_FILETOOLBAR = 'FILETOOLBAR'
 NAME_FILETREE = 'FILETREE'
 NAME_EDITOR = 'EDITOR'
 NAME_BUILDINFORMATION = 'BUILDINFORMATION'
+NAME_CONSOLE = 'CONSOLE'
 
 NAME_PERSPECTIVEOPTIONS = 'PERSPECTIVEOPTIONS'
 

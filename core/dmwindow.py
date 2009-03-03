@@ -47,10 +47,13 @@ class DMWindow(wx.Frame):
 		#-------------------------------------------------------------------
 
 		self.dm_build_info = core.DMBuildInfo(self)
-		self.aui_manager.AddPane(self.dm_build_info, wxAui.AuiPaneInfo().Name(NAME_BUILDINFORMATION).Caption('Build Information').Top().BestSize((-1, 100)).FloatingSize((800, 110)).MaximizeButton(True))
+		self.aui_manager.AddPane(self.dm_build_info, wxAui.AuiPaneInfo().Name(NAME_BUILDINFORMATION).Caption('Build Information').Bottom().BestSize((-1, 100)).FloatingSize((800, 110)).MaximizeButton(True))
+
+		#-------------------------------------------------------------------
 
 		self.dm_console = core.DMConsole(self)
-		self.aui_manager.AddPane(self.dm_console, wxAui.AuiPaneInfo().Name('DMCONSOLE').Caption('Console').Bottom().BestSize((-1, 100)).FloatingSize((800, 110)).MaximizeButton(True))
+		self.aui_manager.AddPane(self.dm_console, wxAui.AuiPaneInfo().Name(NAME_CONSOLE).Caption('Console').Bottom().BestSize((-1, 100)).FloatingSize((500, 300)).MaximizeButton(True))
+		self.aui_manager.GetPane(NAME_CONSOLE).Hide()
 
 		#-------------------------------------------------------------------
 
@@ -94,6 +97,7 @@ class DMWindow(wx.Frame):
 		self.Bind(wx.EVT_MENU, self.OnViewMenu, id = ID_VIEW_FILETREE)
 		self.Bind(wx.EVT_MENU, self.OnViewMenu, id = ID_VIEW_EDITOR)
 		self.Bind(wx.EVT_MENU, self.OnViewMenu, id = ID_VIEW_BUILDINFORMATION)
+		self.Bind(wx.EVT_MENU, self.OnViewMenu, id = ID_VIEW_CONSOLE)
 
 		#-------------------------------------------------------------------
 
@@ -148,6 +152,7 @@ class DMWindow(wx.Frame):
 			menubar.FindItemById(ID_VIEW_FILETREE).Check(self.aui_manager.GetPane(NAME_FILETREE).IsShown())
 			menubar.FindItemById(ID_VIEW_EDITOR).Check(self.aui_manager.GetPane(NAME_EDITOR).IsShown())
 			menubar.FindItemById(ID_VIEW_BUILDINFORMATION).Check(self.aui_manager.GetPane(NAME_BUILDINFORMATION).IsShown())
+			menubar.FindItemById(ID_VIEW_CONSOLE).Check(self.aui_manager.GetPane(NAME_CONSOLE).IsShown())
 
 		else:
 			""" Update the controls """
@@ -156,6 +161,7 @@ class DMWindow(wx.Frame):
 			self.aui_manager.GetPane(NAME_FILETREE).Show(menubar.FindItemById(ID_VIEW_FILETREE).IsChecked())
 			self.aui_manager.GetPane(NAME_EDITOR).Show(menubar.FindItemById(ID_VIEW_EDITOR).IsChecked())
 			self.aui_manager.GetPane(NAME_BUILDINFORMATION).Show(menubar.FindItemById(ID_VIEW_BUILDINFORMATION).IsChecked())
+			self.aui_manager.GetPane(NAME_CONSOLE).Show(menubar.FindItemById(ID_VIEW_CONSOLE).IsChecked())
 			self.aui_manager.Update()
 
 #-------------------------------------------------------------------
