@@ -14,7 +14,6 @@ class DMFileTree(wx.TreeCtrl):
 		wx.TreeCtrl.__init__(self, parent, ID_FILETREE, style = wx.TR_DEFAULT_STYLE | wx.TR_HIDE_ROOT | wx.NO_BORDER)
 
 		self.initBindings()
-		self.loadProject('.')
 
 #-------------------------------------------------------------------
 
@@ -52,6 +51,11 @@ class DMFileTree(wx.TreeCtrl):
 
 	def loadProject(self, project_dir):
 		""" Reset the tree and populate it with all the files in a directory """
+
+		if os.path.splitext(project_dir)[-1] != '.dme':
+			return
+
+		project_dir = os.path.split(project_dir)[0]
 
 		self.DeleteAllItems()
 

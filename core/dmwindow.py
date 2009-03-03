@@ -115,7 +115,13 @@ class DMWindow(wx.Frame):
 
 	def OnFile(self, event):
 		""" Event handler for File menu and toolbar events """
-		pass
+
+		if event.Id == ID_FILE_OPEN:
+			dlg = wx.FileDialog(self, 'Open BYOND environment', os.getcwd(), '', environment_wildcard, wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST)
+			if dlg.ShowModal() == wx.ID_OK:
+				path = dlg.GetPath()
+				self.dm_file_tree.loadProject(path)
+			dlg.Destroy()
 
 #-------------------------------------------------------------------
 
@@ -210,7 +216,8 @@ class DMWindow(wx.Frame):
 		""" Opens the dialog to load a perspective. """
 
 		options = 'DM Perspectives (*.dmvw)|*.dmvw|All files (*.*)|*.*'
-		dlg = wx.FileDialog(self, 'Load which perspective?', os.path.join(os.curdir, 'settings'), '', options, wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST)
+		path = wx.GetApp().get_dir()
+		dlg = wx.FileDialog(self, 'Load which perspective?', os.path.join(path, 'settings'), '', options, wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST)
 		if dlg.ShowModal() == wx.ID_OK:
 			path = dlg.GetPath()
 			self.loadPerspective(open(path, 'r').read())
@@ -222,7 +229,8 @@ class DMWindow(wx.Frame):
 		""" Opens the dialog to save a perspective. """
 
 		options = 'DM Perspectives (*.dmvw)|*.dmvw|All files (*.*)|*.*'
-		dlg = wx.FileDialog(self, 'Save perspective where?', os.path.join(os.curdir, 'settings'), '', options, wx.FD_SAVE | wx.FD_CHANGE_DIR | wx.FD_OVERWRITE_PROMPT)
+		path = wx.GetApp().get_dir()
+		dlg = wx.FileDialog(self, 'Save perspective where?', os.path.join(path, 'settings'), '', options, wx.FD_SAVE | wx.FD_CHANGE_DIR | wx.FD_OVERWRITE_PROMPT)
 		if dlg.ShowModal() == wx.ID_OK:
 			path = dlg.GetPath()
 			data = self.aui_manager.SavePerspective()
