@@ -37,6 +37,10 @@ ID_PERSPECTIVE_DEFAULT = wx.NewId()
 ID_PERSPECTIVE_SAVE = wx.NewId()
 ID_PERSPECTIVE_LOAD = wx.NewId()
 
+###### Build Menu ID #################################################################################################
+
+ID_BUILD_CONSOLE = wx.NewId()
+
 ###### Options Menu ID ###############################################################################################
 
 ID_OPTIONS_PERSPECTIVE = wx.NewId()

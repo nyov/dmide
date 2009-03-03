@@ -41,6 +41,10 @@
 		<menu type="separator" />
 	</menu_bar>
 
+	<menu_bar title="Build">
+		<menu id="ID_BUILD_CONSOLE" title="Console" desc="Open a developer console." />
+	</menu_bar>
+
 	<menu_bar title="Options">
 		<menu id="ID_OPTIONS_PERSPECTIVE" title="Perspective" desc="Settings for the look and feel of DMIDE." />
 	</menu_bar>

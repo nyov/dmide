@@ -2,6 +2,7 @@
 
 import core
 from core import *
+from wx import stc as wxStc
 
 #-------------------------------------------------------------------
 
@@ -37,7 +38,7 @@ class DMFrame(wxAui.AuiNotebook):
 
 			name = os.path.split(file)[-1]
 			icon = dm_art.getFromExt(os.path.splitext(name)[-1])
-			page = wx.TextCtrl(self, wx.ID_ANY, open(file).read(), style = wx.TE_MULTILINE | wx.NO_BORDER)
+			page = DMDemo(self, open(file).read())
 			page.file_path = file
 
 			if type(icon) == int:
@@ -53,3 +54,21 @@ class DMFrame(wxAui.AuiNotebook):
 			newPage(file)
 
 #-------------------------------------------------------------------
+
+class DMDemo(wxStc.StyledTextCtrl):
+	def __init__(self, parent, file):
+		wxStc.StyledTextCtrl.__init__(self, parent)
+
+		self.SetMargins(4, 1)
+
+		self.SetViewWhiteSpace(False)
+		
+		self.SetEdgeMode(wxStc.STC_EDGE_BACKGROUND)
+		self.SetEdgeColumn(78)
+
+		self.SetMarginType(1, wxStc.STC_MARGIN_NUMBER)
+		self.SetMarginWidth(1, 25)
+
+		self.StyleSetSpec(wxStc.STC_STYLE_DEFAULT, 'face:%s,size:%s' % ('Courier', 10))
+
+		self.SetText(file)

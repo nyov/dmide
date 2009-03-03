@@ -31,6 +31,7 @@ environment_wildcard = 'DM Environment (*.dme)|*.dme|' \
 #-------------------------------------------------------------------
 
 """ DMIDE classes """
+from dmconsole import DMConsole
 from dmartfactory import DMArtFactory
 from dmbuildinfo import DMBuildInfo
 from dmfiletree import DMFileTree

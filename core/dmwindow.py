@@ -22,7 +22,7 @@ class DMWindow(wx.Frame):
 		installMenuService(self)
 		self.SetIcon(wx.GetApp().dm_art.getFromExt('byond'))
 		self.updateViewMenu()
-		self.OnDefaultPerspective(None)
+		#self.OnDefaultPerspective(None)
 		self.Show(True)
 		self.Center()
 		self.Thaw()
@@ -47,7 +47,10 @@ class DMWindow(wx.Frame):
 		#-------------------------------------------------------------------
 
 		self.dm_build_info = core.DMBuildInfo(self)
-		self.aui_manager.AddPane(self.dm_build_info, wxAui.AuiPaneInfo().Name(NAME_BUILDINFORMATION).Caption('Build Information').Bottom().BestSize((-1, 100)).FloatingSize((800, 110)).MaximizeButton(True))
+		self.aui_manager.AddPane(self.dm_build_info, wxAui.AuiPaneInfo().Name(NAME_BUILDINFORMATION).Caption('Build Information').Top().BestSize((-1, 100)).FloatingSize((800, 110)).MaximizeButton(True))
+
+		self.dm_console = core.DMConsole(self)
+		self.aui_manager.AddPane(self.dm_console, wxAui.AuiPaneInfo().Name('DMCONSOLE').Caption('Console').Bottom().BestSize((-1, 100)).FloatingSize((800, 110)).MaximizeButton(True))
 
 		#-------------------------------------------------------------------
 

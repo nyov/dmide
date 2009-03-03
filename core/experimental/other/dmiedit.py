@@ -1,31 +1,37 @@
 import wx
 
-
-
 class Test(wx.Panel):
-	def __init__(self, parent):
-		wx.Panel.__init__(self, parent)
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)
+ 
+        self.Bind(wx.EVT_PAINT, self.OnPaint)
+ 
+    def OnPaint(self, event):
+        pdc = wx.PaintDC(self)
+        test_bg = wx.BitmapFromImage(wx.Image('bg.png').Rescale(256, 256))
+        test_img = wx.BitmapFromImage(wx.Image('example.png').Rescale(256, 256))
 
-		self.Bind(wx.EVT_PAINT, self.OnPaint)
+        m = wx.MemoryDC()
+        m.SelectObject(test_img)
+        dc = wx.GCDC(m)
+        dc.DrawLine(0, 0, 256, 256)
 
-	def OnPaint(self, event):
-		test_bg = wx.Bitmap('test_bg.png')
-		test_img = wx.Bitmap('example.png')
+        del m
 
-		dc = wx.PaintDC(self)
-		dc.DrawBitmap(test_bg, 0, 0)
-		dc.DrawBitmap(test_img, 0, 0, True)
-
-
-
+        pdc.SetPen(wx.BLACK_PEN)
+        pdc.DrawBitmap(test_bg, 0, 0)
+        pdc.DrawBitmap(test_img, 0, 0, True)
+ 
+ 
+ 
 if __name__ == '__main__':
-	app = wx.App(0)
-
-	win = wx.Frame(None)
-	win.Show(True)
-
-	panel = Test(win)
-
-	win.SetSize((400, 300))
-
-	app.MainLoop()
+    app = wx.App(0)
+ 
+    win = wx.Frame(None)
+    win.Show(True)
+ 
+    panel = Test(win)
+ 
+    win.SetSize((300, 300))
+ 
+    app.MainLoop()
