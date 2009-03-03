@@ -99,8 +99,13 @@ class DMFileTree(wx.TreeCtrl):
 
 		#-------------------------------------------------------------------
 
-		def sort(a, b):
+		def dosort(a, b):
 			""" sort the project files and folders! """
+
+			if type(a) == unicode:
+				a = str(a)
+			if type(b) == unicode:
+				b = str(b)
 
 			# weights for different types of files
 			sorted_weights = ['.dme', '.dmf', '.dm', '.dmi', '.png', '.bmp', '.gif', '.jpeg', '.jpg', '.dmm', '.dmp', '.dms', '.mod',
@@ -133,7 +138,7 @@ class DMFileTree(wx.TreeCtrl):
 		def populate(files, root, images):
 			""" populate the file tree with the files and folders and icons gathered """
 
-			files.sort(sort)
+			files.sort(dosort)
 			for file in files:
 				if type(file) == dict:
 					new_root = self.AppendItem(root, file.keys()[0])
