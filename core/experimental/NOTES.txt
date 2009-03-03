@@ -15,6 +15,9 @@ PIL PNG zTXt Patch required.
 http://mail.python.org/pipermail/image-sig/2007-February/004343.html
 Patched file included. Replace `[Python installed dir]/Lib/site-packages/PIL/PngImagePlugin.py` with included file.
 
+  Actually it looks like just keeping this patched script in the same dir as the experimental files is good enough!
+  No need to patch.
+
 wxPython comes third. version 2.8.9.1 recommended.
 http://wxpython.org/download.php
 
