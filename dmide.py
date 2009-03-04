@@ -34,7 +34,6 @@ if __name__ == '__main__':
 
 		app.get_dir = get_dir
 		w = DMWindow('DMIDE')
-		wx.FindWindowById(ID_FILETREE).loadProject('../maztekia/Chatters.dme')
 		app.MainLoop()
 
 #-------------------------------------------------------------------
