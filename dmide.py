@@ -11,18 +11,18 @@ if __name__ == '__main__':
 		except ImportError:
 			pass
 
-        #-------------------------------------------------------------------
+		#-------------------------------------------------------------------
 
 		# all the goodies are in here
 		from core import *
 
-        #-------------------------------------------------------------------
+		#-------------------------------------------------------------------
 
 		# create the app and window, and initialize the art factory
 		app = wx.App(0)
 		app.dm_art = DMArtFactory()
 
-        #-------------------------------------------------------------------
+		#-------------------------------------------------------------------
 
 		def get_dir():
 			""" Get the dir DMIDE is in. """
@@ -30,10 +30,11 @@ if __name__ == '__main__':
 			if hasattr(sys, 'frozen'): return sys.executable
 			return sys.argv[0]
 
-        #-------------------------------------------------------------------
+		#-------------------------------------------------------------------
 
 		app.get_dir = get_dir
 		w = DMWindow('DMIDE')
+		wx.FindWindowById(ID_FILETREE).loadProject('../maztekia/Chatters.dme')
 		app.MainLoop()
 
 #-------------------------------------------------------------------
