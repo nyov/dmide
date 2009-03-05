@@ -62,6 +62,19 @@ class DMFrame(wxAui.AuiNotebook):
 
 #-------------------------------------------------------------------
 
+	def OnFile(self, event):
+		if event.Id == ID_FILE_NEW:
+			pass
+
+		elif event.Id == ID_FILE_OPEN:
+			dlg = wx.FileDialog(self, 'Open BYOND environment', os.getcwd(), '', environment_wildcard, wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST)
+			if dlg.ShowModal() == wx.ID_OK:
+				path = dlg.GetPath()
+				wx.FindWindowById(ID_FILETREE).loadProject(path)
+			dlg.Destroy()
+
+#-------------------------------------------------------------------
+
 	def OnEdit(self, event):
 		# find/replace in selected text
 		# automatically add find to dialog if text selected

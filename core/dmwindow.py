@@ -108,11 +108,11 @@ class DMWindow(wx.Frame):
 
 		#-------------------------------------------------------------------
 
-		self.Bind(wx.EVT_MENU, self.OnViewMenu, id = ID_VIEW_FILETOOLBAR)
-		self.Bind(wx.EVT_MENU, self.OnViewMenu, id = ID_VIEW_FILETREE)
-		self.Bind(wx.EVT_MENU, self.OnViewMenu, id = ID_VIEW_EDITOR)
-		self.Bind(wx.EVT_MENU, self.OnViewMenu, id = ID_VIEW_BUILDINFORMATION)
-		self.Bind(wx.EVT_MENU, self.OnViewMenu, id = ID_VIEW_CONSOLE)
+		self.Bind(wx.EVT_MENU, self.OnView, id = ID_VIEW_FILETOOLBAR)
+		self.Bind(wx.EVT_MENU, self.OnView, id = ID_VIEW_FILETREE)
+		self.Bind(wx.EVT_MENU, self.OnView, id = ID_VIEW_EDITOR)
+		self.Bind(wx.EVT_MENU, self.OnView, id = ID_VIEW_BUILDINFORMATION)
+		self.Bind(wx.EVT_MENU, self.OnView, id = ID_VIEW_CONSOLE)
 
 		#-------------------------------------------------------------------
 
@@ -138,17 +138,21 @@ class DMWindow(wx.Frame):
 	def OnFile(self, event):
 		""" Event handler for File menu and toolbar events """
 
-		if event.Id == ID_FILE_OPEN:
-			dlg = wx.FileDialog(self, 'Open BYOND environment', os.getcwd(), '', environment_wildcard, wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST)
-			if dlg.ShowModal() == wx.ID_OK:
-				path = dlg.GetPath()
-				self.dm_file_tree.loadProject(path)
-			dlg.Destroy()
+		self.dm_frame.OnFile(event)
 
 #-------------------------------------------------------------------
 
 	def OnEdit(self, event):
+		""" Pass the Edit menu events to the DMFrame """
+
 		self.dm_frame.OnEdit(event)
+
+#-------------------------------------------------------------------
+
+	def OnView(self, event):
+		""" Toggle the visibility of a control """
+
+		self.updateViewMenu(False)
 
 #-------------------------------------------------------------------
 
@@ -187,17 +191,10 @@ class DMWindow(wx.Frame):
 #-------------------------------------------------------------------
 
 	def OnPaneClose(self, event):
-		""" Update the view menu when one of the controls is closed """
+		""" Update the view menu when one of the panels is closed """
 
 		event.Skip()
 		wx.CallAfter(self.updateViewMenu)
-
-#-------------------------------------------------------------------
-
-	def OnViewMenu(self, event):
-		""" Toggle the visibility of a control """
-
-		self.updateViewMenu(False)
 
 #-------------------------------------------------------------------
 
