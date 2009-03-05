@@ -93,6 +93,20 @@ class DMWindow(wx.Frame):
 
 		#-------------------------------------------------------------------
 
+		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_UNDO)
+		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_REDO)
+		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_CUT)
+		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_COPY)
+		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_PASTE)
+		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_DELETE)
+		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_FIND)
+		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_FINDNEXT)
+		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_REPLACE)
+		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_GOTOLINE)
+		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_SELECTALL)
+
+		#-------------------------------------------------------------------
+
 		self.Bind(wx.EVT_MENU, self.OnViewMenu, id = ID_VIEW_FILETOOLBAR)
 		self.Bind(wx.EVT_MENU, self.OnViewMenu, id = ID_VIEW_FILETREE)
 		self.Bind(wx.EVT_MENU, self.OnViewMenu, id = ID_VIEW_EDITOR)
@@ -129,6 +143,11 @@ class DMWindow(wx.Frame):
 				path = dlg.GetPath()
 				self.dm_file_tree.loadProject(path)
 			dlg.Destroy()
+
+#-------------------------------------------------------------------
+
+	def OnEdit(self, event):
+		self.dm_frame.OnEdit(event)
 
 #-------------------------------------------------------------------
 

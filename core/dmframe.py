@@ -55,19 +55,63 @@ class DMFrame(wxAui.AuiNotebook):
 
 #-------------------------------------------------------------------
 
+	def current(self):
+		index = self.GetSelection()
+		if index == -1: return None
+		return self.GetPage(index)
+
+#-------------------------------------------------------------------
+
+	def OnEdit(self, event):
+		current = self.current()
+		if not current: return
+
+		if event.Id == ID_EDIT_UNDO:
+			current.Undo()
+		elif event.Id == ID_EDIT_REDO:
+			current.Redo()
+		elif event.Id == ID_EDIT_CUT:
+			current.Cut()
+		elif event.Id == ID_EDIT_COPY:
+			current.Copy()
+		elif event.Id == ID_EDIT_PASTE:
+			current.Paste()
+		elif event.Id == ID_EDIT_DELETE:
+			selection = current.GetSelection()
+			selection = selection[1] - selection[0]
+
+			if selection:
+				current.DeleteBack()
+
+			current.CharRight()
+			current.DeleteBack()
+
+		elif event.Id == ID_EDIT_SELECTALL:
+			current.SelectAll()
+
+#-------------------------------------------------------------------
+
 class DMDemo(wxStc.StyledTextCtrl):
+
+#-------------------------------------------------------------------
+
 	def __init__(self, parent, file):
 		wxStc.StyledTextCtrl.__init__(self, parent)
 
 		self.Bind(wxStc.EVT_STC_UPDATEUI, self.OnUpdateUI)
 		self.initStyle()
 		self.SetText(file)
+		self.EmptyUndoBuffer()
+
+#-------------------------------------------------------------------
 
 	def initStyle(self):
 		self.SetLexer(wxStc.STC_LEX_CPP)
 
 		self.SetViewWhiteSpace(False)
 		self.SetBufferedDraw(True)
+		self.SetIndentationGuides(True)
+		#self.SetUseHorizontalScrollBar(False)
 		self.SetViewEOL(False)
 		self.SetEOLMode(wxStc.STC_EOL_CRLF)
 		self.SetUseAntiAliasing(False)
@@ -108,6 +152,8 @@ class DMDemo(wxStc.StyledTextCtrl):
 		self.StyleSetSpec(wxStc.STC_C_NUMBER, 		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#800000') )
 		self.StyleSetSpec(wxStc.STC_C_WORD, 		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(hex(0,   0,   255)) )
 		self.StyleSetSpec(wxStc.STC_C_OPERATOR,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle() )
+
+#-------------------------------------------------------------------
 
 	def OnUpdateUI(self, evt):
 		# check for matching braces
