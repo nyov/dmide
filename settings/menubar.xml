@@ -18,8 +18,9 @@
 		<menu id="ID_EDIT_PASTE"     title="Paste"      macro="Ctrl+V" desc="Paste the text in clipboard." />
 		<menu id="ID_EDIT_DELETE"    title="Delete"     macro="Del"    desc="Delete the selected text." />
 		<menu type="separator" />
-		<menu id="ID_EDIT_FIND"      title="Find"       macro="Alt+F3" desc="Find text in this document." />
+		<menu id="ID_EDIT_FIND"      title="Find"       macro="Ctrl+F" desc="Find text in this document." />
 		<menu id="ID_EDIT_FINDNEXT"  title="Find Next"  macro="F3"     desc="Find the next text in this document." />
+		<menu id="ID_EDIT_FINDPREV"  title="Find Previous"  macro="Shift+F3"     desc="Find the previous text in this document." />
 		<menu id="ID_EDIT_REPLACE"   title="Replace"    macro="Ctrl+H" desc="Replace text in this document." />
 		<menu type="separator" />
 		<menu id="ID_EDIT_GOTOLINE"  title="Goto Line"  macro="Ctrl+G" desc="Go to specified line." />

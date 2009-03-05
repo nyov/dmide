@@ -6,6 +6,7 @@ import os
 import wx
 import platform
 from wx import aui as wxAui
+from wx import stc as wxStc
 
 #-------------------------------------------------------------------
 
@@ -38,5 +39,6 @@ from dmbuildinfo import DMBuildInfo
 from dmfiletree import DMFileTree
 from dmwindow import DMWindow
 from dmframe import DMFrame
+from dmcodeeditor import DMCodeEditor
 
 #-------------------------------------------------------------------

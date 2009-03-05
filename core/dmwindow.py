@@ -101,6 +101,7 @@ class DMWindow(wx.Frame):
 		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_DELETE)
 		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_FIND)
 		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_FINDNEXT)
+		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_FINDPREV)
 		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_REPLACE)
 		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_GOTOLINE)
 		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_SELECTALL)

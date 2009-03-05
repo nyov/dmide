@@ -2,7 +2,6 @@
 
 import core
 from core import *
-from wx import stc as wxStc
 
 #-------------------------------------------------------------------
 
@@ -15,6 +14,7 @@ class DMFrame(wxAui.AuiNotebook):
 		wxAui.AuiNotebook.__init__(self, parent, ID_EDITOR, style = wxAui.AUI_NB_TAB_SPLIT | wxAui.AUI_NB_TAB_MOVE | wxAui.AUI_NB_SCROLL_BUTTONS | wxAui.AUI_NB_CLOSE_ON_ALL_TABS | wx.NO_BORDER)
 
 		self.initBindings()
+		self.find_data = None
 
 #-------------------------------------------------------------------
 
@@ -38,7 +38,7 @@ class DMFrame(wxAui.AuiNotebook):
 
 			name = os.path.split(file)[-1]
 			icon = dm_art.getFromExt(os.path.splitext(name)[-1])
-			page = DMDemo(self, open(file).read())
+			page = core.DMCodeEditor(self, open(file).read())
 			page.file_path = file
 
 			if type(icon) == int:
@@ -63,6 +63,10 @@ class DMFrame(wxAui.AuiNotebook):
 #-------------------------------------------------------------------
 
 	def OnEdit(self, event):
+		# find/replace in selected text
+		# automatically add find to dialog if text selected
+		# option to find/replace in current page, selected text, opened pages, and all pages
+
 		current = self.current()
 		if not current: return
 
@@ -86,104 +90,278 @@ class DMFrame(wxAui.AuiNotebook):
 			current.CharRight()
 			current.DeleteBack()
 
+		elif event.Id == ID_EDIT_FIND or event.Id == ID_EDIT_REPLACE:
+			self.OpenFindReplaceDialog(current)
+		elif event.Id == ID_EDIT_FINDNEXT:
+			self.find(self.find_data)
+		elif event.Id == ID_EDIT_FINDPREV:
+			self.find(self.find_data, next = False)
+
+		elif event.Id == ID_EDIT_GOTOLINE:
+			dlg = GotoLineDialog(self, (current.GetLineCount(), current.GetCurrentLine() + 1))
+			if dlg.ShowModal() == wx.ID_OK:
+				current.ScrollToLine(dlg.getData() - 1)
+			dlg.Destroy()
 		elif event.Id == ID_EDIT_SELECTALL:
 			current.SelectAll()
 
 #-------------------------------------------------------------------
 
-class DMDemo(wxStc.StyledTextCtrl):
+	def OpenFindReplaceDialog(self, page):
+		if not page:
+			return
+
+		dlg = FindReplaceDialog(self, self.find_data)
+		if dlg.ShowModal() == wx.ID_OK:
+
+			data = dlg.getData()
+			button = data[-1]
+			self.find_data = data
+
+			if button == 'find-next':
+				self.find(data, page)
+			elif button == 'find-prev':
+				self.find(data, page, True)
+			elif button == 'replace':
+				self.replace(data, page)
+				wx.CallAfter(self.OpenFindReplaceDialog, page)
+			elif button == 'replace-all':
+				self.replace(data, page, True)
+
+		dlg.Destroy()
 
 #-------------------------------------------------------------------
 
-	def __init__(self, parent, file):
-		wxStc.StyledTextCtrl.__init__(self, parent)
+	def find(self, data, page = None, next = True):
+		if not data:
+			return
 
-		self.Bind(wxStc.EVT_STC_UPDATEUI, self.OnUpdateUI)
-		self.initStyle()
-		self.SetText(file)
-		self.EmptyUndoBuffer()
+		if not page:
+			page = self.current()
 
-#-------------------------------------------------------------------
+		if not page:
+			return
 
-	def initStyle(self):
-		self.SetLexer(wxStc.STC_LEX_CPP)
+		find, replace, context, case, regex, button = data
 
-		self.SetViewWhiteSpace(False)
-		self.SetBufferedDraw(True)
-		self.SetIndentationGuides(True)
-		#self.SetUseHorizontalScrollBar(False)
-		self.SetViewEOL(False)
-		self.SetEOLMode(wxStc.STC_EOL_CRLF)
-		self.SetUseAntiAliasing(False)
-		self.SetTabWidth(4)
+		flags = 0
+		if case:
+			flags ^= wxStc.STC_FIND_MATCHCASE
+		if regex:
+			flags ^= wxStc.STC_FIND_REGEXP
 
-		self.SetMargins(4, 1)
-		self.SetMarginType(1, wxStc.STC_MARGIN_NUMBER)
-		self.SetMarginWidth(1, 25)
+		pos = -1
 
-		def hex(r,g,b): return '#%02.X%02.X%02.X' % (r, g, b)
-		keywords = ['break', 'new', 'del', 'for', 'global', 'var', 'proc', 'verb', 'set',
-					'static', 'arg', 'const', 'goto', 'if', 'in', 'as', 'continue', 'return',
-					'do', 'while', 'else', 'switch', 'tmp', 'to']
-
-		self.SetKeyWords(0, ' '.join(keywords))
-
-		style = {'face': 'Courier',
-				 'size': 10,
-				 'fore': hex(0, 0, 0),
-				 'back': hex(255, 255, 255)
-				}
-
-		def getstyle(fore = style['fore'], back = style['back'], face = style['face'], size = style['size']):
-			return {'fore': fore, 'back': back, 'face': face, 'size': size}
-
-		self.StyleSetSpec(wxStc.STC_STYLE_DEFAULT,     'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle())
-		self.StyleSetSpec(wxStc.STC_STYLE_LINENUMBER,  'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(back = '#888888', size = 8))
-		self.StyleSetSpec(wxStc.STC_STYLE_CONTROLCHAR, 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle())
-		self.StyleSetSpec(wxStc.STC_STYLE_BRACELIGHT,  'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s,bold' % getstyle())
-		self.StyleSetSpec(wxStc.STC_STYLE_BRACEBAD,    'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s,bold' % getstyle())
-
-		self.StyleSetSpec(wxStc.STC_C_DEFAULT, 		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle() )
-		self.StyleSetSpec(wxStc.STC_C_COMMENT, 		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(hex(128, 128, 128)) )
-		self.StyleSetSpec(wxStc.STC_C_COMMENTLINE,  'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(hex(128, 128, 128)) )
-		self.StyleSetSpec(wxStc.STC_C_PREPROCESSOR, 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(hex(0,   128, 0)) )
-		self.StyleSetSpec(wxStc.STC_C_STRING, 		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(hex(0,   150, 180)) )
-		self.StyleSetSpec(wxStc.STC_C_STRINGEOL, 	 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s,eol' % getstyle(back = hex(0,   150, 180), fore = hex(0, 0, 0)) )
-		self.StyleSetSpec(wxStc.STC_C_NUMBER, 		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#800000') )
-		self.StyleSetSpec(wxStc.STC_C_WORD, 		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(hex(0,   0,   255)) )
-		self.StyleSetSpec(wxStc.STC_C_OPERATOR,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle() )
-
-#-------------------------------------------------------------------
-
-	def OnUpdateUI(self, evt):
-		# check for matching braces
-		braceAtCaret = -1
-		braceOpposite = -1
-		charBefore = None
-		caretPos = self.GetCurrentPos()
-
-		if caretPos > 0:
-			charBefore = self.GetCharAt(caretPos - 1)
-			styleBefore = self.GetStyleAt(caretPos - 1)
-
-		# check before
-		if charBefore and chr(charBefore) in "[]{}()" and styleBefore == wxStc.STC_C_OPERATOR:
-			braceAtCaret = caretPos - 1
-
-		# check after
-		if braceAtCaret < 0:
-			charAfter = self.GetCharAt(caretPos)
-			styleAfter = self.GetStyleAt(caretPos)
-
-			if charAfter and chr(charAfter) in "[]{}()" and styleAfter == wxStc.STC_C_OPERATOR:
-				braceAtCaret = caretPos
-
-		if braceAtCaret >= 0:
-			braceOpposite = self.BraceMatch(braceAtCaret)
-
-		if braceAtCaret != -1  and braceOpposite == -1:
-			self.BraceBadLight(braceAtCaret)
+		if next:
+			if context == 'File':
+				pos = page.FindText(page.GetSelectionEnd(), page.GetLength(), find, flags)
+			elif context == 'Selection':
+				pos = page.FindText(page.GetSelectionStart(), page.GetSelectionEnd(), find, flags)
 		else:
-			self.BraceHighlight(braceAtCaret, braceOpposite)
+			if context == 'File':
+				pos = page.FindText(page.GetSelectionStart(), 0, find, flags)
+			elif context == 'Selection':
+				pos = page.FindText(page.GetSelectionEnd(), page.GetSelectionStart(), find, flags)
+
+		if pos != -1:
+			page.SetSelection(pos, pos + len(find))
+
+		return pos
+
+#-------------------------------------------------------------------
+
+	def replace(self, data, page = None, all = False):
+		if not data:
+			return
+
+		if not page:
+			page = self.current()
+
+		if not page:
+			return
+
+		find, replace, context, case, regex, button = data
+
+		flags = 0
+		if case:
+			flags ^= wxStc.STC_FIND_MATCHCASE
+		if regex:
+			flags ^= wxStc.STC_FIND_REGEXP
+
+		if context == 'Selection':
+			old_select = page.GetSelectionStart(), page.GetSelectionEnd()
+
+		pos = self.find(data, page)
+
+		if pos != -1:
+			page.ReplaceSelection(replace)
+			page.SetSelection(pos, pos + len(replace))
+
+			if all:
+				if context == 'Selection':
+					page.SetSelection(old_select[0], old_select[1] + (len(replace) - len(find)))
+	
+				self.replace(data, page, all)
+
+		return pos
+
+#-------------------------------------------------------------------
+
+class FindReplaceDialog(wx.Dialog):
+	""" Custom Find/Replace dialog. """
+
+#-------------------------------------------------------------------
+
+	def __init__(self, parent, find_data):
+		wx.Dialog.__init__(self, parent, title = 'Find/Replace')
+
+		self.initAll(find_data)
+		self.initBindings()
+		self.initConstraints()
+
+#-------------------------------------------------------------------
+
+	def initAll(self, find_data):
+		self.find_label = wx.StaticText(self, wx.ID_ANY, 'Find')
+		self.find = wx.TextCtrl(self, style = wx.TE_MULTILINE, size = (150, 55))
+
+		self.replace_label = wx.StaticText(self, wx.ID_ANY, 'Replace')
+		self.replace = wx.TextCtrl(self, style = wx.TE_MULTILINE, size = (150, 55))
+
+		self.context_label = wx.StaticText(self, wx.ID_ANY, 'Context')
+		self.context = wx.ComboBox(self, wx.ID_ANY, 'File', choices = ['File', 'Selection', 'Opened Files', 'All Files'], style = wx.CB_READONLY)
+
+		self.match_case = wx.CheckBox(self, wx.ID_ANY, 'Match Case')
+		self.regex = wx.CheckBox(self, wx.ID_ANY, 'Regex')
+
+		self.find_next = wx.Button(self, 1337, 'Find Next')
+		self.find_prev = wx.Button(self, 1338, 'Find Prev')
+		self.find_replace = wx.Button(self, 1339, 'Replace')
+		self.find_replace_all = wx.Button(self, 1340, 'Replace All')
+
+		self.button = None
+
+
+		if find_data:
+			find, replace, context, case, regex, button = find_data
+
+			self.find.SetValue(find)
+			self.replace.SetValue(replace)
+			self.context.SetValue(context)
+			if case:
+				self.case.SetChecked(True)
+			if regex:
+				self.regex.SetChecked(True)
+
+#-------------------------------------------------------------------
+
+	def initBindings(self):
+		self.find_next.Bind(wx.EVT_BUTTON, self.OnButton)
+		self.find_prev.Bind(wx.EVT_BUTTON, self.OnButton)
+		self.find_replace.Bind(wx.EVT_BUTTON, self.OnButton)
+		self.find_replace_all.Bind(wx.EVT_BUTTON, self.OnButton)
+
+#-------------------------------------------------------------------
+
+	def initConstraints(self):
+		sizer = wx.GridBagSizer(0, 0)
+
+		b = 4
+
+		sizer.Add(self.find_label, (0, 0), (1, 1), wx.ALL | wx.ALIGN_CENTER, b)
+		sizer.Add(self.replace_label, (1, 0), (1, 1), wx.ALL | wx.ALIGN_CENTER, b)
+		sizer.Add(self.context_label, (2, 0), (1, 1), wx.ALL | wx.ALIGN_CENTER, b)
+
+		sizer.Add(self.find, (0, 1), (1, 1), wx.ALL | wx.EXPAND, b)
+		sizer.Add(self.replace, (1, 1), (1, 1), wx.ALL | wx.EXPAND, b)
+		sizer.Add(self.context, (2, 1), (1, 1), wx.ALL | wx.EXPAND, b)
+
+		sizer.Add(self.match_case, (3, 0), (1, 2), wx.ALL | wx.EXPAND, b)
+		sizer.Add(self.regex, (4, 0), (1, 2), wx.ALL | wx.EXPAND, b)
+
+		sizer.Add(self.find_next, (0, 2), (1, 1), wx.ALL | wx.EXPAND, b)
+		sizer.Add(self.find_prev, (1, 2), (1, 1), wx.ALL | wx.EXPAND, b)
+		sizer.Add(self.find_replace, (2, 2), (1, 1), wx.ALL | wx.EXPAND, b)
+		sizer.Add(self.find_replace_all, (3, 2), (1, 1), wx.ALL | wx.EXPAND, b)
+
+		self.SetSizerAndFit(sizer)
+
+#-------------------------------------------------------------------
+
+	def getData(self):
+		find = str(self.find.GetValue())
+		replace = str(self.replace.GetValue())
+		context = str(self.context.GetValue())
+		case = self.match_case.IsChecked()
+		regex = self.regex.IsChecked()
+		button = self.button
+
+		return (find, replace, context, case, regex, button)
+
+#-------------------------------------------------------------------
+
+	def OnButton(self, event):
+		if event.Id == 1337:
+			self.button = 'find-next'
+		if event.Id == 1338:
+			self.button = 'find-prev'
+		elif event.Id == 1339:
+			self.button = 'replace'
+		elif event.Id == 1340:
+			self.button = 'replace-all'
+
+		self.EndModal(wx.ID_OK)
+
+#-------------------------------------------------------------------
+
+class GotoLineDialog(wx.Dialog):
+
+#-------------------------------------------------------------------
+
+	def __init__(self, parent, data = None):
+		wx.Dialog.__init__(self, parent, title = 'Goto Line')
+
+		self.initAll(data)
+		self.initBinds()
+		self.initConstraints()
+
+#-------------------------------------------------------------------
+
+	def initAll(self, data = None):
+		self.goto_label = wx.StaticText(self, wx.ID_ANY, 'Line #')
+		self.goto = wx.SpinCtrl(self, wx.ID_ANY, '')
+
+		if data:
+			self.goto.SetRange(1, data[0])
+			self.goto.SetValue(data[1])
+		else:
+			self.goto.SetRange(1, 1000000)
+			self.goto.SetValue(1)
+
+		self.ok_button = wx.Button(self, wx.ID_OK)
+		self.cancel_button = wx.Button(self, wx.ID_CANCEL)
+
+#-------------------------------------------------------------------
+
+	def initBinds(self):
+		pass
+
+#-------------------------------------------------------------------
+
+	def initConstraints(self):
+		sizer = wx.GridBagSizer(0, 0)
+
+		sizer.Add(self.goto_label, (0, 0), (1, 1), wx.ALIGN_CENTER, 4)
+		sizer.Add(self.goto, (0, 1), (1, 2), wx.ALL | wx.EXPAND, 4)
+
+		sizer.Add(self.ok_button, (1, 1), (1, 1), wx.ALL | wx.EXPAND, 4)
+		sizer.Add(self.cancel_button, (1, 2), (1, 1), wx.ALL | wx.EXPAND, 4)
+
+		self.SetSizerAndFit(sizer)
+
+#-------------------------------------------------------------------
+
+	def getData(self):
+		return int(self.goto.GetValue())
 
 #-------------------------------------------------------------------
