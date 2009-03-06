@@ -392,7 +392,7 @@ class NewFileDialog(wx.Dialog):
 #-------------------------------------------------------------------
 
 	def __init__(self, parent, default_path = ''):
-		wx.Dialog.__init__(self, parent, title = 'New File')
+		wx.Dialog.__init__(self, parent, title = 'New File', style = wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
 
 		self.default_path = default_path
 		self.initAll()
@@ -413,7 +413,7 @@ class NewFileDialog(wx.Dialog):
 				wx.VListBox.__init__(self, *args, **kwargs)
 
 				self.SetItemCount(len(self.icons))
-				width = self.GetTextExtent(self.types[3])[0] + 5 + 32 + 2 + 2
+				width = self.GetTextExtent(self.types[3])[0] + 8 + 32 + 2 + 2
 				self.SetSize((width, (32 + 5) * self.GetItemCount()))
 				self.SetSelection(0)
 
@@ -446,17 +446,28 @@ class NewFileDialog(wx.Dialog):
 		self.file_name.SetValue(self.default_path)
 		self.file_name.SetFocus()
 
+		self.ok_button = wx.Button(self, wx.ID_OK)
+		self.cancel_button = wx.Button(self, wx.ID_CANCEL)
+
 #-------------------------------------------------------------------
 
 	def initConstraints(self):
-		sizer = wx.BoxSizer(wx.HORIZONTAL)
-		sizer.Add(self.file_list, 1, wx.ALL | wx.EXPAND, 2)
+		sizer = wx.BoxSizer(wx.VERTICAL)
 
-		sizer2 = wx.BoxSizer(wx.VERTICAL)
-		sizer2.Add(self.dir_list, 1, wx.ALL | wx.EXPAND, 2)
-		sizer2.Add(self.file_name, 0, wx.ALL | wx.EXPAND, 2)
+		sizer2 = wx.BoxSizer(wx.HORIZONTAL)
+		sizer2.Add(self.file_list, 0, wx.ALL | wx.EXPAND, 2)
 
-		sizer.Add(sizer2, 2, wx.ALL | wx.EXPAND, 2)
+		sizer3 = wx.BoxSizer(wx.VERTICAL)
+		sizer3.Add(self.dir_list, 1, wx.ALL | wx.EXPAND, 2)
+		sizer3.Add(self.file_name, 0, wx.ALL | wx.EXPAND, 2)
+		sizer2.Add(sizer3, 2, wx.ALL | wx.EXPAND, 2)
+
+		sizer4 = wx.BoxSizer(wx.HORIZONTAL)
+		sizer4.Add(self.ok_button, 1, wx.ALL | wx.EXPAND, 2)
+		sizer4.Add(self.cancel_button, 1, wx.ALL | wx.EXPAND, 2)
+
+		sizer.Add(sizer2, 2, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER, 2)
+		sizer.Add(sizer4, 0, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER, 2)
 		self.SetSizerAndFit(sizer)
 
 #-------------------------------------------------------------------
