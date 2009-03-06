@@ -427,8 +427,8 @@ class NewFileDialog(wx.Dialog):
 			types = ['DM Code', 'DM Icon', 'DM Map', 'DM Interface', 'DM Script']
 			icons = ['.dm', '.dmi', '.dmm', '.dmf', '.dms']
 
-			def __init__(self, *args, **kwargs):
-				wx.VListBox.__init__(self, *args, **kwargs)
+			def __init__(self, parent, callback):
+				wx.VListBox.__init__(self, parent)
 
 				self.SetItemCount(len(self.icons))
 
@@ -436,6 +436,8 @@ class NewFileDialog(wx.Dialog):
 				self.SetSize((width, (32 + 5) * self.GetItemCount()))
 
 				self.SetSelection(0)
+				self.last_selection = -1
+				self.callback = callback
 
 			def OnDrawItem(self, dc, rect, n):
 				if self.GetSelection() == n:
@@ -453,12 +455,16 @@ class NewFileDialog(wx.Dialog):
 				dc.DrawBitmap(dm_art.getFromExt(self.icons[n], (32, 32)), x + 2, y + 2, False)
 				dc.DrawLabel(self.types[n], (x + 32 + 2 + 2, y, width, height), wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL)
 
+				if self.GetSelection() == n and self.last_selection != n:
+					self.last_selection = n
+					self.callback(n)
+
 			def OnMeasureItem(self, n):
 				return max(self.GetTextExtent(self.types[n])[1] + 5, 32 + 5)
 
 #-------------------------------------------------------------------
 
-		self.file_list = DMFileList(self)
+		self.file_list = DMFileList(self, self.OnSelect)
 
 		self.dir_list = wx.GenericDirCtrl(self, size = (200, 150), style = wx.DIRCTRL_DIR_ONLY)
 		self.dir_list.SetPath(self.default_path)
@@ -494,5 +500,13 @@ class NewFileDialog(wx.Dialog):
 
 	def getData(self):
 		return (str(self.file_name.GetValue()), str(self.dir_list.GetPath()))
+
+#-------------------------------------------------------------------
+
+	def OnSelect(self, n):
+		new_ext = self.file_list.icons[n]
+
+		old = os.path.splitext(str(self.file_name.GetValue()))[0]
+		self.file_name.SetValue('%s%s' % (old, new_ext))
 
 #-------------------------------------------------------------------
