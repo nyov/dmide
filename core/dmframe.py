@@ -66,6 +66,18 @@ class DMFrame(wxAui.AuiNotebook):
 
 #-------------------------------------------------------------------
 
+	def closeFile(self, file = None):
+		""" Close a tab """
+
+		if not file:
+			file = self.GetSelection()
+			if file == -1:
+				return
+
+		self.DeletePage(file)
+
+#-------------------------------------------------------------------
+
 	def current(self):
 		index = self.GetSelection()
 		if index == -1: return None
@@ -74,6 +86,7 @@ class DMFrame(wxAui.AuiNotebook):
 #-------------------------------------------------------------------
 
 	def OnFile(self, event):
+
 		if event.Id == ID_FILE_NEW:
 			dm_filetree = wx.FindWindowById(ID_FILETREE)
 			path, name = dm_filetree.getItem(dm_filetree.GetSelection())
@@ -90,7 +103,14 @@ class DMFrame(wxAui.AuiNotebook):
 
 			dlg.Destroy()
 
-		elif event.Id == ID_FILE_OPEN:
+		#-------------------------------------------------------------------
+
+		elif event.Id == ID_FILE_CLOSE:
+			self.closeFile()
+
+		#-------------------------------------------------------------------
+
+		elif event.Id == ID_FILE_OPENENVIRONMENT:
 			dlg = wx.FileDialog(self, 'Open Environment', os.getcwd(), '', environment_wildcard, wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST)
 			if dlg.ShowModal() == wx.ID_OK:
 				path = dlg.GetPath()

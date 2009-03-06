@@ -90,6 +90,8 @@ class DMWindow(wx.Frame):
 		self.Bind(wx.EVT_MENU, self.OnFile, id = ID_FILE_CLOSE)
 		self.Bind(wx.EVT_MENU, self.OnFile, id = ID_FILE_SAVE)
 		self.Bind(wx.EVT_MENU, self.OnFile, id = ID_FILE_SAVEAS)
+		self.Bind(wx.EVT_MENU, self.OnFile, id = ID_FILE_NEWENVIRONMENT)
+		self.Bind(wx.EVT_MENU, self.OnFile, id = ID_FILE_OPENENVIRONMENT)
 
 		#-------------------------------------------------------------------
 

@@ -96,10 +96,13 @@ default_menu = '''
 <menu_list>
 	<menu_bar title="File">
 		<menu id="ID_FILE_NEW"    title="New"     macro="Ctrl+N"       desc="Create a new file." />
-		<menu id="ID_FILE_OPEN"   title="Open"    macro="Ctrl+O"       desc="Open an environment or file." />
-		<menu id="ID_FILE_CLOSE"  title="Close"   macro="Ctrl+Shift+C"       desc="Close the current file." />
+		<menu id="ID_FILE_OPEN"   title="Open"    macro="Ctrl+O"       desc="Open a file." />
+		<menu id="ID_FILE_CLOSE"  title="Close"   macro="Ctrl+Shift+C" desc="Close the current file." />
 		<menu id="ID_FILE_SAVE"   title="Save"    macro="Ctrl+S"       desc="Save the current file." />
 		<menu id="ID_FILE_SAVEAS" title="Save As" macro="Ctrl+Shift+S" desc="Save the current file in a different title." />
+		<menu type="separator" />
+		<menu id="ID_FILE_NEWENVIRONMENT" title="New Environment" desc="Create a new environment." />
+		<menu id="ID_FILE_OPENENVIRONMENT" title="Open Environment" desc="Open an environment." />
 		<menu type="separator" />
 		<menu id="ID_EXIT"        title="Exit"    macro="Ctrl+Q"       desc="Exit DMIDE." />
 	</menu_bar>
@@ -113,8 +116,9 @@ default_menu = '''
 		<menu id="ID_EDIT_PASTE"     title="Paste"      macro="Ctrl+V" desc="Paste the text in clipboard." />
 		<menu id="ID_EDIT_DELETE"    title="Delete"     macro="Del"    desc="Delete the selected text." />
 		<menu type="separator" />
-		<menu id="ID_EDIT_FIND"      title="Find"       macro="Alt+F3" desc="Find text in this document." />
+		<menu id="ID_EDIT_FIND"      title="Find"       macro="Ctrl+F" desc="Find text in this document." />
 		<menu id="ID_EDIT_FINDNEXT"  title="Find Next"  macro="F3"     desc="Find the next text in this document." />
+		<menu id="ID_EDIT_FINDPREV"  title="Find Previous"  macro="Shift+F3"     desc="Find the previous text in this document." />
 		<menu id="ID_EDIT_REPLACE"   title="Replace"    macro="Ctrl+H" desc="Replace text in this document." />
 		<menu type="separator" />
 		<menu id="ID_EDIT_GOTOLINE"  title="Goto Line"  macro="Ctrl+G" desc="Go to specified line." />
@@ -125,8 +129,9 @@ default_menu = '''
 		<menu id="ID_VIEW_FILETOOLBAR" title="File Toolbar" desc="Toggle view of the file toolbar." flags="ID_ITEM_CHECK" />
 		<menu type="separator" />
 		<menu id="ID_VIEW_FILETREE"    title="File Tree"    desc="Toggle view of the file tree."    flags="ID_ITEM_CHECK" />
-		<menu id="ID_VIEW_EDITOR"  title="Main Editor"  desc="Toggle view of the main editor."  flags="ID_ITEM_CHECK" />
-		<menu id="ID_VIEW_BUILDINFORMATION" title="Build Information" desc="Toggle view of the build information" flags="ID_ITEM_CHECK" />
+		<menu id="ID_VIEW_EDITOR"  title="Main Editor"      desc="Toggle view of the main editor."  flags="ID_ITEM_CHECK" />
+		<menu id="ID_VIEW_BUILDINFORMATION" title="Build Information" desc="Toggle view of the build information." flags="ID_ITEM_CHECK" />
+		<menu id="ID_VIEW_CONSOLE" title="Console"          desc="Toggle view of the developer console." flags="ID_ITEM_CHECK" />
 	</menu_bar>
 
 	<menu_bar title="Perspective">

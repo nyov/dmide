@@ -9,6 +9,8 @@ ID_FILE_OPEN = wx.ID_OPEN
 ID_FILE_CLOSE = wx.ID_CLOSE
 ID_FILE_SAVE = wx.ID_SAVE
 ID_FILE_SAVEAS = wx.ID_SAVEAS
+ID_FILE_NEWENVIRONMENT = wx.NewId()
+ID_FILE_OPENENVIRONMENT = wx.NewId()
 
 ###### Edit Menu ID ##################################################################################################
 
