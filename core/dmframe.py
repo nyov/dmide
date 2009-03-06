@@ -55,6 +55,17 @@ class DMFrame(wxAui.AuiNotebook):
 
 #-------------------------------------------------------------------
 
+	def createFile(self, name, path = ''):
+		""" Create a new file """
+
+		if not path:
+			path = wx.App().get_dir()
+
+		open(os.path.join(path, name), 'w').write('')
+		self.openFile(os.path.join(path, name))
+
+#-------------------------------------------------------------------
+
 	def current(self):
 		index = self.GetSelection()
 		if index == -1: return None
@@ -66,10 +77,17 @@ class DMFrame(wxAui.AuiNotebook):
 		if event.Id == ID_FILE_NEW:
 			dm_filetree = wx.FindWindowById(ID_FILETREE)
 			path, name = dm_filetree.getItem(dm_filetree.GetSelection())
-			print path
 
 			dlg = NewFileDialog(self, path)
-			dlg.ShowModal()
+			if dlg.ShowModal() == wx.ID_OK:
+				data = dlg.getData()
+				full_path = os.path.join(data[1], data[0])
+
+				if os.path.exists(full_path):
+					self.openFile(full_path)
+				else:
+					self.createFile(data[0], data[1])
+
 			dlg.Destroy()
 
 		elif event.Id == ID_FILE_OPEN:
@@ -471,5 +489,10 @@ class NewFileDialog(wx.Dialog):
 		sizer.Add(sizer2, 1, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER, 2)
 		sizer.Add(sizer4, 0, wx.ALIGN_CENTER, 2)
 		self.SetSizerAndFit(sizer)
+
+#-------------------------------------------------------------------
+
+	def getData(self):
+		return (str(self.file_name.GetValue()), str(self.dir_list.GetPath()))
 
 #-------------------------------------------------------------------

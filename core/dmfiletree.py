@@ -36,6 +36,7 @@ class DMFileTree(wx.TreeCtrl):
 #-------------------------------------------------------------------
 
 	def getItem(self, item):
+
 		if item == self.GetRootItem():
 			return ('', '')
 
@@ -51,6 +52,9 @@ class DMFileTree(wx.TreeCtrl):
 
 		dirs.reverse()
 		dirs.insert(0, self.path)
+
+		if self.GetFirstChild(item):
+			dirs.append(name)
 
 		path = ''
 		for x in dirs:
@@ -149,6 +153,7 @@ class DMFileTree(wx.TreeCtrl):
 		def populate(files, root, images):
 			""" populate the file tree with the files and folders and icons gathered """
 
+			first = None
 			files.sort(dosort)
 			for file in files:
 				if type(file) == dict:
@@ -160,11 +165,16 @@ class DMFileTree(wx.TreeCtrl):
 				else:
 					child = self.AppendItem(root, file)
 
+					if not first:
+						first = child
+
 					ext = os.path.splitext(file)[-1]
 					if ext in images:
 						self.SetItemImage(child, images[ext], wx.TreeItemIcon_Normal)
 					else:
 						self.SetItemImage(child, images['default'], wx.TreeItemIcon_Normal)
+
+			return first
 
 		#-------------------------------------------------------------------
 
@@ -187,7 +197,7 @@ class DMFileTree(wx.TreeCtrl):
 		del images
 
 		self.AssignImageList(image_list)
-		populate(collection, root, images_keys)
+		self.SelectItem(populate(collection, root, images_keys))
 
 #-------------------------------------------------------------------
 
