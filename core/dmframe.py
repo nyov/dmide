@@ -413,8 +413,10 @@ class NewFileDialog(wx.Dialog):
 				wx.VListBox.__init__(self, *args, **kwargs)
 
 				self.SetItemCount(len(self.icons))
-				width = self.GetTextExtent(self.types[3])[0] + 8 + 32 + 2 + 2
+
+				width = max([self.GetTextExtent(x)[0] for x in self.types]) + 8 + 32 + 2 + 2
 				self.SetSize((width, (32 + 5) * self.GetItemCount()))
+
 				self.SetSelection(0)
 
 			def OnDrawItem(self, dc, rect, n):
@@ -440,10 +442,10 @@ class NewFileDialog(wx.Dialog):
 
 		self.file_list = DMFileList(self)
 
-		self.dir_list = wx.GenericDirCtrl(self, size = (100, 150), style = wx.DIRCTRL_DIR_ONLY)
+		self.dir_list = wx.GenericDirCtrl(self, size = (200, 150), style = wx.DIRCTRL_DIR_ONLY)
+		self.dir_list.SetPath(self.default_path)
 
 		self.file_name = wx.TextCtrl(self)
-		self.file_name.SetValue(self.default_path)
 		self.file_name.SetFocus()
 
 		self.ok_button = wx.Button(self, wx.ID_OK)
@@ -460,14 +462,14 @@ class NewFileDialog(wx.Dialog):
 		sizer3 = wx.BoxSizer(wx.VERTICAL)
 		sizer3.Add(self.dir_list, 1, wx.ALL | wx.EXPAND, 2)
 		sizer3.Add(self.file_name, 0, wx.ALL | wx.EXPAND, 2)
-		sizer2.Add(sizer3, 2, wx.ALL | wx.EXPAND, 2)
+		sizer2.Add(sizer3, 1, wx.ALL | wx.EXPAND, 2)
 
 		sizer4 = wx.BoxSizer(wx.HORIZONTAL)
-		sizer4.Add(self.ok_button, 1, wx.ALL | wx.EXPAND, 2)
-		sizer4.Add(self.cancel_button, 1, wx.ALL | wx.EXPAND, 2)
+		sizer4.Add(self.ok_button, 1, 0, 3)
+		sizer4.Add(self.cancel_button, 1, 0, 3)
 
-		sizer.Add(sizer2, 2, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER, 2)
-		sizer.Add(sizer4, 0, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER, 2)
+		sizer.Add(sizer2, 1, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER, 2)
+		sizer.Add(sizer4, 0, wx.ALIGN_CENTER, 2)
 		self.SetSizerAndFit(sizer)
 
 #-------------------------------------------------------------------
