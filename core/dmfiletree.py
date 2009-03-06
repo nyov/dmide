@@ -29,7 +29,7 @@ class DMFileTree(wx.TreeCtrl):
 		item = event.GetItem()
 		path, name = self.getItem(item)
 
-		self.GetParent().dm_frame.openFile(os.path.join(path, name))
+		wx.FindWindowById(ID_EDITOR).openFile(os.path.join(path, name))
 
 		event.Skip()
 
@@ -53,7 +53,7 @@ class DMFileTree(wx.TreeCtrl):
 		dirs.reverse()
 		dirs.insert(0, self.path)
 
-		if self.GetFirstChild(item):
+		if self.GetFirstChild(item)[0].IsOk():
 			dirs.append(name)
 
 		path = ''
