@@ -413,7 +413,8 @@ class NewFileDialog(wx.Dialog):
 				wx.VListBox.__init__(self, *args, **kwargs)
 
 				self.SetItemCount(len(self.icons))
-				self.SetSize((100, (32 + 5) * self.GetItemCount()))
+				width = self.GetTextExtent(self.types[3])[0] + 5 + 32 + 2 + 2
+				self.SetSize((width, (32 + 5) * self.GetItemCount()))
 				self.SetSelection(0)
 
 			def OnDrawItem(self, dc, rect, n):
