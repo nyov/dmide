@@ -57,7 +57,7 @@ class DMArtFactory(object):
 			return 0
 
 		if extension in self.icons:
-			return self.icons[extension]
+			return self.setSize(self.icons[extension], size)
 
 		filetype = wx.TheMimeTypesManager.GetFileTypeFromExtension(extension)
 
@@ -76,7 +76,7 @@ class DMArtFactory(object):
 
 		icon, file, idx = info
 		if icon.Ok():
-			return self.setSize(icon, (16, 16)) # icon ok
+			return self.setSize(icon, size) # icon ok
 
 		return -3 # icon not ok
 
@@ -106,7 +106,7 @@ class DMArtFactory(object):
 			if type(image) != self.empty_image_type:
 				return 0
 
-			image.Rescale(*size)
+			image = image.Scale(size[0], size[1], wx.IMAGE_QUALITY_NORMAL)
 
 		if type(image) == self.empty_icon_type:
 			return wx.BitmapFromIcon(image)

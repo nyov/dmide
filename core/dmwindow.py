@@ -20,7 +20,7 @@ class DMWindow(wx.Frame):
 		self.initBindings()
 
 		installMenuService(self)
-		self.SetIcon(wx.GetApp().dm_art.getFromExt('byond'))
+		self.SetIcon(wx.GetApp().dm_art.byond_icon)
 		self.updateViewMenu()
 		self.OnDefaultPerspective(None)
 		self.Show(True)

@@ -14,6 +14,7 @@ class DMFileTree(wx.TreeCtrl):
 		wx.TreeCtrl.__init__(self, parent, ID_FILETREE, style = wx.TR_DEFAULT_STYLE | wx.TR_HIDE_ROOT | wx.NO_BORDER)
 
 		self.initBindings()
+		self.selection = ()
 
 #-------------------------------------------------------------------
 
@@ -26,6 +27,18 @@ class DMFileTree(wx.TreeCtrl):
 		""" When a file or folder is activated [double clicked, expanded] """
 
 		item = event.GetItem()
+		path, name = self.getItem(item)
+
+		self.GetParent().dm_frame.openFile(os.path.join(path, name))
+
+		event.Skip()
+
+#-------------------------------------------------------------------
+
+	def getItem(self, item):
+		if item == self.GetRootItem():
+			return ('', '')
+
 		name = self.GetItemText(item)
 
 		dirs = []
@@ -38,14 +51,12 @@ class DMFileTree(wx.TreeCtrl):
 
 		dirs.reverse()
 		dirs.insert(0, self.path)
-		dirs.append(self.GetItemText(item))
+
 		path = ''
 		for x in dirs:
 			path = os.path.join(path, x)
 
-		self.GetParent().dm_frame.openFile(path)
-
-		event.Skip()
+		return (path, name)
 
 #-------------------------------------------------------------------
 

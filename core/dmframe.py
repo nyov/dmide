@@ -64,10 +64,16 @@ class DMFrame(wxAui.AuiNotebook):
 
 	def OnFile(self, event):
 		if event.Id == ID_FILE_NEW:
-			pass
+			dm_filetree = wx.FindWindowById(ID_FILETREE)
+			path, name = dm_filetree.getItem(dm_filetree.GetSelection())
+			print path
+
+			dlg = NewFileDialog(self, path)
+			dlg.ShowModal()
+			dlg.Destroy()
 
 		elif event.Id == ID_FILE_OPEN:
-			dlg = wx.FileDialog(self, 'Open BYOND environment', os.getcwd(), '', environment_wildcard, wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST)
+			dlg = wx.FileDialog(self, 'Open Environment', os.getcwd(), '', environment_wildcard, wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST)
 			if dlg.ShowModal() == wx.ID_OK:
 				path = dlg.GetPath()
 				wx.FindWindowById(ID_FILETREE).loadProject(path)
@@ -328,6 +334,7 @@ class FindReplaceDialog(wx.Dialog):
 #-------------------------------------------------------------------
 
 class GotoLineDialog(wx.Dialog):
+	""" Dialog for the goto-line command. """
 
 #-------------------------------------------------------------------
 
@@ -376,5 +383,79 @@ class GotoLineDialog(wx.Dialog):
 
 	def getData(self):
 		return int(self.goto.GetValue())
+
+#-------------------------------------------------------------------
+
+class NewFileDialog(wx.Dialog):
+	""" Dialog for creating new files. """
+
+#-------------------------------------------------------------------
+
+	def __init__(self, parent, default_path = ''):
+		wx.Dialog.__init__(self, parent, title = 'New File')
+
+		self.default_path = default_path
+		self.initAll()
+		self.initConstraints()
+		self.Layout()
+
+#-------------------------------------------------------------------
+
+	def initAll(self):
+
+#-------------------------------------------------------------------
+
+		class DMFileList(wx.VListBox):
+			types = ['DM Code', 'DM Icon', 'DM Map', 'DM Interface', 'DM Script']
+			icons = ['.dm', '.dmi', '.dmm', '.dmf', '.dms']
+
+			def __init__(self, *args, **kwargs):
+				wx.VListBox.__init__(self, *args, **kwargs)
+
+				self.SetItemCount(len(self.icons))
+				self.SetSize((100, (32 + 5) * self.GetItemCount()))
+				self.SetSelection(0)
+
+			def OnDrawItem(self, dc, rect, n):
+				if self.GetSelection() == n:
+					c = wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT)
+				else:
+					c = self.GetForegroundColour()
+
+				dc.SetFont(self.GetFont())
+				dc.SetTextForeground(c)
+
+				x, y, width, height = rect
+
+				dm_art = wx.GetApp().dm_art
+
+				dc.DrawBitmap(dm_art.getFromExt(self.icons[n], (32, 32)), x + 2, y + 2, False)
+				dc.DrawLabel(self.types[n], (x + 32 + 2 + 2, y, width, height), wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL)
+
+			def OnMeasureItem(self, n):
+				return max(self.GetTextExtent(self.types[n])[1] + 5, 32 + 5)
+
+#-------------------------------------------------------------------
+
+		self.file_list = DMFileList(self)
+
+		self.dir_list = wx.GenericDirCtrl(self, size = (100, 150), style = wx.DIRCTRL_DIR_ONLY)
+
+		self.file_name = wx.TextCtrl(self)
+		self.file_name.SetValue(self.default_path)
+		self.file_name.SetFocus()
+
+#-------------------------------------------------------------------
+
+	def initConstraints(self):
+		sizer = wx.BoxSizer(wx.HORIZONTAL)
+		sizer.Add(self.file_list, 1, wx.ALL | wx.EXPAND, 2)
+
+		sizer2 = wx.BoxSizer(wx.VERTICAL)
+		sizer2.Add(self.dir_list, 1, wx.ALL | wx.EXPAND, 2)
+		sizer2.Add(self.file_name, 0, wx.ALL | wx.EXPAND, 2)
+
+		sizer.Add(sizer2, 2, wx.ALL | wx.EXPAND, 2)
+		self.SetSizerAndFit(sizer)
 
 #-------------------------------------------------------------------
