@@ -118,9 +118,9 @@ class DMFileTree(wx.TreeCtrl):
 			""" sort the project files and folders! """
 
 			if type(a) == unicode:
-				a = str(a)
+				a = unicodedata.normalize('NFKD', a).encode('ascii','ignore')
 			if type(b) == unicode:
-				b = str(b)
+				b = unicodedata.normalize('NFKD', b).encode('ascii','ignore')
 
 			# weights for different types of files
 			sorted_weights = ['.dme', '.dmf', '.dm', '.dmi', '.png', '.bmp', '.gif', '.jpeg', '.jpg', '.dmm', '.dmp', '.dms', '.mod',

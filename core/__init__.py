@@ -5,6 +5,7 @@ import sys
 import os
 import wx
 import platform
+import unicodedata
 from wx import aui as wxAui
 from wx import stc as wxStc
 

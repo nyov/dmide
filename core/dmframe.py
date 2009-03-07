@@ -110,6 +110,27 @@ class DMFrame(wxAui.AuiNotebook):
 
 		#-------------------------------------------------------------------
 
+		elif event.Id == ID_FILE_NEWENVIRONMENT:
+			dm_filetree = wx.FindWindowById(ID_FILETREE)
+			path, name = dm_filetree.getItem(dm_filetree.GetSelection())
+
+			dlg = NewFileDialog(self, path, True)
+			if dlg.ShowModal() == wx.ID_OK:
+				data = dlg.getData()
+				full_path = os.path.join(data[1], data[0])
+
+				if os.path.exists(full_path):
+					self.openFile(full_path)
+				else:
+					self.createFile(data[0], data[1])
+	
+					if os.path.splitext(data[0])[-1] == '.dme':
+						dm_filetree.loadProject(full_path)
+
+			dlg.Destroy()
+
+#-------------------------------------------------------------------
+
 		elif event.Id == ID_FILE_OPENENVIRONMENT:
 			dlg = wx.FileDialog(self, 'Open Environment', os.getcwd(), '', environment_wildcard, wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST)
 			if dlg.ShowModal() == wx.ID_OK:
@@ -429,26 +450,26 @@ class NewFileDialog(wx.Dialog):
 
 #-------------------------------------------------------------------
 
-	def __init__(self, parent, default_path = ''):
+	def __init__(self, parent, default_path = '', dme = False):
 		wx.Dialog.__init__(self, parent, title = 'New File', style = wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
 
 		self.default_path = default_path
-		self.initAll()
+		self.initAll(dme)
 		self.initConstraints()
 		self.Layout()
 
 #-------------------------------------------------------------------
 
-	def initAll(self):
+	def initAll(self, dme = False):
 
 #-------------------------------------------------------------------
 
 		class DMFileList(wx.VListBox):
-			types = ['DM Code', 'DM Icon', 'DM Map', 'DM Interface', 'DM Script']
-			icons = ['.dm', '.dmi', '.dmm', '.dmf', '.dms']
-
-			def __init__(self, parent, callback):
+			def __init__(self, parent, callback, types = 	['DM Code', 'DM Icon', 'DM Map', 'DM Interface', 'DM Script'], icons = ['.dm', '.dmi', '.dmm', '.dmf', '.dms']):
 				wx.VListBox.__init__(self, parent)
+
+				self.types = types
+				self.icons = icons
 
 				self.SetItemCount(len(self.icons))
 
@@ -484,7 +505,10 @@ class NewFileDialog(wx.Dialog):
 
 #-------------------------------------------------------------------
 
-		self.file_list = DMFileList(self, self.OnSelect)
+		if not dme:
+			self.file_list = DMFileList(self, self.OnSelect)
+		else:
+			self.file_list = DMFileList(self, self.OnSelect, ['DM Environment'], ['.dme'])
 
 		self.dir_list = wx.GenericDirCtrl(self, size = (200, 150), style = wx.DIRCTRL_DIR_ONLY)
 		self.dir_list.SetPath(self.default_path)
