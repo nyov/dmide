@@ -118,6 +118,10 @@ class DMWindow(wx.Frame):
 
 		#-------------------------------------------------------------------
 
+		self.Bind(wx.EVT_MENU, self.OnBuild, id = ID_BUILD_COMPILE)
+
+		#-------------------------------------------------------------------
+
 		self.Bind(wx.EVT_MENU, self.OnDefaultPerspective, id = ID_PERSPECTIVE_DEFAULT)
 		self.Bind(wx.EVT_MENU, self.OnSavePerspective, id = ID_PERSPECTIVE_SAVE)
 		self.Bind(wx.EVT_MENU, self.OnLoadPerspective, id = ID_PERSPECTIVE_LOAD)
@@ -158,6 +162,13 @@ class DMWindow(wx.Frame):
 
 #-------------------------------------------------------------------
 
+	def OnBuild(self, event):
+		""" Handle build menu events """
+
+		if event.Id == ID_BUILD_COMPILE:
+			wx.FindWindowById(ID_BUILDINFORMATION).compile()
+
+#-------------------------------------------------------------------
 	def OnClose(self, event):
 		""" Close DMIDE :( """
 

@@ -101,8 +101,8 @@ default_menu = '''
 		<menu id="ID_FILE_SAVE"   title="Save"    macro="Ctrl+S"       desc="Save the current file." />
 		<menu id="ID_FILE_SAVEAS" title="Save As" macro="Ctrl+Shift+S" desc="Save the current file in a different title." />
 		<menu type="separator" />
-		<menu id="ID_FILE_NEWENVIRONMENT" title="New Environment" desc="Create a new environment." />
-		<menu id="ID_FILE_OPENENVIRONMENT" title="Open Environment" desc="Open an environment." />
+		<menu id="ID_FILE_NEWENVIRONMENT" title="New Environment" macro="Ctrl+Shift+N" desc="Create a new environment." />
+		<menu id="ID_FILE_OPENENVIRONMENT" title="Open Environment" macro="Ctrl+Shift+O" desc="Open an environment." />
 		<menu type="separator" />
 		<menu id="ID_EXIT"        title="Exit"    macro="Ctrl+Q"       desc="Exit DMIDE." />
 	</menu_bar>

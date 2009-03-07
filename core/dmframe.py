@@ -34,12 +34,14 @@ class DMFrame(wxAui.AuiNotebook):
 
 			for x in xrange(self.GetPageCount()):
 				if self.GetPage(x).file_path == file:
+					self.SetSelection(x)
 					return
 
 			name = os.path.split(file)[-1]
 			icon = dm_art.getFromExt(os.path.splitext(name)[-1])
 			page = core.DMCodeEditor(self, open(file).read())
 			page.file_path = file
+			page.file_name = name
 
 			if type(icon) == int:
 				icon = dm_art.getFromWx(wx.ART_NORMAL_FILE)
@@ -78,10 +80,53 @@ class DMFrame(wxAui.AuiNotebook):
 
 #-------------------------------------------------------------------
 
+	def saveFile(self, file = None):
+		if not file:
+			file = self.GetSelection()
+			if file == -1:
+				return
+			file = self.GetPage(file)
+
+		file.save(file.file_path)
+
+#-------------------------------------------------------------------
+
+	def saveFileAs(self, file = None):
+		if not file:
+			file = self.GetSelection()
+			if file == -1:
+				return
+			file = self.GetPage(file)
+
+		dlg = wx.FileDialog(self, 'Save File', file.file_path, file.file_name, 'All Files (*.*)|*.*', wx.FD_SAVE | wx.FD_CHANGE_DIR | wx.FD_OVERWRITE_PROMPT)
+		if dlg.ShowModal() == wx.ID_OK:
+			path = dlg.GetPath()
+			file.save(path)
+		dlg.Destroy()
+
+#-------------------------------------------------------------------
+
 	def current(self):
 		index = self.GetSelection()
 		if index == -1: return None
 		return self.GetPage(index)
+
+#-------------------------------------------------------------------
+
+	def isEdited(self, child, edited = True):
+		index = self.GetPageIndex(child)
+		if index == -1:
+			return
+
+		title = self.GetPageText(index)
+
+		if edited:
+			if title == child.file_name:
+				self.SetPageText(index, '%s *' % child.file_name)
+
+		else:
+			if title == '%s *' % child.file_name:
+				self.SetPageText(index, child.file_name)
 
 #-------------------------------------------------------------------
 
@@ -101,12 +146,34 @@ class DMFrame(wxAui.AuiNotebook):
 				else:
 					self.createFile(data[0], data[1])
 
+					tree = wx.FindWindowById(ID_FILETREE)
+					tree.loadProject(tree.path)
+
+			dlg.Destroy()
+
+		#-------------------------------------------------------------------
+
+		elif event.Id == ID_FILE_OPEN:
+			dlg = wx.FileDialog(self, 'Open File', os.getcwd(), '', dmfiles_wildcard, wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST)
+			if dlg.ShowModal() == wx.ID_OK:
+				path = dlg.GetPath()
+				self.openFile(path)
 			dlg.Destroy()
 
 		#-------------------------------------------------------------------
 
 		elif event.Id == ID_FILE_CLOSE:
 			self.closeFile()
+
+		#-------------------------------------------------------------------
+
+		elif event.Id == ID_FILE_SAVE:
+			self.saveFile()
+
+		#-------------------------------------------------------------------
+
+		elif event.Id == ID_FILE_SAVEAS:
+			self.saveFileAs()
 
 		#-------------------------------------------------------------------
 

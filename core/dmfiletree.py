@@ -70,6 +70,7 @@ class DMFileTree(wx.TreeCtrl):
 		if os.path.splitext(project_dir)[-1] != '.dme':
 			return
 
+		self.project_path = project_dir
 		project_dir = os.path.split(project_dir)[0]
 
 		self.DeleteAllItems()

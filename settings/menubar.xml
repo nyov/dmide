@@ -6,7 +6,7 @@
 		<menu id="ID_FILE_SAVE"   title="Save"    macro="Ctrl+S"       desc="Save the current file." />
 		<menu id="ID_FILE_SAVEAS" title="Save As" macro="Ctrl+Shift+S" desc="Save the current file in a different title." />
 		<menu type="separator" />
-		<menu id="ID_FILE_NEWENVIRONMENT" title="New Environment" desc="Create a new environment." />
+		<menu id="ID_FILE_NEWENVIRONMENT" title="New Environment" macro="Ctrl+Shift+N" desc="Create a new environment." />
 		<menu id="ID_FILE_OPENENVIRONMENT" title="Open Environment" macro="Ctrl+Shift+O" desc="Open an environment." />
 		<menu type="separator" />
 		<menu id="ID_EXIT"        title="Exit"    macro="Ctrl+Q"       desc="Exit DMIDE." />
@@ -37,6 +37,10 @@
 		<menu id="ID_VIEW_EDITOR"  title="Main Editor"      desc="Toggle view of the main editor."  flags="ID_ITEM_CHECK" />
 		<menu id="ID_VIEW_BUILDINFORMATION" title="Build Information" desc="Toggle view of the build information." flags="ID_ITEM_CHECK" />
 		<menu id="ID_VIEW_CONSOLE" title="Console"          desc="Toggle view of the developer console." flags="ID_ITEM_CHECK" />
+	</menu_bar>
+
+	<menu_bar title="Build">
+		<menu id="ID_BUILD_COMPILE" title="Compile" desc="Compile your environment." />
 	</menu_bar>
 
 	<menu_bar title="Perspective">

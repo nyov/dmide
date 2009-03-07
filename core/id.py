@@ -35,6 +35,10 @@ ID_VIEW_EDITOR = wx.NewId()
 ID_VIEW_BUILDINFORMATION = wx.NewId()
 ID_VIEW_CONSOLE = wx.NewId()
 
+###### Build Menu ID #################################################################################################
+
+ID_BUILD_COMPILE = wx.NewId()
+
 ###### Perspective Menu ID ###########################################################################################
 
 ID_PERSPECTIVE_DEFAULT = wx.NewId()

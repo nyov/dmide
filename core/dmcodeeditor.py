@@ -12,21 +12,27 @@ class DMCodeEditor(wxStc.StyledTextCtrl):
 	def __init__(self, parent, file):
 		wxStc.StyledTextCtrl.__init__(self, parent)
 
-		self.Bind(wxStc.EVT_STC_UPDATEUI, self.OnUpdateUI)
+		self.initBinds()
 		self.initStyle()
+		self.save_text = file
 		self.SetText(file)
 		self.EmptyUndoBuffer()
+		self.setSavePoint()
+
+#-------------------------------------------------------------------
+
+	def initBinds(self):
+		self.Bind(wxStc.EVT_STC_UPDATEUI, self.OnUpdateUI)
+		self.Bind(wxStc.EVT_STC_CHANGE, self.OnChange)
 
 #-------------------------------------------------------------------
 
 	def initStyle(self):
 		self.SetLexer(wxStc.STC_LEX_CPP)
 
-		#self.SetScrollWidth(10)
 		self.SetViewWhiteSpace(False)
 		self.SetBufferedDraw(True)
 		self.SetIndentationGuides(True)
-		#self.SetUseHorizontalScrollBar(False)
 		self.SetViewEOL(False)
 		self.SetEOLMode(wxStc.STC_EOL_CRLF)
 		self.SetUseAntiAliasing(False)
@@ -70,6 +76,23 @@ class DMCodeEditor(wxStc.StyledTextCtrl):
 
 #-------------------------------------------------------------------
 
+	def setSavePoint(self):
+		self.SetSavePoint()
+		self.save_text = self.GetText()
+		self.OnChange(None)
+
+#-------------------------------------------------------------------
+
+	def OnChange(self, event):
+		editor = wx.FindWindowById(ID_EDITOR)
+
+		if self.GetText() != self.save_text:
+			editor.isEdited(self)
+		else:
+			editor.isEdited(self, False)
+
+#-------------------------------------------------------------------
+
 	def OnUpdateUI(self, evt):
 		# check for matching braces
 		braceAtCaret = -1
@@ -100,5 +123,11 @@ class DMCodeEditor(wxStc.StyledTextCtrl):
 			self.BraceBadLight(braceAtCaret)
 		else:
 			self.BraceHighlight(braceAtCaret, braceOpposite)
+
+#-------------------------------------------------------------------
+
+	def save(self, path):
+		open(path, 'w').write(self.GetText())
+		self.setSavePoint()
 
 #-------------------------------------------------------------------
