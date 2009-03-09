@@ -48,6 +48,7 @@ ID_PERSPECTIVE_LOAD = wx.NewId()
 ###### Options Menu ID ###############################################################################################
 
 ID_OPTIONS_PERSPECTIVE = wx.NewId()
+ID_OPTIONS_CODE = wx.NewId()
 
 ###### Help Menu ID ##################################################################################################
 
@@ -77,5 +78,6 @@ NAME_BUILDINFORMATION = 'BUILDINFORMATION'
 NAME_CONSOLE = 'CONSOLE'
 
 NAME_PERSPECTIVEOPTIONS = 'PERSPECTIVEOPTIONS'
+NAME_CODEOPTIONS = 'CODEOPTIONS'
 
 ######################################################################################################################

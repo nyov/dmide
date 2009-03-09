@@ -16,6 +16,7 @@ from id import *
 from helpers.safe_eval import safe_eval
 from helpers.menuservice import installMenuService
 from helpers.perspectives import PerspectiveOptions
+from helpers.codesettings import CodeOptions
 
 #-------------------------------------------------------------------
 

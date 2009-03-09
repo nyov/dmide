@@ -52,6 +52,7 @@
 
 	<menu_bar title="Options">
 		<menu id="ID_OPTIONS_PERSPECTIVE" title="Perspective" desc="Settings for the look and feel of DMIDE." />
+		<menu id="ID_OPTIONS_CODE" title="Code" desc="Settings for the code editor." />
 	</menu_bar>
 
 	<menu_bar title="Help">

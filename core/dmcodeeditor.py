@@ -7,6 +7,21 @@ from core import *
 
 class DMCodeEditor(wxStc.StyledTextCtrl):
 
+	styles = {wxStc.STC_STYLE_DEFAULT:      ['Courier', 10, '#000000', '#FFFFFF', False, False, False],
+			   wxStc.STC_STYLE_LINENUMBER:  ['Courier',  8, '#000000', '#888888', False, False, False],
+			   wxStc.STC_STYLE_CONTROLCHAR: ['Courier', 10, '#000000', '#FFFFFF', False, False, False],
+			   wxStc.STC_STYLE_BRACELIGHT:  ['Courier', 10, '#000000', '#FFFFFF', True, False, False],
+			   wxStc.STC_C_DEFAULT:         ['Courier', 10, '#000000', '#FFFFFF', False, False, False],
+			   wxStc.STC_C_COMMENT:         ['Courier', 10, '#808080', '#FFFFFF', False, False, False],
+			   wxStc.STC_C_COMMENTLINE:     ['Courier', 10, '#808080', '#FFFFFF', False, False, False],
+			   wxStc.STC_C_PREPROCESSOR:    ['Courier', 10, '#008000', '#FFFFFF', False, False, False],
+			   wxStc.STC_C_STRING:          ['Courier', 10, '#0096B4', '#FFFFFF', False, False, False],
+			   wxStc.STC_C_STRINGEOL:       ['Courier', 10, '#000000', '#0096B4', False, False, False],
+			   wxStc.STC_C_NUMBER:          ['Courier', 10, '#800000', '#FFFFFF', False, False, False],
+			   wxStc.STC_C_WORD:            ['Courier', 10, '#0000FF', '#FFFFFF', False, False, False],
+			   wxStc.STC_C_OPERATOR:        ['Courier', 10, '#000000', '#FFFFFF', False, False, False]
+			  }
+
 #-------------------------------------------------------------------
 
 	def __init__(self, parent, file):
@@ -38,18 +53,19 @@ class DMCodeEditor(wxStc.StyledTextCtrl):
 		self.SetUseAntiAliasing(False)
 		self.SetTabWidth(4)
 
-		self.SetMargins(4, 1)
+		self.SetMargins(4, 0)
 		self.SetMarginType(1, wxStc.STC_MARGIN_NUMBER)
 		self.SetMarginWidth(1, 25)
 
-		def hex(r,g,b): return '#%02.X%02.X%02.X' % (r, g, b)
+		#def hex(r,g,b): return '#%02.X%02.X%02.X' % (r, g, b)
 		keywords = ['break', 'new', 'del', 'for', 'global', 'var', 'proc', 'verb', 'set',
 					'static', 'arg', 'const', 'goto', 'if', 'in', 'as', 'continue', 'return',
 					'do', 'while', 'else', 'switch', 'tmp', 'to']
 
 		self.SetKeyWords(0, ' '.join(keywords))
 
-		style = {'face': 'Courier',
+		'''
+		style = {'face': wx.SystemSettings.GetFont(wx.SYS_ANSI_FIXED_FONT).GetFaceName(),
 				 'size': 10,
 				 'fore': hex(0, 0, 0),
 				 'back': hex(255, 255, 255)
@@ -73,6 +89,43 @@ class DMCodeEditor(wxStc.StyledTextCtrl):
 		self.StyleSetSpec(wxStc.STC_C_NUMBER, 		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#800000') )
 		self.StyleSetSpec(wxStc.STC_C_WORD, 		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(hex(0,   0,   255)) )
 		self.StyleSetSpec(wxStc.STC_C_OPERATOR,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle() )
+		'''
+
+#-------------------------------------------------------------------
+
+	def updateAllStyles(self):
+		wx.FindWindowById(ID_EDITOR).updateAllStyles()
+
+#-------------------------------------------------------------------
+
+	def updateStyle(self, obj):
+		if obj:
+			self.SetViewWhiteSpace(obj.GetViewWhiteSpace())
+			self.SetBufferedDraw(obj.GetBufferedDraw())
+			self.SetIndentationGuides(obj.GetIndentationGuides())
+			self.SetViewEOL(obj.GetViewEOL())
+			self.SetUseAntiAliasing(obj.GetUseAntiAliasing())
+			self.SetMarginWidth(1, obj.GetMarginWidth(1))
+
+		def getstyle(style):
+			s = self.styles[style]
+			style = 'face:%s,size:%s,fore:%s,back:%s' % (s[0], s[1], s[2], s[3])
+			if s[4]: style += ',bold'
+			if s[5]: style += ',italic'
+			if s[6]: style += ',underline'
+			return style
+
+		for style in self.styles:
+			#self.StyleSetSpec(style, getstyle(style))
+
+			values = self.styles[style]
+			self.StyleSetFaceName(style, values[0])
+			self.StyleSetSize(style, values[1])
+			self.StyleSetForeground(style, values[2])
+			self.StyleSetBackground(style, values[3])
+			self.StyleSetBold(style, values[4])
+			self.StyleSetItalic(style, values[5])
+			self.StyleSetUnderline(style, values[6])
 
 #-------------------------------------------------------------------
 

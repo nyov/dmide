@@ -80,6 +80,11 @@ class DMWindow(wx.Frame):
 		self.perspective_options = PerspectiveOptions(self, self)
 		self.aui_manager.AddPane(self.perspective_options, wxAui.AuiPaneInfo().Name(NAME_PERSPECTIVEOPTIONS).Caption('Options').Dockable(False).Float().Hide().CloseButton(True).Resizable(False))
 
+		#-------------------------------------------------------------------
+
+		self.code_options = CodeOptions(self, self.dm_frame.hidden_codeeditor)
+		self.aui_manager.AddPane(self.code_options, wxAui.AuiPaneInfo().Name(NAME_CODEOPTIONS).Caption('Options').Dockable(False).Float().Hide().CloseButton(True).Resizable(False))
+
 		self.aui_manager.Update()
 
 #-------------------------------------------------------------------
@@ -129,6 +134,7 @@ class DMWindow(wx.Frame):
 		#-------------------------------------------------------------------
 
 		self.Bind(wx.EVT_MENU, self.OnOptionsMenu, id = ID_OPTIONS_PERSPECTIVE)
+		self.Bind(wx.EVT_MENU, self.OnOptionsMenu, id = ID_OPTIONS_CODE)
 
 		#-------------------------------------------------------------------
 
@@ -226,6 +232,20 @@ class DMWindow(wx.Frame):
 				self.perspective_options.SetFocus()
 
 			self.aui_manager.Update()
+
+		elif event.Id == ID_OPTIONS_CODE:
+			pane = self.aui_manager.GetPane(NAME_CODEOPTIONS).Float()
+
+			if pane.IsShown():
+				pane.Hide()
+
+			else:
+				pane.Show()
+				pane.Centre()
+				self.perspective_options.SetFocus()
+
+			self.aui_manager.Update()
+
 
 #-------------------------------------------------------------------
 

@@ -15,11 +15,19 @@ class DMFrame(wxAui.AuiNotebook):
 
 		self.initBindings()
 		self.find_data = None
+		self.hidden_codeeditor = core.DMCodeEditor(self, '')
+		self.hidden_codeeditor.Hide()
 
 #-------------------------------------------------------------------
 
 	def initBindings(self):
 		pass
+
+#-------------------------------------------------------------------
+
+	def updateAllStyles(self):
+		for x in xrange(self.GetPageCount()):
+			self.GetPage(x).updateStyle(self.hidden_codeeditor)
 
 #-------------------------------------------------------------------
 
@@ -42,6 +50,7 @@ class DMFrame(wxAui.AuiNotebook):
 			page = core.DMCodeEditor(self, open(file).read())
 			page.file_path = file
 			page.file_name = name
+			page.updateStyle(self.hidden_codeeditor)
 
 			if type(icon) == int:
 				icon = dm_art.getFromWx(wx.ART_NORMAL_FILE)
