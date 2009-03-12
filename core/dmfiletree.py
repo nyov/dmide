@@ -20,6 +20,7 @@ class DMFileTree(wx.TreeCtrl):
 
 	def initBindings(self):
 		self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnTreeItemActivated)
+		self.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
 
 #-------------------------------------------------------------------
 
@@ -32,6 +33,14 @@ class DMFileTree(wx.TreeCtrl):
 		wx.FindWindowById(ID_EDITOR).openFile(os.path.join(path, name))
 
 		event.Skip()
+
+#-------------------------------------------------------------------
+
+	def OnRightUp(self, event):
+		menu = wx.Menu()
+		menu.Append(wx.ID_ANY, 'Rename')
+		menu.Append(wx.ID_ANY, 'Delete')
+		self.PopupMenu(menu)
 
 #-------------------------------------------------------------------
 

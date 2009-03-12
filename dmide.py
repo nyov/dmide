@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
 #-------------------------------------------------------------------
 
-	except:
+	except Exception:
 
 		# errors :(
 		import traceback

@@ -6,7 +6,7 @@ from core import *
 #-------------------------------------------------------------------
 
 class DMFrame(wxAui.AuiNotebook):
-	''' Overseer of all editors [icon, code, map, and skin] '''
+	""" Overseer of all editors [icon, code, map, and skin] """
 
 #-------------------------------------------------------------------
 
@@ -32,7 +32,7 @@ class DMFrame(wxAui.AuiNotebook):
 #-------------------------------------------------------------------
 
 	def openFile(self, file):
-		''' Create a new tab and load the file contents '''
+		""" Create a new tab and load the file contents """
 
 		if not os.path.isfile(file):
 			return

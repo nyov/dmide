@@ -47,7 +47,7 @@ class DMICanvas(wx.Panel):
 		self.initBinds()
 
 	def init(self):
-		self.buffer = wx.Bitmap('./imgs/images/test.png')
+		self.buffer = wx.Bitmap('./imgs/images/example.png')
 		self.background = wx.Bitmap('./imgs/dmieditor/bg.png')
 
 		self.action_mouse_position = (-1, -1)
@@ -132,7 +132,7 @@ class DMICanvas(wx.Panel):
 
 		elif event.LeftUp():
 			# finish action
-			#self.Commit()
+			self.Commit()
 			self.action_mouse_position = (-1, -1)
 			self.Refresh(False)
 			if self.GetCapture() == self:
