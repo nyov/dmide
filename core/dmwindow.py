@@ -2,6 +2,8 @@ import core
 from core import *
 
 
+""" test docs """
+
 class DMWindow(wx.Frame):
 	""" The top-level window, handles events not widget-specific. """
 

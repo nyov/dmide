@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------
+
 
 import compiler
 
-#-------------------------------------------------------------------
+
 
 class Unsafe_Source_Error(Exception):
 	def __init__(self,error,descr = None,node = None):
@@ -15,7 +15,7 @@ class Unsafe_Source_Error(Exception):
 		return "Line %d.  %s: %s" % (self.lineno, self.error, self.descr)
 	__str__ = __repr__	
 
-#-------------------------------------------------------------------
+
    
 class SafeEval(object):
 	
@@ -42,7 +42,7 @@ class SafeEval(object):
 	def visitList(self,node, **kw):
 		return [self.visit(i) for i in node.nodes]
 
-#-------------------------------------------------------------------
+
 
 class SafeEvalWithErrors(SafeEval):
 
@@ -56,7 +56,7 @@ class SafeEvalWithErrors(SafeEval):
 								 
 	# Add more specific errors if desired
 
-#-------------------------------------------------------------------
+
 
 def safe_eval(source, fail_on_error = True):
 	walker = fail_on_error and SafeEvalWithErrors() or SafeEval()
@@ -69,4 +69,3 @@ def safe_eval(source, fail_on_error = True):
 	except Unsafe_Source_Error, err:
 		raise
 
-#-------------------------------------------------------------------

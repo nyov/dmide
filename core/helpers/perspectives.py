@@ -1,10 +1,10 @@
-#-------------------------------------------------------------------
+
 
 # re-using this code written many years ago! beware!
 from core import *
 from unrepr import unrepr
 
-#-------------------------------------------------------------------
+
 
 ID_HINTFADEIN = wx.NewId()
 ID_ALLOWFLOATING = wx.NewId()
@@ -28,7 +28,7 @@ ID_ActiveCaptionTextColor = wx.NewId()
 ID_BorderColor = wx.NewId()
 ID_GripperColor = wx.NewId()
 
-#-------------------------------------------------------------------
+
 
 ID_DATA={
 	'hint-type': {'transparent': wx.aui.AUI_MGR_TRANSPARENT_HINT, 'venetian': wx.aui.AUI_MGR_VENETIAN_BLINDS_HINT,
@@ -58,12 +58,12 @@ SETTINGS_DATA={
 		'caption-size': wx.aui.AUI_DOCKART_CAPTION_SIZE,
 		}
 
-#-------------------------------------------------------------------
+
 
 class PerspectiveOptions(wx.Panel):
 	''' Panel which contains the notebook of option panels. '''
 
-#-------------------------------------------------------------------
+
 
 	def __init__(self, parent, frame):
 		wx.Panel.__init__(self, parent, wx.ID_ANY)
@@ -72,7 +72,7 @@ class PerspectiveOptions(wx.Panel):
 
 		self.create_options(self._frame)
 
-#-------------------------------------------------------------------
+
 
 	def load(self, aui_manager, data):
 		''' Used to load perspective setting data. '''
@@ -88,14 +88,14 @@ class PerspectiveOptions(wx.Panel):
 		self.options_docking.Update()
 		self.options_interface.Update()
 
-#-------------------------------------------------------------------
+
 
 	def save(self, perspectiveData):
 		''' Used to save perspective setting data. '''
 
 		return self.options_docking.save() + self.options_interface.save()
 
-#-------------------------------------------------------------------
+
 
 	def create_options(self, frame):
 		''' Create the notebook and add the option pages. '''
@@ -112,12 +112,12 @@ class PerspectiveOptions(wx.Panel):
 		options_sizer.Fit(self)
 		self.Layout()
 
-#-------------------------------------------------------------------
+
 
 class Options_Docking(wx.Panel):
 	''' Holds the options for the docking page. '''
 
-#-------------------------------------------------------------------
+
 
 	def __init__(self, parent, frame):
 		self._frame = frame
@@ -138,7 +138,7 @@ class Options_Docking(wx.Panel):
 		self.__do_binds()
 		self.Update()
 
-#-------------------------------------------------------------------
+
 
 	def load(self, data):
 		''' Load the options for this panel. '''
@@ -171,7 +171,7 @@ class Options_Docking(wx.Panel):
 		aui_manager.SetFlags(flags)
 		aui_manager.GetArtProvider().SetMetric(wx.aui.AUI_DOCKART_GRADIENT_TYPE, gflags)
 
-#-------------------------------------------------------------------
+
 
 	def save(self):
 		''' Save the options for this panel. '''
@@ -198,13 +198,13 @@ class Options_Docking(wx.Panel):
 
 		return save_text
 
-#-------------------------------------------------------------------
+
 
 	def __set_properties(self):
 		self.hint_radiobox.SetSelection(0)
 		self.gradient_radiobox.SetSelection(0)
 
-#-------------------------------------------------------------------
+
 
 	def __do_layout(self):
 		options_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -226,7 +226,7 @@ class Options_Docking(wx.Panel):
 		options_sizer.Fit(self)
 		self.Layout()
 
-#-------------------------------------------------------------------
+
 
 	def __do_binds(self):
 		self.Bind(wx.EVT_CHECKBOX, self.OnApply, id = ID_HINTFADEIN)
@@ -237,7 +237,7 @@ class Options_Docking(wx.Panel):
 		self.Bind(wx.EVT_RADIOBOX, self.OnApply, id = ID_HINTTYPE)
 		self.Bind(wx.EVT_RADIOBOX, self.OnApply, id = ID_GRADIENTTYPE)
 
-#-------------------------------------------------------------------
+
 
 	def Update(self):
 		flags = self._frame.aui_manager.GetFlags()
@@ -280,7 +280,7 @@ class Options_Docking(wx.Panel):
 		else:
 			self.gradient_radiobox.SetSelection(2)
 
-#-------------------------------------------------------------------
+
 
 	def OnApply(self,event):
 		flags = 0
@@ -317,14 +317,14 @@ class Options_Docking(wx.Panel):
 		self._frame.aui_manager.GetArtProvider().SetMetric(wx.aui.AUI_DOCKART_GRADIENT_TYPE, gradient_flags)
 		self._frame.aui_manager.Update()
 
-#-------------------------------------------------------------------
+
 
 class Options_Interface(wx.Panel):
 	''' Holds the options for the interface page. '''
 
 	option_border_size = None
 
-#-------------------------------------------------------------------
+
 
 	def __init__(self, parent, frame):
 		wx.Panel.__init__(self, parent, wx.ID_ANY)
@@ -333,7 +333,7 @@ class Options_Interface(wx.Panel):
 
 		self.create_controls()
 
-#-------------------------------------------------------------------
+
 
 	def Update(self):
 		''' Grab all the options from the AUI Manager and update the options panel. '''
@@ -346,7 +346,7 @@ class Options_Interface(wx.Panel):
 		self._sash_size.SetValue(dockart.GetMetric(wx.aui.AUI_DOCKART_SASH_SIZE))
 		self._caption_size.SetValue(dockart.GetMetric(wx.aui.AUI_DOCKART_CAPTION_SIZE))
 
-#-------------------------------------------------------------------
+
 
 	def save(self):
 		''' Saving the options for this panel. '''
@@ -367,7 +367,7 @@ class Options_Interface(wx.Panel):
 		save_text += 'caption-size=%s|' % self._frame.aui_manager.GetArtProvider().GetMetric(wx.aui.AUI_DOCKART_CAPTION_SIZE)
 		return save_text
 
-#-------------------------------------------------------------------
+
 
 	def load(self, data):
 		''' Loading the options for this panel. '''
@@ -390,7 +390,7 @@ class Options_Interface(wx.Panel):
 			else:
 				dockart.SetMetric(SETTINGS_DATA[d], value)
 
-#-------------------------------------------------------------------
+
 
 	def CreateColorBitmap(self,c):
 		image = wx.EmptyImage(25,14)
@@ -402,7 +402,7 @@ class Options_Interface(wx.Panel):
 				image.SetRGB(x, y, pixcol.Red(), pixcol.Green(), pixcol.Blue())
 		return image.ConvertToBitmap()
 
-#-------------------------------------------------------------------
+
 
 	def UpdateColors(self):
 		''' Used to update all the colours on the panel. '''
@@ -437,25 +437,25 @@ class Options_Interface(wx.Panel):
 		gripper = self._frame.aui_manager.GetArtProvider().GetColour(wx.aui.AUI_DOCKART_GRIPPER_COLOUR)
 		self._gripper_color.SetBitmapLabel(self.CreateColorBitmap(gripper))
 
-#-------------------------------------------------------------------
+
 
 	def OnPaneBorderSize(self,event):
 		self._frame.aui_manager.GetArtProvider().SetMetric(wx.aui.AUI_DOCKART_PANE_BORDER_SIZE, event.GetInt())
 		self._frame.aui_manager.Update()
 
-#-------------------------------------------------------------------
+
 
 	def OnSashSize(self,event):
 		self._frame.aui_manager.GetArtProvider().SetMetric(wx.aui.AUI_DOCKART_SASH_SIZE, event.GetInt())
 		self._frame.aui_manager.Update()
 
-#-------------------------------------------------------------------
+
 
 	def OnCaptionSize(self,event):
 		self._frame.aui_manager.GetArtProvider().SetMetric(wx.aui.AUI_DOCKART_CAPTION_SIZE, event.GetInt())
 		self._frame.aui_manager.Update()
 
-#-------------------------------------------------------------------
+
 
 	def OnSetColor(self,event):
 		dlg = wx.ColourDialog(self._frame)
@@ -490,7 +490,7 @@ class Options_Interface(wx.Panel):
 		self._frame.aui_manager.Update()
 		self.UpdateColors()
 
-#-------------------------------------------------------------------
+
 
 	def create_controls(self):
 		''' Method that creates all the option controls. '''
@@ -606,4 +606,3 @@ class Options_Interface(wx.Panel):
 		self.Bind(wx.EVT_BUTTON, self.OnSetColor, id = ID_BorderColor)
 		self.Bind(wx.EVT_BUTTON, self.OnSetColor, id = ID_GripperColor)
 
-#-------------------------------------------------------------------

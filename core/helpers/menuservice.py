@@ -1,10 +1,10 @@
-#-------------------------------------------------------------------
+
 
 from core import *
 import xml.sax
 import xml.sax.handler
 
-#-------------------------------------------------------------------
+
 
 def installMenuService(window):
 	""" Build a MenuBar for the top-level window as read from an XML file """
@@ -41,19 +41,19 @@ def installMenuService(window):
 
 	window.SetMenuBar(menu_bar)
 
-#-------------------------------------------------------------------
+
 
 class MenuBarHandler(xml.sax.handler.ContentHandler):
 	""" Handler for reading the XML """
 
-#-------------------------------------------------------------------
+
 
 	def __init__(self):
 		self.menu_bars = {}
 		self.ordered_list = []
 		self.current = None
 
-#-------------------------------------------------------------------
+
 
 	def startElement(self, name, attributes):
 		if name == 'menu_bar':
@@ -85,12 +85,12 @@ class MenuBarHandler(xml.sax.handler.ContentHandler):
 
 			self.menu_bars[self.current].append([id, title, macro, desc, flags])
 
-#-------------------------------------------------------------------
+
 
 	def endElement(self, name):
 		pass
 
-#-------------------------------------------------------------------
+
 
 default_menu = '''
 <menu_list>
@@ -152,4 +152,3 @@ default_menu = '''
 </menu_list>
 '''
 
-#-------------------------------------------------------------------

@@ -1,20 +1,20 @@
-#-------------------------------------------------------------------
+
 
 # This file is in the public domain
 import compiler
 
-#-------------------------------------------------------------------
+
 
 def getObj(s):
     s="a="+s
     return compiler.parse(s).getChildren()[1].getChildren()[0].getChildren()[1]
 
-#-------------------------------------------------------------------
+
 
 class UnknownType(Exception):
     pass
 
-#-------------------------------------------------------------------
+
 
 class Builder:
 
@@ -55,9 +55,8 @@ class Builder:
             raise UnknownType('Add')
         return real+imag
 
-#-------------------------------------------------------------------
+
 
 def unrepr(s):
     return Builder().build(getObj(s))
 
-#-------------------------------------------------------------------
