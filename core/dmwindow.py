@@ -1,14 +1,10 @@
-#-------------------------------------------------------------------
-
 import core
 from core import *
 
-#-------------------------------------------------------------------
 
 class DMWindow(wx.Frame):
-	""" The top-level window, handles events not widget-specific """
+	""" The top-level window, handles events not widget-specific. """
 
-#-------------------------------------------------------------------
 
 	def __init__(self, title = 'DMIDE'):
 		wx.Frame.__init__(self, None, ID_WINDOW, title)
@@ -17,7 +13,7 @@ class DMWindow(wx.Frame):
 		self.SetInitialSize((800, 600))
 
 		self.initAll()
-		self.initBindings()
+		self.initBinds()
 
 		installMenuService(self)
 		self.SetIcon(wx.GetApp().dm_art.byond_icon)
@@ -27,40 +23,26 @@ class DMWindow(wx.Frame):
 		self.Center()
 		self.Thaw()
 
-#-------------------------------------------------------------------
-
 	def initAll(self):
-		""" Initialize all the UI parts and display them """
+		""" Initialize all the UI widgets and display them. """
 
 		dm_art = wx.GetApp().dm_art
-
-		#-------------------------------------------------------------------
 
 		self.aui_manager = wxAui.AuiManager()
 		self.aui_manager.SetManagedWindow(self)
 
-		#-------------------------------------------------------------------
-
 		self.dm_frame = core.DMFrame(self)
 		self.aui_manager.AddPane(self.dm_frame, wxAui.AuiPaneInfo().CentrePane().Name(NAME_EDITOR))
 
-		#-------------------------------------------------------------------
-
 		self.dm_build_info = core.DMBuildInfo(self)
 		self.aui_manager.AddPane(self.dm_build_info, wxAui.AuiPaneInfo().Name(NAME_BUILDINFORMATION).Caption('Build Information').Bottom().BestSize((-1, 100)).FloatingSize((800, 110)).MaximizeButton(True))
-
-		#-------------------------------------------------------------------
 
 		self.dm_console = core.DMConsole(self)
 		self.aui_manager.AddPane(self.dm_console, wxAui.AuiPaneInfo().Name(NAME_CONSOLE).Caption('Console').Bottom().BestSize((-1, 100)).FloatingSize((500, 300)).MaximizeButton(True))
 		self.aui_manager.GetPane(NAME_CONSOLE).Hide()
 
-		#-------------------------------------------------------------------
-
 		self.dm_file_tree = core.DMFileTree(self)
 		self.aui_manager.AddPane(self.dm_file_tree, wxAui.AuiPaneInfo().Name(NAME_FILETREE).Caption('File Tree').Left().BestSize((200, -1)).FloatingSize((200, 400)).MaximizeButton(True))
-
-		#-------------------------------------------------------------------
 
 		file_toolbar = wx.ToolBar(self, ID_FILETOOLBAR, style = wx.TB_FLAT | wx.TB_NODIVIDER)
 		file_toolbar.SetToolBitmapSize(wx.Size(16, 16))
@@ -75,21 +57,17 @@ class DMWindow(wx.Frame):
 		self.file_toolbar = file_toolbar
 		self.aui_manager.AddPane(file_toolbar, wxAui.AuiPaneInfo().Name(NAME_FILETOOLBAR).Caption('File Toolbar').ToolbarPane().Top())
 
-		#-------------------------------------------------------------------
-
 		self.perspective_options = PerspectiveOptions(self, self)
 		self.aui_manager.AddPane(self.perspective_options, wxAui.AuiPaneInfo().Name(NAME_PERSPECTIVEOPTIONS).Caption('Options').Dockable(False).Float().Hide().CloseButton(True).Resizable(False))
-
-		#-------------------------------------------------------------------
 
 		self.code_options = CodeOptions(self, self.dm_frame.hidden_codeeditor)
 		self.aui_manager.AddPane(self.code_options, wxAui.AuiPaneInfo().Name(NAME_CODEOPTIONS).Caption('Options').Dockable(False).Float().Hide().CloseButton(True).Resizable(False))
 
 		self.aui_manager.Update()
 
-#-------------------------------------------------------------------
+	def initBinds(self):
+		""" Assign the event handlers. """
 
-	def initBindings(self):
 		self.Bind(wx.EVT_MENU, self.OnFile, id = ID_FILE_NEW)
 		self.Bind(wx.EVT_MENU, self.OnFile, id = ID_FILE_OPEN)
 		self.Bind(wx.EVT_MENU, self.OnFile, id = ID_FILE_CLOSE)
@@ -97,8 +75,6 @@ class DMWindow(wx.Frame):
 		self.Bind(wx.EVT_MENU, self.OnFile, id = ID_FILE_SAVEAS)
 		self.Bind(wx.EVT_MENU, self.OnFile, id = ID_FILE_NEWENVIRONMENT)
 		self.Bind(wx.EVT_MENU, self.OnFile, id = ID_FILE_OPENENVIRONMENT)
-
-		#-------------------------------------------------------------------
 
 		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_UNDO)
 		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_REDO)
@@ -113,112 +89,49 @@ class DMWindow(wx.Frame):
 		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_GOTOLINE)
 		self.Bind(wx.EVT_MENU, self.OnEdit, id = ID_EDIT_SELECTALL)
 
-		#-------------------------------------------------------------------
-
 		self.Bind(wx.EVT_MENU, self.OnView, id = ID_VIEW_FILETOOLBAR)
 		self.Bind(wx.EVT_MENU, self.OnView, id = ID_VIEW_FILETREE)
 		self.Bind(wx.EVT_MENU, self.OnView, id = ID_VIEW_EDITOR)
 		self.Bind(wx.EVT_MENU, self.OnView, id = ID_VIEW_BUILDINFORMATION)
 		self.Bind(wx.EVT_MENU, self.OnView, id = ID_VIEW_CONSOLE)
 
-		#-------------------------------------------------------------------
-
 		self.Bind(wx.EVT_MENU, self.OnBuild, id = ID_BUILD_COMPILE)
-
-		#-------------------------------------------------------------------
 
 		self.Bind(wx.EVT_MENU, self.OnDefaultPerspective, id = ID_PERSPECTIVE_DEFAULT)
 		self.Bind(wx.EVT_MENU, self.OnSavePerspective, id = ID_PERSPECTIVE_SAVE)
 		self.Bind(wx.EVT_MENU, self.OnLoadPerspective, id = ID_PERSPECTIVE_LOAD)
 
-		#-------------------------------------------------------------------
-
-		self.Bind(wx.EVT_MENU, self.OnOptionsMenu, id = ID_OPTIONS_PERSPECTIVE)
-		self.Bind(wx.EVT_MENU, self.OnOptionsMenu, id = ID_OPTIONS_CODE)
-
-		#-------------------------------------------------------------------
+		self.Bind(wx.EVT_MENU, self.OnOptions, id = ID_OPTIONS_PERSPECTIVE)
+		self.Bind(wx.EVT_MENU, self.OnOptions, id = ID_OPTIONS_CODE)
 
 		self.Bind(wxAui.EVT_AUI_PANE_CLOSE, self.OnPaneClose)
-
-		#-------------------------------------------------------------------
 
 		self.Bind(wx.EVT_CLOSE, self.OnClose)
 		self.Bind(wx.EVT_MENU, self.OnClose, id = ID_EXIT)
 
-#-------------------------------------------------------------------
-
 	def OnFile(self, event):
-		""" Event handler for File menu and toolbar events """
+		""" Event handler for File menu and toolbar events. """
 
 		self.dm_frame.OnFile(event)
 
-#-------------------------------------------------------------------
-
 	def OnEdit(self, event):
-		""" Pass the Edit menu events to the DMFrame """
+		""" Event handler for Edit menu and toolbar events. """
 
 		self.dm_frame.OnEdit(event)
 
-#-------------------------------------------------------------------
-
 	def OnView(self, event):
-		""" Toggle the visibility of a control """
+		""" Event handler for View menu and toolbar events. """
 
 		self.updateViewMenu(False)
 
-#-------------------------------------------------------------------
-
 	def OnBuild(self, event):
-		""" Handle build menu events """
+		""" Event handler for Build menu and toolbar events. """
 
 		if event.Id == ID_BUILD_COMPILE:
 			wx.FindWindowById(ID_BUILDINFORMATION).compile()
 
-#-------------------------------------------------------------------
-	def OnClose(self, event):
-		""" Close DMIDE :( """
-
-		event.Skip()
-		self.Destroy()
-
-#-------------------------------------------------------------------
-
-	def updateViewMenu(self, update = True):
-		""" Update the View menubar, or update the visibility of the controls """
-
-		menubar = self.GetMenuBar()
-
-		if update:
-			""" Update the menubar """
-
-			menubar.FindItemById(ID_VIEW_FILETOOLBAR).Check(self.aui_manager.GetPane(NAME_FILETOOLBAR).IsShown())
-			menubar.FindItemById(ID_VIEW_FILETREE).Check(self.aui_manager.GetPane(NAME_FILETREE).IsShown())
-			menubar.FindItemById(ID_VIEW_EDITOR).Check(self.aui_manager.GetPane(NAME_EDITOR).IsShown())
-			menubar.FindItemById(ID_VIEW_BUILDINFORMATION).Check(self.aui_manager.GetPane(NAME_BUILDINFORMATION).IsShown())
-			menubar.FindItemById(ID_VIEW_CONSOLE).Check(self.aui_manager.GetPane(NAME_CONSOLE).IsShown())
-
-		else:
-			""" Update the controls """
-
-			self.aui_manager.GetPane(NAME_FILETOOLBAR).Show(menubar.FindItemById(ID_VIEW_FILETOOLBAR).IsChecked())
-			self.aui_manager.GetPane(NAME_FILETREE).Show(menubar.FindItemById(ID_VIEW_FILETREE).IsChecked())
-			self.aui_manager.GetPane(NAME_EDITOR).Show(menubar.FindItemById(ID_VIEW_EDITOR).IsChecked())
-			self.aui_manager.GetPane(NAME_BUILDINFORMATION).Show(menubar.FindItemById(ID_VIEW_BUILDINFORMATION).IsChecked())
-			self.aui_manager.GetPane(NAME_CONSOLE).Show(menubar.FindItemById(ID_VIEW_CONSOLE).IsChecked())
-			self.aui_manager.Update()
-
-#-------------------------------------------------------------------
-
-	def OnPaneClose(self, event):
-		""" Update the view menu when one of the panels is closed """
-
-		event.Skip()
-		wx.CallAfter(self.updateViewMenu)
-
-#-------------------------------------------------------------------
-
-	def OnOptionsMenu(self, event):
-		""" Handle the options events """
+	def OnOptions(self, event):
+		""" Event handler for Options menu and toolbar events. """
 
 		if event.Id == ID_OPTIONS_PERSPECTIVE:
 			pane = self.aui_manager.GetPane(NAME_PERSPECTIVEOPTIONS).Float()
@@ -247,10 +160,45 @@ class DMWindow(wx.Frame):
 			self.aui_manager.Update()
 
 
-#-------------------------------------------------------------------
+	def OnClose(self, event):
+		""" Safely close DMIDE. """
 
+		event.Skip()
+		self.Destroy()
+
+	def updateViewMenu(self, update = True):
+		""" Update the View menubar, or update the visibility of the controls """
+
+		menubar = self.GetMenuBar()
+
+		if update:
+			""" Update the menubar """
+
+			menubar.FindItemById(ID_VIEW_FILETOOLBAR).Check(self.aui_manager.GetPane(NAME_FILETOOLBAR).IsShown())
+			menubar.FindItemById(ID_VIEW_FILETREE).Check(self.aui_manager.GetPane(NAME_FILETREE).IsShown())
+			menubar.FindItemById(ID_VIEW_EDITOR).Check(self.aui_manager.GetPane(NAME_EDITOR).IsShown())
+			menubar.FindItemById(ID_VIEW_BUILDINFORMATION).Check(self.aui_manager.GetPane(NAME_BUILDINFORMATION).IsShown())
+			menubar.FindItemById(ID_VIEW_CONSOLE).Check(self.aui_manager.GetPane(NAME_CONSOLE).IsShown())
+
+		else:
+			""" Update the controls """
+
+			self.aui_manager.GetPane(NAME_FILETOOLBAR).Show(menubar.FindItemById(ID_VIEW_FILETOOLBAR).IsChecked())
+			self.aui_manager.GetPane(NAME_FILETREE).Show(menubar.FindItemById(ID_VIEW_FILETREE).IsChecked())
+			self.aui_manager.GetPane(NAME_EDITOR).Show(menubar.FindItemById(ID_VIEW_EDITOR).IsChecked())
+			self.aui_manager.GetPane(NAME_BUILDINFORMATION).Show(menubar.FindItemById(ID_VIEW_BUILDINFORMATION).IsChecked())
+			self.aui_manager.GetPane(NAME_CONSOLE).Show(menubar.FindItemById(ID_VIEW_CONSOLE).IsChecked())
+			self.aui_manager.Update()
+
+	def OnPaneClose(self, event):
+		""" Update the view menu when one of the panels is closed. """
+
+		event.Skip()
+		wx.CallAfter(self.updateViewMenu)
+
+	# perspectives
 	def loadPerspective(self, perspectiveData, path = False):
-		""" Loads the perspective data or path to perspective file """
+		""" Loads the perspective data or path to perspective file. """
 
 		if path == True:
 			if os.path.exists(perspectiveData):
@@ -261,15 +209,11 @@ class DMWindow(wx.Frame):
 		self.perspective_options.load(self.aui_manager, perspectiveData)
 		self.updateViewMenu()
 
-#-------------------------------------------------------------------
-
 	def savePerspective(self, path, perspectiveData):
-		""" Loads the perspective data to a file """
+		""" Loads the perspective data to a file. """
 
 		perspectiveData += self.perspective_options.save(perspectiveData)
 		open(path, 'w+').write(perspectiveData)
-
-#-------------------------------------------------------------------
 
 	def OnLoadPerspective(self, event):
 		""" Opens the dialog to load a perspective. """
@@ -281,8 +225,6 @@ class DMWindow(wx.Frame):
 			path = dlg.GetPath()
 			self.loadPerspective(open(path, 'r').read())
 		dlg.Destroy()
-
-#-------------------------------------------------------------------
 
 	def OnSavePerspective(self, event):
 		""" Opens the dialog to save a perspective. """
@@ -296,13 +238,9 @@ class DMWindow(wx.Frame):
 			self.savePerspective(path, data)
 		dlg.Destroy()
 
-#-------------------------------------------------------------------
-
 	def OnDefaultPerspective(self, event):
 		""" Load the default perspective. """
 
 		path = wx.GetApp().get_dir()
 
 		self.loadPerspective(os.path.join(os.path.split(path)[0], 'settings', 'views', 'default.dmvw'), True)
-
-#-------------------------------------------------------------------

@@ -1,21 +1,14 @@
-#-------------------------------------------------------------------
-
 import core
 from core import *
 
-#-------------------------------------------------------------------
 
 class DMBuildInfo(wx.TextCtrl):
-	""" Widget for displaying errors and compiling information """
-
-#-------------------------------------------------------------------
+	""" Handles compiling and displaying build errors. """
 
 	def __init__(self, parent):
 		wx.TextCtrl.__init__(self, parent, ID_BUILDINFORMATION, style = wx.NO_BORDER | wx.TE_MULTILINE)
 
 		self.SetEditable(False)
-
-#-------------------------------------------------------------------
 
 	def compile(self):
 		filetree = wx.FindWindowById(ID_FILETREE)
@@ -51,5 +44,3 @@ class DMBuildInfo(wx.TextCtrl):
 		p.close()
 
 		self.SetEditable(False)
-
-#-------------------------------------------------------------------

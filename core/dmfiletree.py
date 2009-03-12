@@ -1,28 +1,20 @@
-#-------------------------------------------------------------------
-
 import core
 from core import *
 
-#-------------------------------------------------------------------
 
 class DMFileTree(wx.TreeCtrl):
-	""" Handles displaying the files in a project """
-
-#-------------------------------------------------------------------
+	""" Handles displaying the files in a project. """
 
 	def __init__(self, parent):
 		wx.TreeCtrl.__init__(self, parent, ID_FILETREE, style = wx.TR_DEFAULT_STYLE | wx.TR_HIDE_ROOT | wx.NO_BORDER)
 
-		self.initBindings()
+		self.initBinds()
 		self.selection = ()
 
-#-------------------------------------------------------------------
-
-	def initBindings(self):
+	def initBinds(self):
+		""" Assign the event handlers. """
 		self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnTreeItemActivated)
 		self.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
-
-#-------------------------------------------------------------------
 
 	def OnTreeItemActivated(self, event):
 		""" When a file or folder is activated [double clicked, expanded] """
@@ -34,17 +26,16 @@ class DMFileTree(wx.TreeCtrl):
 
 		event.Skip()
 
-#-------------------------------------------------------------------
-
 	def OnRightUp(self, event):
+		""" Display a menu when right-clicked. """
+
 		menu = wx.Menu()
 		menu.Append(wx.ID_ANY, 'Rename')
 		menu.Append(wx.ID_ANY, 'Delete')
 		self.PopupMenu(menu)
 
-#-------------------------------------------------------------------
-
 	def getItem(self, item):
+		""" Get an item's path and file name. """
 
 		if item == self.GetRootItem():
 			return ('', '')
@@ -71,10 +62,8 @@ class DMFileTree(wx.TreeCtrl):
 
 		return (path, name)
 
-#-------------------------------------------------------------------
-
 	def loadProject(self, project_dir):
-		""" Reset the tree and populate it with all the files in a directory """
+		""" Reset the tree and populate it with all the files in a directory. """
 
 		if os.path.splitext(project_dir)[-1] != '.dme':
 			return
@@ -90,10 +79,8 @@ class DMFileTree(wx.TreeCtrl):
 		dir_name = os.path.split(path)[-1]
 		icon_size = 16
 
-		#-------------------------------------------------------------------
-
 		def step_dir(dir):
-			""" grab a dictionary of all the files and folders in a dir """
+			""" Grab a dictionary of all the files and folders in a dir. """
 
 			files = []
 			for item in os.listdir(dir):
@@ -106,10 +93,8 @@ class DMFileTree(wx.TreeCtrl):
 					files.append(item)
 			return files
 
-		#-------------------------------------------------------------------
-
 		def get_images(collection, images):
-			""" build a dictionary consisting of {ext: icon} """
+			""" Build a dictionary consisting of {ext: icon}. """
 
 			for item in collection:
 				if type(item) == dict:
@@ -122,10 +107,8 @@ class DMFileTree(wx.TreeCtrl):
 
 			return images
 
-		#-------------------------------------------------------------------
-
 		def dosort(a, b):
-			""" sort the project files and folders! """
+			""" Sort the project files and folders! """
 
 			if type(a) == unicode:
 				a = unicodedata.normalize('NFKD', a).encode('ascii','ignore')
@@ -158,10 +141,8 @@ class DMFileTree(wx.TreeCtrl):
 
 			return cmp(weight_a, weight_b)
 
-		#-------------------------------------------------------------------
-
 		def populate(files, root, images):
-			""" populate the file tree with the files and folders and icons gathered """
+			""" Populate the file tree with the files and folders and icons gathered. """
 
 			first = None
 			files.sort(dosort)
@@ -186,8 +167,6 @@ class DMFileTree(wx.TreeCtrl):
 
 			return first
 
-		#-------------------------------------------------------------------
-
 		root = self.AddRoot(dir_name)
 		collection = step_dir(path)
 
@@ -209,7 +188,6 @@ class DMFileTree(wx.TreeCtrl):
 		self.AssignImageList(image_list)
 		self.SelectItem(populate(collection, root, images_keys))
 
-#-------------------------------------------------------------------
 
 '''
 sorting, as designed by koil

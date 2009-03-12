@@ -1,14 +1,9 @@
-#-------------------------------------------------------------------
-
 import core
 from core import *
 
-#-------------------------------------------------------------------
 
 class DMFrame(wxAui.AuiNotebook):
 	""" Overseer of all editors [icon, code, map, and skin] """
-
-#-------------------------------------------------------------------
 
 	def __init__(self, parent):
 		wxAui.AuiNotebook.__init__(self, parent, ID_EDITOR, style = wxAui.AUI_NB_TAB_SPLIT | wxAui.AUI_NB_TAB_MOVE | wxAui.AUI_NB_SCROLL_BUTTONS | wxAui.AUI_NB_CLOSE_ON_ALL_TABS | wx.NO_BORDER)
@@ -18,21 +13,19 @@ class DMFrame(wxAui.AuiNotebook):
 		self.hidden_codeeditor = core.DMCodeEditor(self, '')
 		self.hidden_codeeditor.Hide()
 
-#-------------------------------------------------------------------
-
 	def initBindings(self):
+		""" Assign event handlers. """
+
 		pass
 
-#-------------------------------------------------------------------
-
 	def updateAllStyles(self):
+		""" Update all code editor stylings. """
+
 		for x in xrange(self.GetPageCount()):
 			self.GetPage(x).updateStyle(self.hidden_codeeditor)
 
-#-------------------------------------------------------------------
-
 	def openFile(self, file):
-		""" Create a new tab and load the file contents """
+		""" Create a new tab and load the file contents. """
 
 		if not os.path.isfile(file):
 			return
@@ -64,10 +57,8 @@ class DMFrame(wxAui.AuiNotebook):
 		elif not '\0' in open(file).read():
 			newPage(file)
 
-#-------------------------------------------------------------------
-
 	def createFile(self, name, path = ''):
-		""" Create a new file """
+		""" Create a new file and open it. """
 
 		if not path:
 			path = wx.App().get_dir()
@@ -75,10 +66,8 @@ class DMFrame(wxAui.AuiNotebook):
 		open(os.path.join(path, name), 'w').write('')
 		self.openFile(os.path.join(path, name))
 
-#-------------------------------------------------------------------
-
 	def closeFile(self, file = None):
-		""" Close a tab """
+		""" Close a file. """
 
 		if not file:
 			file = self.GetSelection()
@@ -87,9 +76,9 @@ class DMFrame(wxAui.AuiNotebook):
 
 		self.DeletePage(file)
 
-#-------------------------------------------------------------------
-
 	def saveFile(self, file = None):
+		""" Save a file. """
+
 		if not file:
 			file = self.GetSelection()
 			if file == -1:
@@ -98,9 +87,9 @@ class DMFrame(wxAui.AuiNotebook):
 
 		file.save(file.file_path)
 
-#-------------------------------------------------------------------
-
 	def saveFileAs(self, file = None):
+		""" Save a file under a different name or path. """
+
 		if not file:
 			file = self.GetSelection()
 			if file == -1:
@@ -113,16 +102,16 @@ class DMFrame(wxAui.AuiNotebook):
 			file.save(path)
 		dlg.Destroy()
 
-#-------------------------------------------------------------------
-
 	def current(self):
+		""" Get the currently selected editor. """
+
 		index = self.GetSelection()
 		if index == -1: return None
 		return self.GetPage(index)
 
-#-------------------------------------------------------------------
-
 	def isEdited(self, child, edited = True):
+		""" Update the modified page text. """
+
 		index = self.GetPageIndex(child)
 		if index == -1:
 			return
@@ -137,9 +126,8 @@ class DMFrame(wxAui.AuiNotebook):
 			if title == '%s *' % child.file_name:
 				self.SetPageText(index, child.file_name)
 
-#-------------------------------------------------------------------
-
 	def OnFile(self, event):
+		""" Event handler for File events. """
 
 		if event.Id == ID_FILE_NEW:
 			dm_filetree = wx.FindWindowById(ID_FILETREE)
@@ -160,8 +148,6 @@ class DMFrame(wxAui.AuiNotebook):
 
 			dlg.Destroy()
 
-		#-------------------------------------------------------------------
-
 		elif event.Id == ID_FILE_OPEN:
 			dlg = wx.FileDialog(self, 'Open File', os.getcwd(), '', dmfiles_wildcard, wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST)
 			if dlg.ShowModal() == wx.ID_OK:
@@ -169,22 +155,14 @@ class DMFrame(wxAui.AuiNotebook):
 				self.openFile(path)
 			dlg.Destroy()
 
-		#-------------------------------------------------------------------
-
 		elif event.Id == ID_FILE_CLOSE:
 			self.closeFile()
-
-		#-------------------------------------------------------------------
 
 		elif event.Id == ID_FILE_SAVE:
 			self.saveFile()
 
-		#-------------------------------------------------------------------
-
 		elif event.Id == ID_FILE_SAVEAS:
 			self.saveFileAs()
-
-		#-------------------------------------------------------------------
 
 		elif event.Id == ID_FILE_NEWENVIRONMENT:
 			dm_filetree = wx.FindWindowById(ID_FILETREE)
@@ -205,8 +183,6 @@ class DMFrame(wxAui.AuiNotebook):
 
 			dlg.Destroy()
 
-#-------------------------------------------------------------------
-
 		elif event.Id == ID_FILE_OPENENVIRONMENT:
 			dlg = wx.FileDialog(self, 'Open Environment', os.getcwd(), '', environment_wildcard, wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST)
 			if dlg.ShowModal() == wx.ID_OK:
@@ -214,26 +190,27 @@ class DMFrame(wxAui.AuiNotebook):
 				wx.FindWindowById(ID_FILETREE).loadProject(path)
 			dlg.Destroy()
 
-#-------------------------------------------------------------------
-
 	def OnEdit(self, event):
-		# find/replace in selected text
-		# automatically add find to dialog if text selected
-		# option to find/replace in current page, selected text, opened pages, and all pages
+		""" Event handler for Edit events. """
 
 		current = self.current()
 		if not current: return
 
 		if event.Id == ID_EDIT_UNDO:
 			current.Undo()
+
 		elif event.Id == ID_EDIT_REDO:
 			current.Redo()
+
 		elif event.Id == ID_EDIT_CUT:
 			current.Cut()
+
 		elif event.Id == ID_EDIT_COPY:
 			current.Copy()
+
 		elif event.Id == ID_EDIT_PASTE:
 			current.Paste()
+
 		elif event.Id == ID_EDIT_DELETE:
 			selection = current.GetSelection()
 			selection = selection[1] - selection[0]
@@ -246,8 +223,10 @@ class DMFrame(wxAui.AuiNotebook):
 
 		elif event.Id == ID_EDIT_FIND or event.Id == ID_EDIT_REPLACE:
 			self.OpenFindReplaceDialog(current)
+
 		elif event.Id == ID_EDIT_FINDNEXT:
 			self.find(self.find_data)
+
 		elif event.Id == ID_EDIT_FINDPREV:
 			self.find(self.find_data, next = False)
 
@@ -256,12 +235,13 @@ class DMFrame(wxAui.AuiNotebook):
 			if dlg.ShowModal() == wx.ID_OK:
 				current.ScrollToLine(dlg.getData() - 1)
 			dlg.Destroy()
+
 		elif event.Id == ID_EDIT_SELECTALL:
 			current.SelectAll()
 
-#-------------------------------------------------------------------
-
 	def OpenFindReplaceDialog(self, page):
+		""" Display the Find/Replace dialog. """
+
 		if not page:
 			return
 
@@ -284,9 +264,9 @@ class DMFrame(wxAui.AuiNotebook):
 
 		dlg.Destroy()
 
-#-------------------------------------------------------------------
-
 	def find(self, data, page = None, next = True):
+		""" Find previous or next text in a page. """
+
 		if not data:
 			return
 
@@ -322,9 +302,9 @@ class DMFrame(wxAui.AuiNotebook):
 
 		return pos
 
-#-------------------------------------------------------------------
-
 	def replace(self, data, page = None, all = False):
+		""" Replace preview, next, or all text in a page. """
+
 		if not data:
 			return
 
@@ -359,12 +339,9 @@ class DMFrame(wxAui.AuiNotebook):
 
 		return pos
 
-#-------------------------------------------------------------------
 
 class FindReplaceDialog(wx.Dialog):
 	""" Custom Find/Replace dialog. """
-
-#-------------------------------------------------------------------
 
 	def __init__(self, parent, find_data):
 		wx.Dialog.__init__(self, parent, title = 'Find/Replace')
@@ -373,9 +350,9 @@ class FindReplaceDialog(wx.Dialog):
 		self.initBindings()
 		self.initConstraints()
 
-#-------------------------------------------------------------------
-
 	def initAll(self, find_data):
+		""" Build the widgets. """
+
 		self.find_label = wx.StaticText(self, wx.ID_ANY, 'Find')
 		self.find = wx.TextCtrl(self, style = wx.TE_MULTILINE, size = (150, 55))
 
@@ -407,17 +384,17 @@ class FindReplaceDialog(wx.Dialog):
 			if regex:
 				self.regex.SetChecked(True)
 
-#-------------------------------------------------------------------
 
 	def initBindings(self):
+		""" Assign the event handlers. """
 		self.find_next.Bind(wx.EVT_BUTTON, self.OnButton)
 		self.find_prev.Bind(wx.EVT_BUTTON, self.OnButton)
 		self.find_replace.Bind(wx.EVT_BUTTON, self.OnButton)
 		self.find_replace_all.Bind(wx.EVT_BUTTON, self.OnButton)
 
-#-------------------------------------------------------------------
-
 	def initConstraints(self):
+		""" Build the sizers. """
+
 		sizer = wx.GridBagSizer(0, 0)
 
 		b = 4
@@ -440,9 +417,9 @@ class FindReplaceDialog(wx.Dialog):
 
 		self.SetSizerAndFit(sizer)
 
-#-------------------------------------------------------------------
-
 	def getData(self):
+		""" Returns (find, replace, context, case, regex, button) data from the dialog. """
+
 		find = str(self.find.GetValue())
 		replace = str(self.replace.GetValue())
 		context = str(self.context.GetValue())
@@ -452,9 +429,9 @@ class FindReplaceDialog(wx.Dialog):
 
 		return (find, replace, context, case, regex, button)
 
-#-------------------------------------------------------------------
-
 	def OnButton(self, event):
+		""" Event handler for the buttons. """
+
 		if event.Id == 1337:
 			self.button = 'find-next'
 		if event.Id == 1338:
@@ -466,12 +443,9 @@ class FindReplaceDialog(wx.Dialog):
 
 		self.EndModal(wx.ID_OK)
 
-#-------------------------------------------------------------------
 
 class GotoLineDialog(wx.Dialog):
 	""" Dialog for the goto-line command. """
-
-#-------------------------------------------------------------------
 
 	def __init__(self, parent, data = None):
 		wx.Dialog.__init__(self, parent, title = 'Goto Line')
@@ -480,9 +454,9 @@ class GotoLineDialog(wx.Dialog):
 		self.initBinds()
 		self.initConstraints()
 
-#-------------------------------------------------------------------
-
 	def initAll(self, data = None):
+		""" Build the widgets. """
+
 		self.goto_label = wx.StaticText(self, wx.ID_ANY, 'Line #')
 		self.goto = wx.SpinCtrl(self, wx.ID_ANY, '')
 
@@ -496,14 +470,14 @@ class GotoLineDialog(wx.Dialog):
 		self.ok_button = wx.Button(self, wx.ID_OK)
 		self.cancel_button = wx.Button(self, wx.ID_CANCEL)
 
-#-------------------------------------------------------------------
-
 	def initBinds(self):
+		""" Assign the event handlers. """
+
 		pass
 
-#-------------------------------------------------------------------
-
 	def initConstraints(self):
+		""" Build the sizers. """
+
 		sizer = wx.GridBagSizer(0, 0)
 
 		sizer.Add(self.goto_label, (0, 0), (1, 1), wx.ALIGN_CENTER, 4)
@@ -514,17 +488,14 @@ class GotoLineDialog(wx.Dialog):
 
 		self.SetSizerAndFit(sizer)
 
-#-------------------------------------------------------------------
-
 	def getData(self):
+		""" Get the line number currently selected in the dialog. """
+
 		return int(self.goto.GetValue())
 
-#-------------------------------------------------------------------
 
 class NewFileDialog(wx.Dialog):
 	""" Dialog for creating new files. """
-
-#-------------------------------------------------------------------
 
 	def __init__(self, parent, default_path = '', dme = False):
 		wx.Dialog.__init__(self, parent, title = 'New File', style = wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
@@ -534,13 +505,12 @@ class NewFileDialog(wx.Dialog):
 		self.initConstraints()
 		self.Layout()
 
-#-------------------------------------------------------------------
-
 	def initAll(self, dme = False):
-
-#-------------------------------------------------------------------
+		""" Build the widgets. """
 
 		class DMFileList(wx.VListBox):
+			""" Custom list that displays the different DM files available to create. """
+
 			def __init__(self, parent, callback, types = 	['DM Code', 'DM Icon', 'DM Map', 'DM Interface', 'DM Script'], icons = ['.dm', '.dmi', '.dmm', '.dmf', '.dms']):
 				wx.VListBox.__init__(self, parent)
 
@@ -557,6 +527,8 @@ class NewFileDialog(wx.Dialog):
 				self.callback = callback
 
 			def OnDrawItem(self, dc, rect, n):
+				""" Draw the file image and label. """
+
 				if self.GetSelection() == n:
 					c = wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT)
 				else:
@@ -577,9 +549,9 @@ class NewFileDialog(wx.Dialog):
 					self.callback(n)
 
 			def OnMeasureItem(self, n):
+				""" Return the measurements for each item. """
+	
 				return max(self.GetTextExtent(self.types[n])[1] + 5, 32 + 5)
-
-#-------------------------------------------------------------------
 
 		if not dme:
 			self.file_list = DMFileList(self, self.OnSelect)
@@ -595,9 +567,9 @@ class NewFileDialog(wx.Dialog):
 		self.ok_button = wx.Button(self, wx.ID_OK)
 		self.cancel_button = wx.Button(self, wx.ID_CANCEL)
 
-#-------------------------------------------------------------------
-
 	def initConstraints(self):
+		""" Build the sizers. """
+
 		sizer = wx.BoxSizer(wx.VERTICAL)
 
 		sizer2 = wx.BoxSizer(wx.HORIZONTAL)
@@ -616,17 +588,15 @@ class NewFileDialog(wx.Dialog):
 		sizer.Add(sizer4, 0, wx.ALIGN_CENTER, 2)
 		self.SetSizerAndFit(sizer)
 
-#-------------------------------------------------------------------
-
 	def getData(self):
+		""" Get the name of the file to create, and the path. """
+
 		return (str(self.file_name.GetValue()), str(self.dir_list.GetPath()))
 
-#-------------------------------------------------------------------
-
 	def OnSelect(self, n):
+		""" Event handler for when an item in the list is selected. """
+
 		new_ext = self.file_list.icons[n]
 
 		old = os.path.splitext(str(self.file_name.GetValue()))[0]
 		self.file_name.SetValue('%s%s' % (old, new_ext))
-
-#-------------------------------------------------------------------

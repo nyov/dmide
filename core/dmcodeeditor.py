@@ -1,11 +1,9 @@
-#-------------------------------------------------------------------
-
 import core
 from core import *
 
-#-------------------------------------------------------------------
 
 class DMCodeEditor(wxStc.StyledTextCtrl):
+	""" Handles code editing. """
 
 	styles = {wxStc.STC_STYLE_DEFAULT:      ['Courier', 10, '#000000', '#FFFFFF', False, False, False],
 			   wxStc.STC_STYLE_LINENUMBER:  ['Courier',  8, '#000000', '#888888', False, False, False],
@@ -22,8 +20,6 @@ class DMCodeEditor(wxStc.StyledTextCtrl):
 			   wxStc.STC_C_OPERATOR:        ['Courier', 10, '#000000', '#FFFFFF', False, False, False]
 			  }
 
-#-------------------------------------------------------------------
-
 	def __init__(self, parent, file):
 		wxStc.StyledTextCtrl.__init__(self, parent)
 
@@ -34,15 +30,15 @@ class DMCodeEditor(wxStc.StyledTextCtrl):
 		self.EmptyUndoBuffer()
 		self.setSavePoint()
 
-#-------------------------------------------------------------------
-
 	def initBinds(self):
+		""" Assign event handlers. """
+
 		self.Bind(wxStc.EVT_STC_UPDATEUI, self.OnUpdateUI)
 		self.Bind(wxStc.EVT_STC_CHANGE, self.OnChange)
 
-#-------------------------------------------------------------------
-
 	def initStyle(self):
+		""" Set the STC styling. """
+
 		self.SetLexer(wxStc.STC_LEX_CPP)
 
 		self.SetViewWhiteSpace(False)
@@ -91,14 +87,14 @@ class DMCodeEditor(wxStc.StyledTextCtrl):
 		self.StyleSetSpec(wxStc.STC_C_OPERATOR,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle() )
 		'''
 
-#-------------------------------------------------------------------
-
 	def updateAllStyles(self):
+		""" Used to tell the general editor to update all code editor styles. """
+
 		wx.FindWindowById(ID_EDITOR).updateAllStyles()
 
-#-------------------------------------------------------------------
-
 	def updateStyle(self, obj):
+		""" Copy the STC styling from the empty code editor that the general editor owns. """
+
 		if obj:
 			self.SetViewWhiteSpace(obj.GetViewWhiteSpace())
 			self.SetBufferedDraw(obj.GetBufferedDraw())
@@ -127,16 +123,16 @@ class DMCodeEditor(wxStc.StyledTextCtrl):
 			self.StyleSetItalic(style, values[5])
 			self.StyleSetUnderline(style, values[6])
 
-#-------------------------------------------------------------------
-
 	def setSavePoint(self):
+		""" Update the code editor's save point. """
+
 		self.SetSavePoint()
 		self.save_text = self.GetText()
 		self.OnChange(None)
 
-#-------------------------------------------------------------------
-
 	def OnChange(self, event):
+		""" Update the modified state. """
+
 		editor = wx.FindWindowById(ID_EDITOR)
 
 		if self.GetText() != self.save_text:
@@ -144,9 +140,9 @@ class DMCodeEditor(wxStc.StyledTextCtrl):
 		else:
 			editor.isEdited(self, False)
 
-#-------------------------------------------------------------------
-
 	def OnUpdateUI(self, evt):
+		""" Highlight matching braces. """
+
 		# check for matching braces
 		braceAtCaret = -1
 		braceOpposite = -1
@@ -177,10 +173,8 @@ class DMCodeEditor(wxStc.StyledTextCtrl):
 		else:
 			self.BraceHighlight(braceAtCaret, braceOpposite)
 
-#-------------------------------------------------------------------
-
 	def save(self, path):
+		""" Save the code to the path specified. """
+
 		open(path, 'w').write(self.GetText())
 		self.setSavePoint()
-
-#-------------------------------------------------------------------
