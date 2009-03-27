@@ -99,11 +99,13 @@ class DMICanvas(wx.Panel):
 	def Commit(self):
 		# commit a change to the buffer
 
+		'''
 		dc = wx.MemoryDC(self.buffer)
 		if self.action_mouse_position != (-1, -1):
 			pos1, pos2 = self.TrueCoords(self.action_mouse_position), self.TrueCoords(self.current_mouse_position)
 			dc.DrawLine(pos1[0], pos1[1], pos2[0], pos2[1])
 		dc.SelectObject(wx.NullBitmap)
+		'''
 
 
 	def SetZoom(self, zoom_level):

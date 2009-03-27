@@ -13,6 +13,7 @@ class DMFileTree(wx.TreeCtrl):
 
 	def initBinds(self):
 		""" Assign the event handlers. """
+
 		self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnTreeItemActivated)
 		self.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
 
