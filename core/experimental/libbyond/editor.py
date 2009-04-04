@@ -39,8 +39,12 @@ class Window(wx.Frame):
 
 
 class Widget(wx.Panel):
-	def __init__(self, parent):
-		wx.Panel.__init__(self, parent)
+	def __init__(self, parent, sunken = False):
+		styles = wx.DEFAULT_FRAME_STYLE
+		if sunken:
+			styles |= wx.SUNKEN_BORDER
+
+		wx.Panel.__init__(self, parent, style = styles)
 
 		self.Bind(wx.EVT_PAINT, self.on_paint)
 
@@ -51,9 +55,13 @@ class Widget(wx.Panel):
 		ctrl = None
 		styles = 0
 
+		# special cases for borders and flatness
 		if widget.type == 'BUTTON':
 			if widget.is_flat:
 				styles |= wx.NO_BORDER
+
+		elif widget.type == 'INPUT' or widget.type == 'OUTPUT':
+			styles |= wx.NO_BORDER
 
 		try:
 			align_styles = widget.align.split('-')
@@ -85,8 +93,8 @@ class Widget(wx.Panel):
 		elif widget.type == 'CHILD':
 			ctrl = wx.Panel(self, wx.ID_ANY, style = styles)
 
-		elif widget.type == 'BROWSER':
-			ctrl = wx.Panel(self, wx.ID_ANY, style = styles)
+		elif widget.type == 'BROWSER': #special
+			ctrl = WidgetMap(self, wx.ID_ANY, style = styles)
 
 		elif widget.type == 'INPUT':
 			ctrl = wx.TextCtrl(self, wx.ID_ANY, widget.command, style = styles)
@@ -94,7 +102,18 @@ class Widget(wx.Panel):
 		elif widget.type == 'OUTPUT':
 			ctrl = wx.TextCtrl(self, wx.ID_ANY, style = styles)
 
+		elif widget.type == 'MAP':
+			ctrl = wx.Panel(self, wx.ID_ANY, style = styles)
+			ctrl.SetBackgroundColour('#8C8C8C')
+
+		elif widget.type == 'INFO': #special
+			ctrl = WidgetInfo(self, wx.ID_ANY, style = styles)
+
+		elif widget.type == 'GRID':
+			ctrl = wx.Panel(self, wx.ID_ANY, style = styles)
+
 		else:
+			self.Destroy()
 			return
 
 		self.SetBackgroundColour(widget.background_color)
@@ -108,7 +127,10 @@ class Widget(wx.Panel):
 		font = wx.Font(font_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, font_family)
 		ctrl.SetFont(font)
 
-		sizer.Add(ctrl, 1, wx.ALL | wx.EXPAND, border = 1)
+		borders = 0
+		if widget.border == 'line':
+			borders = 1
+		sizer.Add(ctrl, 1, wx.ALL | wx.EXPAND, border = borders)
 
 		self.SetSizer(sizer)
 
@@ -127,6 +149,42 @@ class Widget(wx.Panel):
 			x, y = self.GetPosition()
 			w, h = self.GetSize()
 			dc.DrawRectangle(0, 0, w, h)
+
+
+class WidgetMap(wx.Panel):
+	def __init__(self, *args, **kwargs):
+		wx.Panel.__init__(self, *args, **kwargs)
+		self.SetBackgroundColour('#F3F2F5')
+
+		sizer = wx.BoxSizer(wx.HORIZONTAL)
+		flags = wx.SizerFlags(0)
+		flags.Border(wx.LEFT, 4)
+		sizer.AddF(wx.StaticBitmap(self, wx.ID_ANY, wx.Bitmap('browser.png')), flags)
+		flags = wx.SizerFlags(1)
+		flags.Border(wx.RIGHT, 4)
+		sizer.AddF(wx.TextCtrl(self, wx.ID_ANY, ''), flags)
+
+		sizer0 = wx.BoxSizer(wx.VERTICAL)
+		sizer0.Add(sizer)
+		panel = wx.Panel(self)
+		panel.SetBackgroundColour('WHITE')
+		sizer0.Add(panel, 1, wx.ALL | wx.EXPAND, 4)
+
+		self.SetSizer(sizer0)
+
+
+class WidgetInfo(wx.Notebook):
+	def __init__(self, *args, **kwargs):
+		wx.Notebook.__init__(self, *args, **kwargs)
+
+		panel = wx.Panel(self, style = wx.SUNKEN_BORDER)
+		panel.SetBackgroundColour('WHITE')
+
+		self.AddPage(panel, 'Stats')
+
+
+class WidgetBar(wx.Slider):
+	pass
 
 
 if __name__ == '__main__':
@@ -148,7 +206,7 @@ if __name__ == '__main__':
 					w.CreateStatusBar()
 
 			else:
-				x = Widget(w)
+				x = Widget(w, (widget.border == 'sunken'))
 				x.load_widget(widget)
 		w.Show(True)
 
