@@ -618,7 +618,7 @@ window "about"
 		right-click = false
 		saved-params = ""
 		text = "Portal"
-		image = 'C:\\Documents and Settings\\CRASH\\Desktop\\libbyond\\globe.png'
+		image = ""
 		command = ""
 		is-flat = true
 		stretch = false
@@ -9974,7 +9974,7 @@ window "dmide"
 	elem "dmide"
 		type = MAIN
 		pos = 281,0
-		size = 306x416
+		size = 301x590
 		anchor1 = none
 		anchor2 = none
 		font-family = ""
@@ -10957,6 +10957,81 @@ window "dmide"
 		angle2 = 180
 		value = 0
 		on-change = ""
+	elem "child1"
+		type = CHILD
+		pos = 24,464
+		size = 240x120
+		anchor1 = none
+		anchor2 = none
+		font-family = ""
+		font-size = 0
+		font-style = ""
+		text-color = #000000
+		background-color = none
+		is-visible = true
+		is-disabled = false
+		is-transparent = false
+		is-default = false
+		border = none
+		drop-zone = false
+		right-click = false
+		saved-params = "splitter"
+		left = "about"
+		right = ""
+		is-vert = false
+		splitter = 50
+		show-splitter = true
+		lock = none
+	elem "child2"
+		type = CHILD
+		pos = 104,408
+		size = 88x48
+		anchor1 = none
+		anchor2 = none
+		font-family = ""
+		font-size = 0
+		font-style = ""
+		text-color = #000000
+		background-color = none
+		is-visible = true
+		is-disabled = false
+		is-transparent = false
+		is-default = false
+		border = line
+		drop-zone = false
+		right-click = false
+		saved-params = "splitter"
+		left = ""
+		right = ""
+		is-vert = false
+		splitter = 50
+		show-splitter = true
+		lock = none
+	elem "child3"
+		type = CHILD
+		pos = 200,408
+		size = 88x48
+		anchor1 = none
+		anchor2 = none
+		font-family = ""
+		font-size = 0
+		font-style = ""
+		text-color = #000000
+		background-color = none
+		is-visible = true
+		is-disabled = false
+		is-transparent = false
+		is-default = false
+		border = sunken
+		drop-zone = false
+		right-click = false
+		saved-params = "splitter"
+		left = ""
+		right = ""
+		is-vert = false
+		splitter = 50
+		show-splitter = true
+		lock = none
 
 window "events"
 	elem "events"

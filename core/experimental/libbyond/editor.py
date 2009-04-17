@@ -37,7 +37,6 @@ class Window(wx.Frame):
 				dc.DrawLine(0, y, w, y)
 
 
-
 class Widget(wx.Panel):
 	def __init__(self, parent, sunken = False):
 		styles = wx.DEFAULT_FRAME_STYLE
@@ -48,7 +47,7 @@ class Widget(wx.Panel):
 
 		self.Bind(wx.EVT_PAINT, self.on_paint)
 
-	def load_widget(self, widget):
+	def load_widget(self, widget, widgetlist = None):
 
 		sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -92,9 +91,27 @@ class Widget(wx.Panel):
 
 		elif widget.type == 'CHILD':
 			ctrl = wx.Panel(self, wx.ID_ANY, style = styles)
+			'''
+			if not widgetlist:
+				ctrl = wx.Panel(self, wx.ID_ANY, style = styles)
+			else:
+				ctrl = Widget(self)
+				for window in widgetlist:
+					if window.name == widget.left:
+						for w in window.windows:
+
+							if widget.type == 'MAIN':
+								pass
+
+							else:
+								x = Widget(ctrl, (w.border == 'sunken'))
+								x.load_widget(w, widgetlist)
+
+						break
+			'''
 
 		elif widget.type == 'BROWSER': #special
-			ctrl = WidgetMap(self, wx.ID_ANY, style = styles)
+			ctrl = WidgetBrowser(self, wx.ID_ANY, style = styles)
 
 		elif widget.type == 'INPUT':
 			ctrl = wx.TextCtrl(self, wx.ID_ANY, widget.command, style = styles)
@@ -151,7 +168,7 @@ class Widget(wx.Panel):
 			dc.DrawRectangle(0, 0, w, h)
 
 
-class WidgetMap(wx.Panel):
+class WidgetBrowser(wx.Panel):
 	def __init__(self, *args, **kwargs):
 		wx.Panel.__init__(self, *args, **kwargs)
 		self.SetBackgroundColour('#F3F2F5')
@@ -207,7 +224,7 @@ if __name__ == '__main__':
 
 			else:
 				x = Widget(w, (widget.border == 'sunken'))
-				x.load_widget(widget)
+				x.load_widget(widget, windows)
 		w.Show(True)
 
 	a.MainLoop()
