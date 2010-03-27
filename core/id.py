@@ -31,13 +31,20 @@ ID_EDIT_SELECTALL = wx.ID_SELECTALL
 
 ID_VIEW_FILETOOLBAR = wx.NewId()
 ID_VIEW_FILETREE = wx.NewId()
+ID_VIEW_OBJTREE = wx.NewId()
+ID_VIEW_CLASSTREE = wx.NewId()
 ID_VIEW_EDITOR = wx.NewId()
 ID_VIEW_BUILDINFORMATION = wx.NewId()
 ID_VIEW_CONSOLE = wx.NewId()
+ID_VIEW_MENUBAR = wx.NewId()
+ID_VIEW_STATUSBAR = wx.NewId()
+ID_VIEW_FULLSCREEN = wx.NewId()
 
 ###### Build Menu ID #################################################################################################
 
 ID_BUILD_COMPILE = wx.NewId()
+ID_BUILD_RUN = wx.NewId()
+ID_BUILD_COMPILE_RUN = wx.NewId()
 
 ###### Perspective Menu ID ###########################################################################################
 
@@ -52,12 +59,14 @@ ID_OPTIONS_CODE = wx.NewId()
 
 ###### Help Menu ID ##################################################################################################
 
+ID_HELP_REFERENCE = wx.NewId()
 ID_HELP_ABOUT = wx.NewId()
 
 ###### Others ########################################################################################################
 
 ID_EXIT = wx.ID_EXIT
 ID_ITEM_CHECK = wx.ITEM_CHECK
+ID_ITEM_NORMAL = wx.ITEM_NORMAL
 
 ###### Controls ######################################################################################################
 
@@ -66,16 +75,24 @@ ID_FILETREE = wx.NewId()
 ID_EDITOR = wx.NewId()
 ID_BUILDINFORMATION = wx.NewId()
 ID_CONSOLE = wx.NewId()
+ID_OBJTREE = wx.NewId()
+ID_CLASSTREE = wx.NewId()
+ID_PAINTER = wx.NewId()
 
 ID_FILETOOLBAR = wx.NewId()
+ID_MENUBAR = wx.NewId()
+ID_STATUSBAR = wx.NewId()
 
-###### Names### ######################################################################################################
+###### Names #########################################################################################################
 
 NAME_FILETOOLBAR = 'FILETOOLBAR'
 NAME_FILETREE = 'FILETREE'
 NAME_EDITOR = 'EDITOR'
 NAME_BUILDINFORMATION = 'BUILDINFORMATION'
 NAME_CONSOLE = 'CONSOLE'
+NAME_OBJTREE = 'OBJTREE'
+NAME_CLASSTREE = 'CLASSTREE'
+NAME_PAINTER = 'PAINTER'
 
 NAME_PERSPECTIVEOPTIONS = 'PERSPECTIVEOPTIONS'
 NAME_CODEOPTIONS = 'CODEOPTIONS'
