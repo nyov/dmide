@@ -22,9 +22,8 @@ class DMIDE_ClassTree(wx.TreeCtrl):
 
 		build_path = ''
 
-		if os.name in ['posix', 'os2', 'mac', 'ce']:
-			build_path = '/usr/local/byond/bin'
-			dm_path = os.path.join(build_path, 'DreamMaker')
+		if os.name in ['posix', 'osx', 'mac', 'ce']:
+			dm_path = 'DreamMaker'
 
 		elif os.name in ['dos', 'nt']:
 			build_path = 'C:\\Program Files\\BYOND\\bin'
