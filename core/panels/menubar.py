@@ -69,7 +69,7 @@ class MenuBarHandler(xml.sax.handler.ContentHandler):
 			if not self.current:
 				return
 
-			if 'type' in attributes:
+			if attributes.has_key('type'):
 				if attributes['type'] == 'separator':
 					self.current[-1][0].AppendSeparator()
 				return
@@ -80,11 +80,11 @@ class MenuBarHandler(xml.sax.handler.ContentHandler):
 			desc = ''
 			flags = ''
 
-			if 'macro' in attributes:
+			if attributes.has_key('macro'):
 				macro = attributes['macro']
-			if 'desc' in attributes:
+			if attributes.has_key('desc'):
 				desc = attributes['desc']
-			if 'flags' in attributes:
+			if attributes.has_key('flags'):
 				flags = attributes['flags']
 
 			if macro:
@@ -128,7 +128,7 @@ class FancyMenuBarHandler(xml.sax.handler.ContentHandler):
 			if not self.current:
 				return
 
-			if 'type' in attributes:
+			if attributes.has_key('type'):
 				if attributes['type'] == 'separator':
 					self.current[-1][0].AppendSeparator()
 				return
@@ -139,11 +139,11 @@ class FancyMenuBarHandler(xml.sax.handler.ContentHandler):
 			desc = ''
 			flags = ''
 
-			if 'macro' in attributes:
+			if attributes.has_key('macro'):
 				macro = attributes['macro']
-			if 'desc' in attributes:
+			if attributes.has_key('desc'):
 				desc = attributes['desc']
-			if 'flags' in attributes:
+			if attributes.has_key('flags'):
 				flags = attributes['flags']
 
 			if macro:
