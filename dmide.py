@@ -22,7 +22,7 @@ if __name__ == '__main__':
 			""" Get the dir DMIDE is in. """
 
 			if hasattr(sys, 'frozen'): return os.path.split(sys.executable)[0]
-			return os.path.split(sys.argv[0])[0]
+			return os.path.split(os.path.abspath(sys.argv[0]))[0]
 
 		app.get_dir = get_dir
 		app.art = DMIDE_ArtFactory()
