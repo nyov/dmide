@@ -36,7 +36,7 @@ class DMIDE_DMPEditor(wx.ScrolledWindow):
 		self.Bind(wx.EVT_MOUSEWHEEL, self.OnMouseWheel)
 
 		self.buffer = wx.EmptyBitmap(*self.dimensions)
-		self.buffer_zoom = wx.EmptyBitmap(*self.dimensions)
+		#self.buffer_zoom = wx.EmptyBitmap(*self.dimensions)
 		self.UpdateDrawing()
 
 	def Open(self, path):
@@ -71,7 +71,7 @@ class DMIDE_DMPEditor(wx.ScrolledWindow):
 		dc = wx.BufferedPaintDC(self, new_buffer)
 		self.PrepareDC(dc)
 
-		dc.DrawBitmap(self.buffer_zoom, 0, 0)
+		dc.DrawBitmap(self.buffer, 0, 0)
 
 		if self.mouse_pos != (-1, -1):
 			x, y = self.CoordToTile(*self.CalcUnscrolledPosition(self.mouse_pos[0], self.mouse_pos[1]))
@@ -101,7 +101,7 @@ class DMIDE_DMPEditor(wx.ScrolledWindow):
 		#self.buffer_zoom = wx.BitmapFromImage(wx.ImageFromBitmap(self.buffer).Rescale(self.buffer.GetSize()[0] * self.zoom, self.buffer.GetSize()[1] * self.zoom))
 		#except:
 		#	pass
-		self.buffer_zoom = self.buffer
+		#self.buffer_zoom = self.buffer
 
 	def Draw(self, dc, savemap=False):
 		dc.SetBackground(wx.Brush(wx.Color(168, 168, 168)))
@@ -120,6 +120,12 @@ class DMIDE_DMPEditor(wx.ScrolledWindow):
 							px, py = x * self.tile_size[0], (y+1) * self.tile_size[1]
 							py -= img.GetSize()[1]
 							dc.DrawBitmap(self.images[object.type], px, py)
+
+				#self.buffer_zoom = self.buffer
+				dc.SelectObject(wx.NullBitmap)
+				wx.Yield()
+				self.Refresh()
+				dc.SelectObject(self.buffer)
 
 		if self.show_grid and not savemap:
 			pen = wx.Pen(wx.Color(100, 100, 100), 1, wx.DOT)
