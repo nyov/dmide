@@ -14,6 +14,10 @@ import xml.sax
 import xml.sax.handler
 from xml.dom.minidom import parseString as xmlParseString
 
+import wxselect
+wxselect.wxVersionFinder.setpath(version='2.8')
+import wx
+
 import wx
 import agw
 import agw.aui as wxAui
