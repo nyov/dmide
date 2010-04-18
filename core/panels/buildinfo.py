@@ -142,8 +142,8 @@ class DMIDE_BuildInfo(wxGizmos.TreeListCtrl):
 		try:
 			objtree = wx.FindWindowById(ID_OBJTREE)
 			objtree.UpdateObjTree()
-			classtree = wx.FindWindowById(ID_CLASSTREE)
-			classtree.UpdateObjTree()
+			#classtree = wx.FindWindowById(ID_CLASSTREE)
+			#classtree.UpdateObjTree()
 		except:
 			traceback.print_exc()
 
