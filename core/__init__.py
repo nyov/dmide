@@ -77,6 +77,9 @@ dmfiles_wildcard = 'DM Files (*.dm;*.dmp;*.dmm;*.dmi;*.dmf;*.dms;*.dme)|*.dm;*.d
 environment_wildcard = 'DM Environment (*.dme)|*.dme|' \
 					   'All Files (*.*)|*.*'
 
+imagefiles_wildcard = 'Image Files (*.dmi;*.png)|*.dmi;*.png' \
+					'All Files (*.*)|*.*'
+
 
 """ dm, dmi, dmf, dmp, rsc editors """
 from editors.dmeditor import DMIDE_DMEditor
