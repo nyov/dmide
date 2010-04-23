@@ -50,6 +50,15 @@ class DMIDE_ArtFactory(object):
 	""" Handles getting art for the file tree. """
 
 	def __init__(self):
+		self.initialized = False
+
+		self.empty_icon_type = type(wx.EmptyIcon())
+		self.empty_bitmap_type = type(wx.EmptyBitmap(0, 0))
+		self.empty_image_type = type(wx.EmptyImage(0, 0))
+
+		self.generateIcons()
+
+	def initialize(self):
 		try:
 			mtypes = wx.TheMimeTypesManager.EnumAllFileTypes()
 		except wx.PyAssertionError:
@@ -61,11 +70,7 @@ class DMIDE_ArtFactory(object):
 			if mt not in self.mimes:
 				self.mimes.append(mt)
 
-		self.empty_icon_type = type(wx.EmptyIcon())
-		self.empty_bitmap_type = type(wx.EmptyBitmap(0, 0))
-		self.empty_image_type = type(wx.EmptyImage(0, 0))
-
-		self.generateIcons()
+		self.initialized = True
 
 	def generateIcons(self):
 		""" Preload the DM icons. """
@@ -87,6 +92,9 @@ class DMIDE_ArtFactory(object):
 
 	def getFromExt(self, extension, size=(16, 16)):
 		""" Grab art associated with the extension if possible. """
+
+		if not self.initialized:
+			self.initialize()
 
 		if not len(extension):
 			return 0
