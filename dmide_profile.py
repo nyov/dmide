@@ -19,7 +19,7 @@ def run():
     app.get_dir = get_dir
     app.art = DMIDE_ArtFactory()
     w = DMIDE_Window('DMIDE')
-    #wx.CallAfter(app.Exit)
+    wx.CallAfter(app.Exit)
     app.MainLoop()
 
 
@@ -32,6 +32,6 @@ print 'total time: %0.3fs' % (end-start)
 sys.stdout = open('profile.txt', 'w')
 
 p = pstats.Stats('profile')
-p.strip_dirs().sort_stats('time', 'calls').print_stats()
+p.sort_stats('time', 'calls').print_stats()
 
 os.remove('profile')
