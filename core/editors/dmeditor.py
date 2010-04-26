@@ -14,6 +14,8 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 	DM_STYLE_NUMBER = 6
 	DM_STYLE_KEYWORD = 7
 	DM_STYLE_OPERATOR = 8
+	DM_STYLE_EMBEDDED_STRING = 9
+	DM_STYLE_EMBEDDED_MULTISTRING = 10
 
 	styles = {wxStc.STC_STYLE_DEFAULT:	  ['Courier', 10, '#000000', '#FFFFFF', False, False, False],
 			   wxStc.STC_STYLE_LINENUMBER:  ['Courier',  8, '#000000', '#888888', False, False, False],
@@ -27,7 +29,9 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 			   DM_STYLE_MULTISTRING:	   ['Courier', 10, '#000000', '#0096B4', False, False, False],
 			   DM_STYLE_NUMBER:		  ['Courier', 10, '#800000', '#FFFFFF', False, False, False],
 			   DM_STYLE_KEYWORD:			['Courier', 10, '#0000FF', '#FFFFFF', False, False, False],
-			   DM_STYLE_OPERATOR:		['Courier', 10, '#0000FF', '#FFFFFF', False, False, False]
+			   DM_STYLE_OPERATOR:		['Courier', 10, '#0000FF', '#FFFFFF', False, False, False],
+			   DM_STYLE_EMBEDDED_STRING:		['Courier', 10, '#0000FF', '#FFFFFF', False, False, False],
+			   DM_STYLE_EMBEDDED_MULTISTRING:		['Courier', 10, '#0000FF', '#FFFFFF', False, False, False]
 			  }
 			  
 	keyword_text = ''
@@ -99,6 +103,8 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 		self.StyleSetSpec(self.DM_STYLE_NUMBER, 		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#800000') )
 		self.StyleSetSpec(self.DM_STYLE_KEYWORD, 		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(hex(0,   0,   255)) )
 		self.StyleSetSpec(self.DM_STYLE_OPERATOR,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#0000FF') )
+		self.StyleSetSpec(self.DM_STYLE_EMBEDDED_STRING,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#0000FF') )
+		self.StyleSetSpec(self.DM_STYLE_EMBEDDED_MULTISTRING,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#0000FF') )
 		
 		self.SetProperty("fold", "1")
 		
@@ -243,6 +249,8 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 		STATE_MULTICOMMENT = 4
 		STATE_PREPROCESSOR = 5
 		STATE_NUMBER = 6
+		STATE_EMBEDDED_STRING = 7
+		STATE_EMBEDDED_MULTISTRING = 8
 		
 		LINE_STATE_DEFAULT = 0
 		LINE_STATE_ESCAPED = 1
@@ -259,6 +267,8 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 		elif last_style == self.DM_STYLE_STRING and self.GetLineState(self.LineFromPosition(start-1)) == LINE_STATE_ESCAPED: state = STATE_STRING
 		elif last_style == self.DM_STYLE_COMMENT and self.GetLineState(self.LineFromPosition(start-1)) == LINE_STATE_ESCAPED: state = STATE_COMMENT
 		elif last_style == self.DM_STYLE_PREPROCESSOR and self.GetLineState(self.LineFromPosition(start-1)) == LINE_STATE_ESCAPED: state = STATE_PREPROCESSOR
+		elif last_style == self.DM_STYLE_EMBEDDED_STRING and self.GetLineState(self.LineFromPosition(start-1)) == LINE_STATE_ESCAPED: state = STATE_EMBEDDED_STRING
+		elif last_style == self.DM_STYLE_EMBEDDED_MULTISTRING and self.GetLineState(self.LineFromPosition(start-1)) == LINE_STATE_ESCAPED: state = STATE_EMBEDDED_MULTISTRING
 		
 		last_styled = start - 1
 		escaped = False
@@ -292,7 +302,7 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 				elif current_char == '"' and (not escaped):
 					state = STATE_STRING
 					
-				elif current_char in "0123456789":
+				elif (current_char in "0123456789") and not (last_char.isalpha() or last_char == "_" or (last_char in "0123456789")):
 					state = STATE_NUMBER
 					if not (next_char in ".0123456789"):
 						state = STATE_DEFAULT
@@ -326,59 +336,67 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 							
 						word_end = self.WordEndPosition(pos+1, False)
 						word = ''
-						
-				continue
 
-			if state == STATE_STRING:
+			elif state == STATE_STRING:
 				if (current_char == '"' or current_char == '\n') and (not escaped):
 					state = STATE_DEFAULT
 					self.SetStyling(pos - last_styled, self.DM_STYLE_STRING)
 					last_styled = pos
 				elif current_char == '\n' and escaped: self.SetLineState(self.LineFromPosition(pos), LINE_STATE_ESCAPED)
-					
-				continue
+				elif (current_char == "[") and (not escaped):
+					state = STATE_EMBEDDED_STRING
+					self.SetStyling(pos - last_styled - 1, self.DM_STYLE_STRING)
+					last_styled = pos - 1
 				
-			if state == STATE_MULTISTRING:
+			elif state == STATE_MULTISTRING:
 				if current_char == '}' and last_char == '"' and (not last_escaped):
 					state = STATE_DEFAULT
 					self.SetStyling(pos - last_styled, self.DM_STYLE_MULTISTRING)
 					last_styled = pos
-					
-				continue
+				elif (current_char == "[") and (not escaped):
+					state = STATE_EMBEDDED_MULTISTRING
+					self.SetStyling(pos - last_styled - 1, self.DM_STYLE_MULTISTRING)
+					last_styled = pos - 1
 				
-			if state == STATE_NUMBER:
+			elif state == STATE_EMBEDDED_STRING:
+				if (current_char == ']' or current_char == '\n') and (not escaped):
+					state = STATE_STRING
+					self.SetStyling(pos - last_styled, self.DM_STYLE_EMBEDDED_STRING)
+					last_styled = pos
+				elif current_char == '\n' and escaped: self.SetLineState(self.LineFromPosition(pos), LINE_STATE_ESCAPED)
+				
+			elif state == STATE_EMBEDDED_MULTISTRING:
+				if (current_char == ']' or current_char == '\n') and (not escaped):
+					state = STATE_MULTISTRING
+					self.SetStyling(pos - last_styled, self.DM_STYLE_EMBEDDED_MULTISTRING)
+					last_styled = pos
+				elif current_char == '\n' and escaped: self.SetLineState(self.LineFromPosition(pos), LINE_STATE_ESCAPED)
+				
+			elif state == STATE_NUMBER:
 				if not (next_char in ".0123456789"):
 					state = STATE_DEFAULT
 					self.SetStyling(pos - last_styled, self.DM_STYLE_NUMBER)
 					last_styled = pos
-			
-				continue
 				
-			if state == STATE_COMMENT:
+			elif state == STATE_COMMENT:
 				if (current_char == '\n') and (not escaped):
 					state = STATE_DEFAULT
 					self.SetStyling(pos - last_styled, self.DM_STYLE_COMMENT)
 					last_styled = pos
 				elif current_char == '\n' and escaped: self.SetLineState(self.LineFromPosition(pos), LINE_STATE_ESCAPED)
-				
-				continue
 					
-			if state == STATE_MULTICOMMENT:
+			elif state == STATE_MULTICOMMENT:
 				if current_char == '/' and last_char == '*':
 					state = STATE_DEFAULT
 					self.SetStyling(pos - last_styled, self.DM_STYLE_COMMENTLINE)
 					last_styled = pos
 					
-				continue
-					
-			if state == STATE_PREPROCESSOR:
+			elif state == STATE_PREPROCESSOR:
 				if (current_char == '\n') and (not escaped):
 					state = STATE_DEFAULT
 					self.SetStyling(pos - last_styled, self.DM_STYLE_PREPROCESSOR)
 					last_styled = pos
 				elif current_char == '\n' and escaped: self.SetLineState(self.LineFromPosition(pos), LINE_STATE_ESCAPED)
-				
-			continue
 				
 		if state == STATE_DEFAULT:
 			self.SetStyling(end - last_styled, self.DM_STYLE_DEFAULT)
@@ -401,9 +419,16 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 		if state == STATE_PREPROCESSOR:
 			self.SetStyling(end - last_styled, self.DM_STYLE_PREPROCESSOR)
 			
+		if state == STATE_EMBEDDED_STRING:
+			self.SetStyling(end - last_styled, self.DM_STYLE_EMBEDDED_STRING)
+		
+		if state == STATE_EMBEDDED_MULTISTRING:
+			self.SetStyling(end - last_styled, self.DM_STYLE_EMBEDDED_MULTISTRING)
+			
 		self.SetFoldFlags(16)
 		last_depth = 0
 		last_meaningful = 0
+		brace_depth = 0
 		
 		first = True
 		
@@ -413,9 +438,19 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 			whitespace = True
 			for char in line:
 				if not (char in "\t "):
-					if not (char in "\r\n"): whitespace = False
+					if char == '{':
+						brace_depth+=1
+						continue
+						
+					if char == '}':
+						brace_depth -=1
+						continue
+						
+					if not (char in "\r\n{}"): whitespace = False
 					break
 				depth += 1
+				
+			depth+=brace_depth
 			
 			if not first:
 				fold_level = (last_depth + wxStc.STC_FOLDLEVELBASE) & wxStc.STC_FOLDLEVELNUMBERMASK
