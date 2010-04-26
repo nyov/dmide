@@ -360,7 +360,8 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 				
 			elif state == STATE_EMBEDDED_STRING:
 				if (current_char == ']' or current_char == '\n') and (not escaped):
-					state = STATE_STRING
+					if current_char == '\n': state = STATE_DEFAULT
+					else: state = STATE_STRING
 					self.SetStyling(pos - last_styled, self.DM_STYLE_EMBEDDED_STRING)
 					last_styled = pos
 				elif current_char == '\n' and escaped: self.SetLineState(self.LineFromPosition(pos), LINE_STATE_ESCAPED)
