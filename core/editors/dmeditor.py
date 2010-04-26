@@ -260,7 +260,6 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 		
 		start = self.PositionFromLine(self.LineFromPosition(self.GetEndStyled()))
 		end = e.GetPosition()
-		self.StartStyling(start, 31)
 
 		state = STATE_DEFAULT
 		last_style = self.GetStyleAt(start - 1)
@@ -273,6 +272,11 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 		elif last_style == self.DM_STYLE_EMBEDDED_STRING and self.GetLineState(self.LineFromPosition(start-1)) == LINE_STATE_ESCAPED: state = STATE_EMBEDDED_STRING
 		elif last_style == self.DM_STYLE_EMBEDDED_MULTISTRING and self.GetLineState(self.LineFromPosition(start-1)) == LINE_STATE_ESCAPED: state = STATE_EMBEDDED_MULTISTRING
 		
+		while last_style == self.DM_STYLE_BADSTRING and self.GetLineState(self.LineFromPosition(start-1)) == LINE_STATE_ESCAPED:
+			start = self.PositionFromLine(self.LineFromPosition(start - 1))
+			last_style = self.GetStyleAt(start - 1)
+		
+		self.StartStyling(start, 31)
 		last_styled = start - 1
 		escaped = False
 		last_escaped = False
