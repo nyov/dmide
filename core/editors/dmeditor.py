@@ -16,6 +16,7 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 	DM_STYLE_OPERATOR = 8
 	DM_STYLE_EMBEDDED_STRING = 9
 	DM_STYLE_EMBEDDED_MULTISTRING = 10
+	DM_STYLE_BADSTRING = 11
 
 	styles = {wxStc.STC_STYLE_DEFAULT:	  ['Courier', 10, '#000000', '#FFFFFF', False, False, False],
 			   wxStc.STC_STYLE_LINENUMBER:  ['Courier',  8, '#000000', '#888888', False, False, False],
@@ -31,7 +32,8 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 			   DM_STYLE_KEYWORD:			['Courier', 10, '#0000FF', '#FFFFFF', False, False, False],
 			   DM_STYLE_OPERATOR:		['Courier', 10, '#0000FF', '#FFFFFF', False, False, False],
 			   DM_STYLE_EMBEDDED_STRING:		['Courier', 10, '#0000FF', '#FFFFFF', False, False, False],
-			   DM_STYLE_EMBEDDED_MULTISTRING:		['Courier', 10, '#0000FF', '#FFFFFF', False, False, False]
+			   DM_STYLE_EMBEDDED_MULTISTRING:		['Courier', 10, '#0000FF', '#FFFFFF', False, False, False],
+			   DM_STYLE_BADSTRING:		['Courier', 10, '#000000', '#FF0000', False, False, False]
 			  }
 			  
 	keyword_text = ''
@@ -105,6 +107,7 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 		self.StyleSetSpec(self.DM_STYLE_OPERATOR,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#0000FF') )
 		self.StyleSetSpec(self.DM_STYLE_EMBEDDED_STRING,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#0000FF') )
 		self.StyleSetSpec(self.DM_STYLE_EMBEDDED_MULTISTRING,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#0000FF') )
+		self.StyleSetSpec(self.DM_STYLE_BADSTRING,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(back = hex(255, 0, 0), fore = hex(0, 0, 0)) )
 		
 		self.SetProperty("fold", "1")
 		
@@ -339,8 +342,9 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 
 			elif state == STATE_STRING:
 				if (current_char == '"' or current_char == '\n') and (not escaped):
+					if current_char == '\n': self.SetStyling(pos - last_styled, self.DM_STYLE_BADSTRING)
+					else: self.SetStyling(pos - last_styled, self.DM_STYLE_STRING)
 					state = STATE_DEFAULT
-					self.SetStyling(pos - last_styled, self.DM_STYLE_STRING)
 					last_styled = pos
 				elif current_char == '\n' and escaped: self.SetLineState(self.LineFromPosition(pos), LINE_STATE_ESCAPED)
 				elif (current_char == "[") and (not escaped):
