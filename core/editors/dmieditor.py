@@ -4,9 +4,11 @@
 DMIDE Icon Editor
 
 """
+import sys
 
-import wxversion
-wxversion.select("2.8")
+if not hasattr(sys, 'frozen'):
+	import wxversion
+	wxversion.select("2.8")
 
 import wx
 
