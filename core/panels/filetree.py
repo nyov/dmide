@@ -21,6 +21,8 @@ class DMIDE_FileTree(wx.TreeCtrl):
 		self.dme_path = None # dme path
 		self.dme = None
 
+		#self.SetDoubleBuffered(True)
+
 	def initBinds(self):
 		""" Assign the event handlers. """
 

@@ -9,7 +9,8 @@ class DMIDE_Window(wx.Frame):
 		wx.Frame.__init__(self, None, ID_WINDOW, title, style=wx.DEFAULT_FRAME_STYLE | wx.NO_FULL_REPAINT_ON_RESIZE | wx.CLIP_CHILDREN)
 
 		self.Freeze()
-		self.SetInitialSize((800, 600))
+		#self.SetInitialSize((800, 600))
+		self.SetSize((800, 600))
 
 		self.initAll()
 		self.initBinds()
@@ -29,7 +30,9 @@ class DMIDE_Window(wx.Frame):
 	def initAll(self):
 		""" Initialize all the UI widgets and display them. """
 
-		self.aui_manager = wxAui.AuiManager()
+		self.SetDoubleBuffered(True)
+
+		self.aui_manager = DMIDE_AuiManager()#wxAui.AuiManager()
 		self.aui_manager.SetManagedWindow(self)
 
 		if dmide_menu_type == 'fancy':
@@ -51,9 +54,12 @@ class DMIDE_Window(wx.Frame):
 		#self.dmide_classtree = DMIDE_ClassTree(self)
 		#self.dmide_painter = DMIDE_Painter(self)
 
-		self.aui_manager.AddPane(self.dmide_editor, wxAui.AuiPaneInfo().Name(NAME_EDITOR).Caption('Editor').CenterPane().CaptionVisible(True).MaximizeButton().CloseButton(True))
-		self.aui_manager.AddPane(self.dmide_filetree, wxAui.AuiPaneInfo().Name(NAME_FILETREE).Caption('File Tree').Left().BestSize((200, 200)).FloatingSize((200, 400)).MaximizeButton(True))
-		self.aui_manager.AddPane(self.dmide_objtree, wxAui.AuiPaneInfo().Name(NAME_OBJTREE).Caption('Object Tree').Right().BestSize((200, 200)).FloatingSize((200, 400)).MaximizeButton(True))
+		self.aui_manager.AddPane(self.dmide_editor, wxAui.AuiPaneInfo().Name(NAME_EDITOR).CenterPane().PaneBorder(False))
+		ftree = wxAui.AuiPaneInfo().Name(NAME_FILETREE).Caption('File Tree').Left().BestSize((200, 200)).FloatingSize((200, 400)).MaximizeButton(True)
+		self.aui_manager.AddPane(self.dmide_filetree, ftree)
+		self.aui_manager.FireEvent(wxAui.wxEVT_AUI_PANE_DOCKED, ftree, canVeto=False)
+
+		self.aui_manager.AddPane(self.dmide_objtree, wxAui.AuiPaneInfo().Name(NAME_OBJTREE).Caption('Object Tree').Right().BestSize((200, 200)).FloatingSize((200, 400)).MaximizeButton(True), target=ftree)
 		#self.aui_manager.AddPane(self.dmide_classtree, wxAui.AuiPaneInfo().Name(NAME_CLASSTREE).Caption('Class Tree').Right().BestSize((200, 200)).FloatingSize((200, 400)).MaximizeButton(True))
 		#self.aui_manager.AddPane(self.dmide_painter, wxAui.AuiPaneInfo().Name(NAME_PAINTER).Caption('Painter').Right().BestSize((200, 200)).FloatingSize((200, 400)).MaximizeButton(True))
 		self.aui_manager.AddPane(self.dmide_buildinfo, wxAui.AuiPaneInfo().Name(NAME_BUILDINFORMATION).Caption('Build Information').Bottom().BestSize((600, 150)).FloatingSize((800, 200)).MaximizeButton(True))
@@ -236,3 +242,31 @@ class DMIDE_Window(wx.Frame):
 				menubar.FindItemById(id).Enable(enable)
 			except:
 				pass
+
+
+class DMIDE_AuiManager(wxAui.AuiManager):
+	def __init__(self, *args, **kwargs):
+		wxAui.AuiManager.__init__(self, *args, **kwargs)
+
+		self.Bind(wxAui.EVT_AUI_PANE_DOCKED, self.OnDock)
+
+	def OnDock(self, event):
+		event.Skip()
+
+		pane = event.GetPane()
+
+		def check():
+			if pane.HasNotebook():
+				notebook = self._notebooks[pane.notebook_id]
+				self.GetPane(notebook).CaptionVisible(False).PaneBorder(False)
+
+			self.Update()
+
+		wx.CallAfter(check)
+
+	def CreateNotebook(self):
+		notebook = wxAui.auibook.AuiNotebook(self._frame, style=dmide_editor_style)
+		notebook.GetAuiManager().SetMasterManager(self)
+		self._notebooks.append(notebook)
+
+		return notebook

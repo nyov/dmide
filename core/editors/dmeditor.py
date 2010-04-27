@@ -58,6 +58,8 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 
 		self.SetLexer(wxStc.STC_LEX_CONTAINER)
 
+		self.SetLayoutCache(wxStc.STC_CACHE_DOCUMENT)
+
 		self.SetViewWhiteSpace(False)
 		self.SetBufferedDraw(True)
 		self.SetIndentationGuides(True)
@@ -66,11 +68,14 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 		self.SetUseAntiAliasing(False)
 		self.SetTabWidth(4)
 
-		self.SetMargins(4, 0)
+		self.SetMargins(4, 4)
+
 		self.SetMarginType(1, wxStc.STC_MARGIN_SYMBOL)
-		self.SetMarginWidth(1, 35)
+		self.SetMarginWidth(1, 16)
 		self.SetMarginMask(1, wxStc.STC_MASK_FOLDERS)
 		self.SetMarginSensitive(1, True)
+
+
 		self.SetMarginType(0, wxStc.STC_MARGIN_NUMBER)
 		self.SetMarginWidth(0, 35)
 

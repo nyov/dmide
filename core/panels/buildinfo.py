@@ -26,6 +26,7 @@ class DMIDE_BuildInfo(wxGizmos.TreeListCtrl):
 		self.compiled = 0
 
 		self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnActivate)
+		#self.SetDoubleBuffered(True)
 
 	def OnActivate(self, event):
 		item = event.GetItem()
