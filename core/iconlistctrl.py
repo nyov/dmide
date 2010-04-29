@@ -21,8 +21,8 @@ class IconListCtrl(wx.PyScrolledWindow):
 	
 	"""
 	
-	def __init__(self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.DefaultSize):
-		wx.ScrolledWindow.__init__(self, parent, id, pos, size)
+	def __init__(self, *args, **kwargs):
+		wx.ScrolledWindow.__init__(self, *args, **kwargs)
 
 		self._items = 0
 		self._selStore = SelectionStore()

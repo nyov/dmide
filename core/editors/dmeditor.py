@@ -18,24 +18,24 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 	DM_STYLE_EMBEDDED_MULTISTRING = 10
 	DM_STYLE_BADSTRING = 11
 
-	styles = {wxStc.STC_STYLE_DEFAULT:	  ['Courier', 10, '#000000', '#FFFFFF', False, False, False],
-			   wxStc.STC_STYLE_LINENUMBER:  ['Courier',  8, '#000000', '#888888', False, False, False],
-			   wxStc.STC_STYLE_CONTROLCHAR: ['Courier', 10, '#000000', '#FFFFFF', False, False, False],
-			   wxStc.STC_STYLE_BRACELIGHT:  ['Courier', 10, '#000000', '#FFFFFF', True, False, False],
-			   DM_STYLE_DEFAULT:		 ['Courier', 10, '#000000', '#FFFFFF', False, False, False],
-			   DM_STYLE_COMMENT:		 ['Courier', 10, '#808080', '#FFFFFF', False, False, False],
-			   DM_STYLE_COMMENTLINE:		 ['Courier', 10, '#808080', '#FFFFFF', False, False, False],
-			   DM_STYLE_PREPROCESSOR:	['Courier', 10, '#008000', '#FFFFFF', False, False, False],
-			   DM_STYLE_STRING:		  ['Courier', 10, '#0096B4', '#FFFFFF', False, False, False],
-			   DM_STYLE_MULTISTRING:	   ['Courier', 10, '#000000', '#0096B4', False, False, False],
-			   DM_STYLE_NUMBER:		  ['Courier', 10, '#800000', '#FFFFFF', False, False, False],
-			   DM_STYLE_KEYWORD:			['Courier', 10, '#0000FF', '#FFFFFF', False, False, False],
-			   DM_STYLE_OPERATOR:		['Courier', 10, '#0000FF', '#FFFFFF', False, False, False],
-			   DM_STYLE_EMBEDDED_STRING:		['Courier', 10, '#0000FF', '#FFFFFF', False, False, False],
-			   DM_STYLE_EMBEDDED_MULTISTRING:		['Courier', 10, '#0000FF', '#FFFFFF', False, False, False],
-			   DM_STYLE_BADSTRING:		['Courier', 10, '#000000', '#FF0000', False, False, False]
+	styles = {wxStc.STC_STYLE_DEFAULT:	      ['Courier', 10, '#000000', '#FFFFFF', False, False, False],
+			   wxStc.STC_STYLE_LINENUMBER:    ['Courier',  8, '#000000', '#888888', False, False, False],
+			   wxStc.STC_STYLE_CONTROLCHAR:   ['Courier', 10, '#000000', '#FFFFFF', False, False, False],
+			   wxStc.STC_STYLE_BRACELIGHT:    ['Courier', 10, '#000000', '#FFFFFF', True, False, False],
+			   DM_STYLE_DEFAULT:		      ['Courier', 10, '#000000', '#FFFFFF', False, False, False],
+			   DM_STYLE_COMMENT:		      ['Courier', 10, '#808080', '#FFFFFF', False, False, False],
+			   DM_STYLE_COMMENTLINE:		  ['Courier', 10, '#808080', '#FFFFFF', False, False, False],
+			   DM_STYLE_PREPROCESSOR:	      ['Courier', 10, '#008000', '#FFFFFF', False, False, False],
+			   DM_STYLE_STRING:		          ['Courier', 10, '#0096B4', '#FFFFFF', False, False, False],
+			   DM_STYLE_MULTISTRING:	      ['Courier', 10, '#000000', '#0096B4', False, False, False],
+			   DM_STYLE_NUMBER:		          ['Courier', 10, '#800000', '#FFFFFF', False, False, False],
+			   DM_STYLE_KEYWORD:			  ['Courier', 10, '#FF0000', '#FFFFFF', False, False, False],
+			   DM_STYLE_OPERATOR:		      ['Courier', 10, '#000000', '#FFFFFF', False, False, False],
+			   DM_STYLE_EMBEDDED_STRING:	  ['Courier', 10, '#004B5A', '#FFFFFF', False, False, False],
+			   DM_STYLE_EMBEDDED_MULTISTRING: ['Courier', 10, '#004B5A', '#FFFFFF', False, False, False],
+			   DM_STYLE_BADSTRING:		      ['Courier', 10, '#000000', '#FF0000', False, False, False]
 			  }
-			  
+
 	keyword_text = ''
 
 	def __init__(self, parent):
@@ -109,9 +109,9 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 		self.StyleSetSpec(self.DM_STYLE_MULTISTRING, 	 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(back = hex(0,   150, 180), fore = hex(0, 0, 0)) )
 		self.StyleSetSpec(self.DM_STYLE_NUMBER, 		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#800000') )
 		self.StyleSetSpec(self.DM_STYLE_KEYWORD, 		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(hex(0,   0,   255)) )
-		self.StyleSetSpec(self.DM_STYLE_OPERATOR,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#0000FF') )
-		self.StyleSetSpec(self.DM_STYLE_EMBEDDED_STRING,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#0000FF') )
-		self.StyleSetSpec(self.DM_STYLE_EMBEDDED_MULTISTRING,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#0000FF') )
+		self.StyleSetSpec(self.DM_STYLE_OPERATOR,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#000000') )
+		self.StyleSetSpec(self.DM_STYLE_EMBEDDED_STRING,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#004B5A') )
+		self.StyleSetSpec(self.DM_STYLE_EMBEDDED_MULTISTRING,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#004B5A') )
 		self.StyleSetSpec(self.DM_STYLE_BADSTRING,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(back = hex(255, 0, 0), fore = hex(0, 0, 0)) )
 		
 		self.SetProperty("fold", "1")
