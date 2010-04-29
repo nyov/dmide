@@ -57,9 +57,9 @@ class DMIDE_Window(wx.Frame):
 		self.aui_manager.AddPane(self.dmide_editor, wxAui.AuiPaneInfo().Name(NAME_EDITOR).CenterPane().PaneBorder(False))
 		ftree = wxAui.AuiPaneInfo().Name(NAME_FILETREE).Caption('File Tree').Left().BestSize((200, 200)).FloatingSize((200, 400)).MaximizeButton(True)
 		self.aui_manager.AddPane(self.dmide_filetree, ftree)
-		self.aui_manager.FireEvent(wxAui.wxEVT_AUI_PANE_DOCKED, ftree, canVeto=False)
 
 		self.aui_manager.AddPane(self.dmide_objtree, wxAui.AuiPaneInfo().Name(NAME_OBJTREE).Caption('Object Tree').Right().BestSize((200, 200)).FloatingSize((200, 400)).MaximizeButton(True), target=ftree)
+		self.aui_manager.FireEvent(wxAui.wxEVT_AUI_PANE_DOCKED, ftree, canVeto=False)
 		#self.aui_manager.AddPane(self.dmide_classtree, wxAui.AuiPaneInfo().Name(NAME_CLASSTREE).Caption('Class Tree').Right().BestSize((200, 200)).FloatingSize((200, 400)).MaximizeButton(True))
 		#self.aui_manager.AddPane(self.dmide_painter, wxAui.AuiPaneInfo().Name(NAME_PAINTER).Caption('Painter').Right().BestSize((200, 200)).FloatingSize((200, 400)).MaximizeButton(True))
 		self.aui_manager.AddPane(self.dmide_buildinfo, wxAui.AuiPaneInfo().Name(NAME_BUILDINFORMATION).Caption('Build Information').Bottom().BestSize((600, 150)).FloatingSize((800, 200)).MaximizeButton(True))
