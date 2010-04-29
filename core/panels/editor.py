@@ -4,6 +4,7 @@ from core import *
 DM_FILE_TYPES = ['.dm', '.dmm', '.dmp', '.dms', '.dmf', '.dme', '.rsc', '.dmi']
 IMAGE_FILE_TYPES = ['.png', '.bmp', '.gif', '.jpeg', '.jpg', '.dmi']
 AUDIO_FILE_TYPES = ['.mod', '.it', '.s3m', '.xm', '.oxm', '.mid', '.midi', '.wav', '.ogg', '.raw', '.wma', '.aiff']
+INTERFACE_FILE_TYPES = ['.dmf']
 
 RECOGNIZED_FILE_TYPES = DM_FILE_TYPES + IMAGE_FILE_TYPES + AUDIO_FILE_TYPES
 
@@ -16,7 +17,7 @@ class DMIDE_Editor(wxAui.AuiNotebook):
 
 		self.initBindings()
 		self.SetArtProvider(dmide_editor_tab_art())
-		self.hidden_codeeditor = DMIDE_DMEditor(self)
+		self.hidden_codeeditor = DMIDE_DMEditor(self, "")
 		self.hidden_codeeditor.Hide()
 		self.SetWindowStyleFlag(self._flags | wx.NO_BORDER)
 
@@ -72,8 +73,14 @@ class DMIDE_Editor(wxAui.AuiNotebook):
 				elif ext in AUDIO_FILE_TYPES:
 					page = DMIDE_OGGEditor(self)
 
+				elif ext in INTERFACE_FILE_TYPES:
+					page = DMIDE_DMEditor(self, "dmf")
+				
+				elif ext in DM_FILE_TYPES:
+					page = DMIDE_DMEditor(self, "dm")
+					
 				else:
-					page = DMIDE_DMEditor(self)
+					page = DMIDE_DMEditor(self, "")
 
 				page.file_path = file
 				page.file_name = name
