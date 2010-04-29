@@ -282,29 +282,19 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 		self.SetFoldFlags(16)
 		last_depth = 0
 		last_meaningful = 0
-		brace_depth = 0
 		
 		first = True
 		
-		for line_number in range(self.LineFromPosition(start)-1, self.LineFromPosition(end)+1):
+		linerange = range(self.LineFromPosition(start)-1, self.LineFromPosition(end)+1)
+		for line_number in linerange:
 			line = self.GetLine(line_number)
 			depth = 0
 			whitespace = True
 			for char in line:
 				if not (char in "\t "):
-					if char == '{':
-						brace_depth+=1
-						continue
-						
-					if char == '}':
-						brace_depth -=1
-						continue
-						
-					if not (char in "\r\n{}"): whitespace = False
+					whitespace = False
 					break
 				depth += 1
-				
-			depth+=brace_depth
 			
 			if not first:
 				fold_level = (last_depth + wxStc.STC_FOLDLEVELBASE) & wxStc.STC_FOLDLEVELNUMBERMASK
