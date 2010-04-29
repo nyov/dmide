@@ -37,6 +37,16 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 			  }
 
 	keyword_text = ''
+	
+	def clearErrors(self):
+		self.StartStyling(0, wxStc.STC_INDICS_MASK)
+		self.SetStyling(self.GetLength(), 0)
+		
+	def addError(self, line):
+		line -= 1
+		start = self.PositionFromLine(line)
+		self.StartStyling(start, wxStc.STC_INDIC2_MASK)
+		self.SetStyling(self.LineLength(line), 0xff)
 
 	def __init__(self, parent):
 		wxStc.StyledTextCtrl.__init__(self, parent, style=wx.NO_BORDER)
