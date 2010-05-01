@@ -279,6 +279,7 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 		#self.SetSelection(self.PositionFromLine(line-1), self.GetLineEndPosition(line-1))
 		#self.SetSelBackground(False, '#FF6464')
 		self.SetSelection(self.PositionFromLine(line-1), self.GetLineEndPosition(line-1))
+		self.addError(line)
 
 	def FoldDM(self, start, end):
 		self.SetFoldFlags(16)
@@ -412,9 +413,11 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 				elif current_char == "/" and next_char == "*" and (not escaped): state = STATE_MULTICOMMENT
 
 				elif current_char in "./:~!-+*%<=>&^|?()[]":
-					self.SetStyling(1, self.DM_STYLE_OPERATOR)
+					self.SetStyling(pos - last_styled, self.DM_STYLE_OPERATOR)
 					last_styled = pos
-
+					word = ''
+					word_end = self.WordEndPosition(pos+1, False)
+					
 				elif current_char == '#': state = STATE_PREPROCESSOR
 
 				else:
