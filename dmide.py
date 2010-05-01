@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """ DMIDE by Crashed. """
 
 
@@ -9,6 +10,7 @@ if __name__ == '__main__':
 		try:
 			import psyco
 			psyco.full()
+			print 'Optimizing with psyco'
 		except ImportError:
 			pass
 
@@ -24,11 +26,18 @@ if __name__ == '__main__':
 			if hasattr(sys, 'frozen'): return os.path.split(sys.executable)[0]
 			return os.path.split(os.path.abspath(sys.argv[0]))[0]
 
+		def get_byond():
+			""" Get the dir the BYOND bin is in """
+
+			typical_paths = ['C:\\Program Files\\BYOND\\bin', 'C:\\Program Files (x86)\\BYOND\\bin',
+							 ]
+
 		app.get_dir = get_dir
 		app.art = DMIDE_ArtFactory()
+
+		print 'DMIDE dir:', get_dir()
+
 		w = DMIDE_Window('DMIDE')
-		#wx.CallLater(1000, w.dmide_filetree.Open, 'C:\\Documents and Settings\\Crashed\\Desktop\\crashrpg\\crashrpg.dme')
-		#w.dmide_filetree.Open('C:\\Documents and Settings\\Crashed\\Desktop\\EvilResidentsOld\\EvilResidents.dme')
 		app.MainLoop()
 
 	except Exception:

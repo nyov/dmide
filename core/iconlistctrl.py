@@ -211,6 +211,7 @@ class IconListCtrl(wx.PyScrolledWindow):
 
 				gcdc = wx.GCDC(dc)
 				highlight_colour = wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT)
+				gcdc.SetPen(wx.Pen(highlight_colour))
 				highlight_colour.Set(*highlight_colour.Get(), alpha=64)
 				gcdc.SetBrush(wx.Brush(highlight_colour))
 				gcdc.DrawRectangle(x, y, width, height)
@@ -343,6 +344,7 @@ class IconListItem:
 		if highlight:
 			old_brush = dc.GetBrush()
 			highlight_colour = wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT)
+			dc.SetPen(wx.Pen(highlight_colour))
 			highlight_colour.Set(*highlight_colour.Get(), alpha=64)
 			dc.SetBrush(wx.Brush(highlight_colour))
 			dc.DrawRoundedRectangle(*rect, radius=4)
