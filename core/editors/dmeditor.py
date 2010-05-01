@@ -18,6 +18,7 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 	DM_STYLE_EMBEDDED_STRING = 9
 	DM_STYLE_EMBEDDED_MULTISTRING = 10
 	DM_STYLE_BADSTRING = 11
+	DM_STYLE_SINGLESTRING = 12
 
 	styles = {wxStc.STC_STYLE_DEFAULT:		  ['Courier', 10, '#000000', '#FFFFFF', False, False, False],
 			   wxStc.STC_STYLE_LINENUMBER:	  ['Courier',  8, '#000000', '#888888', False, False, False],
@@ -34,7 +35,8 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 			   DM_STYLE_OPERATOR:			  ['Courier', 10, '#000000', '#FFFFFF', False, False, False],
 			   DM_STYLE_EMBEDDED_STRING:	  ['Courier', 10, '#004B5A', '#FFFFFF', False, False, False],
 			   DM_STYLE_EMBEDDED_MULTISTRING: ['Courier', 10, '#004B5A', '#FFFFFF', False, False, False],
-			   DM_STYLE_BADSTRING:			  ['Courier', 10, '#000000', '#FF0000', False, False, False]
+			   DM_STYLE_BADSTRING:			  ['Courier', 10, '#000000', '#FF0000', False, False, False],
+			   DM_STYLE_SINGLESTRING:		  ['Courier', 10, '#0096B4', '#FFFFFF', False, False, False],
 			  }
 
 	keyword_text = ''
@@ -139,6 +141,7 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 		self.StyleSetSpec(self.DM_STYLE_EMBEDDED_STRING,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#004B5A') )
 		self.StyleSetSpec(self.DM_STYLE_EMBEDDED_MULTISTRING,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle('#004B5A') )
 		self.StyleSetSpec(self.DM_STYLE_BADSTRING,		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(back = hex(255, 0, 0), fore = hex(0, 0, 0)) )
+		self.StyleSetSpec(self.DM_STYLE_SINGLESTRING,	 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(hex(0,   150, 180)) )
 
 		self.SetProperty("fold", "1")
 
@@ -331,6 +334,7 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 		STATE_NUMBER = 6
 		STATE_EMBEDDED_STRING = 7
 		STATE_EMBEDDED_MULTISTRING = 8
+		STATE_SINGLESTRING = 9
 
 		LINE_STATE_DEFAULT = 0
 		LINE_STATE_ESCAPED = 1
@@ -344,7 +348,8 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 							STATE_PREPROCESSOR: self.DM_STYLE_PREPROCESSOR,
 							STATE_NUMBER: self.DM_STYLE_NUMBER,
 							STATE_EMBEDDED_STRING: self.DM_STYLE_EMBEDDED_STRING,
-							STATE_EMBEDDED_MULTISTRING: self.DM_STYLE_EMBEDDED_MULTISTRING
+							STATE_EMBEDDED_MULTISTRING: self.DM_STYLE_EMBEDDED_MULTISTRING,
+							STATE_SINGLESTRING: self.DM_STYLE_SINGLESTRING
 							}
 
 		state = STATE_DEFAULT
@@ -358,6 +363,7 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 			elif last_style == self.DM_STYLE_PREPROCESSOR: state = STATE_PREPROCESSOR
 			elif last_style == self.DM_STYLE_EMBEDDED_STRING: state = STATE_EMBEDDED_STRING
 			elif last_style == self.DM_STYLE_EMBEDDED_MULTISTRING: state = STATE_EMBEDDED_MULTISTRING
+			elif last_style == self.DM_STYLE_SINGLESTRING: state = STATE_SINGLESTRING
 
 		while last_style == self.DM_STYLE_BADSTRING and self.GetLineState(self.LineFromPosition(start-1)) == LINE_STATE_ESCAPED:
 			start = self.PositionFromLine(self.LineFromPosition(start - 1))
@@ -393,6 +399,7 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 			if state == STATE_DEFAULT:
 				if current_char == '{' and next_char == '"' and (not escaped): state = STATE_MULTISTRING
 				elif current_char == '"' and (not escaped): state = STATE_STRING
+				elif current_char == "'" and (not escaped): state = STATE_SINGLESTRING
 
 				elif (current_char in "0123456789") and not (last_char.isalpha() or last_char == "_" or (last_char in "0123456789")):
 					state = STATE_NUMBER
@@ -436,6 +443,14 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 					state = STATE_EMBEDDED_STRING
 					self.SetStyling(pos - last_styled - 1, self.DM_STYLE_STRING)
 					last_styled = pos - 1
+					
+			elif state == STATE_SINGLESTRING:
+				if (current_char == "'" or current_char == '\n') and (not escaped):
+					if current_char == '\n': self.SetStyling(pos - last_styled, self.DM_STYLE_BADSTRING)
+					else: self.SetStyling(pos - last_styled, self.DM_STYLE_SINGLESTRING)
+					state = STATE_DEFAULT
+					last_styled = pos
+				elif current_char == '\n' and escaped: self.SetLineState(self.LineFromPosition(pos), LINE_STATE_ESCAPED)
 
 			elif state == STATE_MULTISTRING:
 				if current_char == '}' and last_char == '"' and (not last_escaped):
