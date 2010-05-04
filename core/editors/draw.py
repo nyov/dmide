@@ -199,7 +199,9 @@ class Draw(object):
 			self.point((x,y), (red, green, blue, alpha))
 
 	def point(self, (x, y), (red, green, blue, alpha)=pen):
-		if x < 0 or y < 0:
+##		if x < 0 or y < 0:
+##			return
+		if not self.within(x, y):
 			return
 
 		#try:
