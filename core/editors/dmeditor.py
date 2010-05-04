@@ -362,11 +362,13 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 			if last_style == self.DM_STYLE_STRING: state = STATE_STRING
 			elif last_style == self.DM_STYLE_COMMENT: state = STATE_COMMENT
 			elif last_style == self.DM_STYLE_PREPROCESSOR: state = STATE_PREPROCESSOR
-			elif last_style == self.DM_STYLE_EMBEDDED_STRING: state = STATE_EMBEDDED_STRING
-			elif last_style == self.DM_STYLE_EMBEDDED_MULTISTRING: state = STATE_EMBEDDED_MULTISTRING
 			elif last_style == self.DM_STYLE_SINGLESTRING: state = STATE_SINGLESTRING
 
 		while last_style == self.DM_STYLE_BADSTRING and self.GetLineState(self.LineFromPosition(start-1)) == LINE_STATE_ESCAPED:
+			start = self.PositionFromLine(self.LineFromPosition(start - 1))
+			last_style = self.GetStyleAt(start - 1)
+			
+		while (last_style == self.DM_STYLE_EMBEDDED_STRING or last_style == self.DM_STYLE_EMBEDDED_MULTISTRING) and self.GetLineState(self.LineFromPosition(start-1)) == LINE_STATE_ESCAPED:
 			start = self.PositionFromLine(self.LineFromPosition(start - 1))
 			last_style = self.GetStyleAt(start - 1)
 
@@ -380,6 +382,7 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 		current_char = chr(self.GetCharAt(start - 1))
 		next_char = chr(self.GetCharAt(start))
 		word = ''
+		embed_count = 0
 
 		linerange = range(start, end)
 		for pos in linerange:
@@ -444,6 +447,7 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 				elif current_char == '\n' and escaped: self.SetLineState(self.LineFromPosition(pos), LINE_STATE_ESCAPED)
 				elif (current_char == "[") and (not escaped):
 					state = STATE_EMBEDDED_STRING
+					embed_count = 1
 					self.SetStyling(pos - last_styled - 1, self.DM_STYLE_STRING)
 					last_styled = pos - 1
 					
@@ -464,17 +468,23 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 					state = STATE_EMBEDDED_MULTISTRING
 					self.SetStyling(pos - last_styled - 1, self.DM_STYLE_MULTISTRING)
 					last_styled = pos - 1
+					embed_count = 1
 
 			elif state == STATE_EMBEDDED_STRING:
-				if (current_char == ']' or current_char == '\n') and (not escaped):
+				if (current_char == '[') and (not escaped): embed_count += 1
+				if (current_char == ']') and (not escaped): embed_count -= 1
+				if embed_count == 0 or (current_char == '\n' and (not escaped)):
 					if current_char == '\n': state = STATE_DEFAULT
 					else: state = STATE_STRING
 					self.SetStyling(pos - last_styled, self.DM_STYLE_EMBEDDED_STRING)
 					last_styled = pos
+					embed_count = 0
 				elif current_char == '\n' and escaped: self.SetLineState(self.LineFromPosition(pos), LINE_STATE_ESCAPED)
 
 			elif state == STATE_EMBEDDED_MULTISTRING:
-				if (current_char == ']' or current_char == '\n') and (not escaped):
+				if (current_char == '[') and (not escaped): embed_count += 1
+				if (current_char == ']') and (not escaped): embed_count -= 1
+				if embed_count == 0 or (current_char == '\n' and (not escaped)):
 					state = STATE_MULTISTRING
 					self.SetStyling(pos - last_styled, self.DM_STYLE_EMBEDDED_MULTISTRING)
 					last_styled = pos
