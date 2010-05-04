@@ -616,7 +616,7 @@ class DMIPanel(wx.ScrolledWindow):
 		dc.Clear()
 		
 		# Get box, mapping current view to rect visible of pil image
-		#scrollx, scrolly = self.GetScroll()
+		scrollx, scrolly = self.GetScroll()
 		box = self.GetBox()
 		
 		if self.bufferdirty:
@@ -636,14 +636,14 @@ class DMIPanel(wx.ScrolledWindow):
 			
 			self.last_box = box
 		
-		blitbox = self.GetBox(False)
-		left, top, width, height = blitbox
+		#blitbox = self.GetBox(False)
+		#left, top, width, height = blitbox
 		
-		dcmem = wx.MemoryDC(self.zoom_buffer)
+		#dcmem = wx.MemoryDC(self.zoom_buffer)
 		
-		dc.Blit(left, top, width, height, dcmem, 0, 0, rop=wx.COPY, useMask=False)
+		#dc.Blit(left, top, width, height, dcmem, 0, 0, rop=wx.COPY, useMask=False)
 
-#		dc.DrawBitmap(self.zoom_buffer, scrollx, scrolly)
+		dc.DrawBitmap(self.zoom_buffer, scrollx, scrolly)
 
 	def OnEraseBackground(self, event):
 		# Eliminate some flicker
