@@ -547,6 +547,10 @@ class DMIPanel(wx.ScrolledWindow):
 		like pen, line, and others, either draw on the image, or prepare to draw,
 		showing the result of letting go of the mouse button at this point.
 		"""
+		
+		# Get focus so that mousewheel events fire on win32
+		self.SetFocusIgnoringChildren()
+		
 		if event.Dragging() :
 			if event.LeftIsDown():
 				# Do things with dragging. Deal with tools.
@@ -611,6 +615,7 @@ class DMIPanel(wx.ScrolledWindow):
 	def OnPaint(self, event):
 		""" Called when the window is exposed. """
 		# Prepare DC for drawing
+		# TODO: Use BufferedPaintDC properly instead of like it is now
 		dc = wx.BufferedPaintDC(self)
 		self.DoPrepareDC(dc)
 		dc.Clear()
@@ -635,6 +640,8 @@ class DMIPanel(wx.ScrolledWindow):
 			self.zoom_buffer = ImgToWx(cropped.resize((cropped.size[0] * self.zoom_level, cropped.size[1] * self.zoom_level)))
 			
 			self.last_box = box
+		
+		# Current dc.Blit() is wrong somehow - crashes on win32
 		
 		#blitbox = self.GetBox(False)
 		#left, top, width, height = blitbox
