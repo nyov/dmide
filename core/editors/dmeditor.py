@@ -428,7 +428,7 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 
 			elif state == STATE_STRING:
 				if (current_char == '"' or current_char == '\n') and (not escaped):
-					if current_char == '\n': self.SetStyling(pos - last_styled, self.DM_STYLE_BADSTRING)
+					if current_char == '\n' and self.GetCurrentLine() != self.LineFromPosition(pos): self.SetStyling(pos - last_styled, self.DM_STYLE_BADSTRING)
 					else: self.SetStyling(pos - last_styled, self.DM_STYLE_STRING)
 					state = STATE_DEFAULT
 					last_styled = pos
