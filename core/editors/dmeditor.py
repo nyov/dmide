@@ -127,7 +127,7 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 		self.StyleSetSpec(wxStc.STC_STYLE_LINENUMBER,  'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(back = '#888888', size = 8))
 		self.StyleSetSpec(wxStc.STC_STYLE_CONTROLCHAR, 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle())
 		self.StyleSetSpec(wxStc.STC_STYLE_BRACELIGHT,  'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s,bold' % getstyle())
-		self.StyleSetSpec(wxStc.STC_STYLE_BRACEBAD,	'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s,bold' % getstyle())
+		self.StyleSetSpec(wxStc.STC_STYLE_BRACEBAD,	'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s,bold' % getstyle(fore = hex(255, 0, 0)))
 
 		self.StyleSetSpec(self.DM_STYLE_DEFAULT, 		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle() )
 		self.StyleSetSpec(self.DM_STYLE_COMMENT, 		 'fore:%(fore)s,back:%(back)s,face:%(face)s,size:%(size)s' % getstyle(hex(128, 128, 128)) )
