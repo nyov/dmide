@@ -7,6 +7,7 @@ Icons are arranged left-to-right, top-to-bottom.
 """
 
 import wx
+import sys
 from agw.ultimatelistctrl import SelectionStore
 
 
@@ -16,13 +17,13 @@ ITEM_STATE_SELECTED = 1
 
 
 class IconListCtrl(wx.PyScrolledWindow):
-	""" 
-	IconListCtrl
-	
 	"""
-	
+	IconListCtrl
+
+	"""
+
 	def __init__(self, *args, **kwargs):
-		wx.ScrolledWindow.__init__(self, *args, **kwargs)
+		wx.PyScrolledWindow.__init__(self, *args, **kwargs)
 
 		self._items = 0
 		self._selStore = SelectionStore()
@@ -37,6 +38,9 @@ class IconListCtrl(wx.PyScrolledWindow):
 
 		self._cols = 0
 		self._rows = 0
+
+		self._max_rows = sys.maxint
+		self._max_cols = sys.maxint
 
 		self._selected_index = -1
 
@@ -68,9 +72,9 @@ class IconListCtrl(wx.PyScrolledWindow):
 			boxwidth, boxheight = self._box_size[0] + self._spacing[0], self._box_size[1] + self._spacing[1]
 			hspace, vspace = self.GetClientSizeTuple()
 
-			cols = max(1, hspace / boxwidth)
-			rows = self._items / cols + 1
-
+			cols = min(self._max_cols, max(1, hspace / boxwidth))
+			rows = min(self._max_rows, self._items / cols + 1)
+			self.SetMinSize((cols * boxwidth, rows * boxheight))
 			self.SetVirtualSize((cols * boxwidth, rows * boxheight))
 
 			if cols != self._cols or rows != self._rows:
@@ -152,14 +156,14 @@ class IconListCtrl(wx.PyScrolledWindow):
 		boxwidth, boxheight = self._box_size
 
 		spacing_h = self._spacing[0]
-		spacing_v = self._spacing[1]        
+		spacing_v = self._spacing[1]
 
 		#TODO: move these calcs into Layout() or onsize
 		# they don't change unless the size of the drawing space changes
 		hspace, vspace = self.GetClientSizeTuple()
 
-		cols = max(1, hspace / (boxwidth + spacing_h))
-		rows = self._items / cols + 1
+		cols = min(self._max_cols, max(1, hspace / (boxwidth + spacing_h)))
+		rows = min(self._max_rows, self._items / cols + 1)
 
 		view_x = self.GetViewStart()[0] * self.GetScrollPixelsPerUnit()[0]
 		view_y = self.GetViewStart()[1] * self.GetScrollPixelsPerUnit()[1]
@@ -277,7 +281,7 @@ class IconListCtrl(wx.PyScrolledWindow):
 	def SetLabelFont(self, font=None):
 		"""
 		Sets the font for the icon labels.
-		
+
 		'font' takes a 'wx.Font' object
 		"""
 		if font is None:
@@ -351,4 +355,3 @@ class IconListItem:
 			dc.SetBrush(old_brush)
 
 		dc.DrawLabel(new_label, rect, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_BOTTOM)
-

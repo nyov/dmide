@@ -52,7 +52,7 @@ def WxToImg(img):
 
 """ Settings """
 dmide_art_quality = wx.IMAGE_QUALITY_HIGH
-dmide_menu_type = 'fancy'
+dmide_menu_type = 0#'fancy'
 dmide_menu_art_size = 16
 dmide_filetree_icon_size = 16
 dmide_objtree_icon_size = 16

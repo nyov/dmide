@@ -40,6 +40,7 @@ import thread
 import subprocess
 import PngImagePlugin
 import traceback
+import copy
 
 optipng = os.getcwd()
 
@@ -71,6 +72,28 @@ class Icon:
 		return 'State: "%s", dirs: %i, frames: %i, icons: %i,\n  delays: %s, loops: %i, rewind: %i' % (self.state, self.dirs, self.frames, len(flatten_array(self.icons)),
 																																			  self.delays, self.loops, self.rewind)
 
+	def copy(self, deep=True):
+		icon = Icon()
+		icon.state = self.state
+		icon.dirs = self.dirs
+		icon.frames = self.frames
+
+		if not deep:
+			# original and copied icon will share delay list and icon image objects
+			# a change to one will change both
+			icon.icons = self.icons
+			icon.delays = self.delays
+		else:
+			icon.icons = [[]] * self.dirs
+			for dir in xrange(self.dirs):
+				icon.icons[dir] = [x.copy() for x in self.icons[dir]]
+			icon.delays = copy.copy(self.delays)
+
+		icon.loops = self.loops
+		icon.rewind = self.rewind
+		icon.movement = self.movement
+
+		return icon
 
 def DMIREAD(path):
 	# Takes a path to a dmi file and splits it up into multiple Icon objects

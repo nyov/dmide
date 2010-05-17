@@ -60,7 +60,7 @@ class DMIDE_DMIEditor(wx.Panel):
 		self.viewer.Hide()
 		self.GetSizer().Show(self.editor)
 		self.editor.Show()
-		self.editor.Open(img.icons[0][0])
+		self.editor.Open(img)
 		self.Layout()
 
 
@@ -80,10 +80,10 @@ class DMIDE_DMIEditor(wx.Panel):
 ##	def __init__(self, *args, **kwargs):
 ##		"""Create the standalone frame."""
 ##		wx.Frame.__init__(self, *args, **kwargs)
-##		
+##
 ##		#Build the menu bar
 ##		menubar = wx.MenuBar()
-##		
+##
 ##		filemenu = wx.Menu()
 ##
 ##		item = filemenu.Append(wx.ID_NEW, "&New", "Create a new DMI")
@@ -94,46 +94,46 @@ class DMIDE_DMIEditor(wx.Panel):
 ##		self.Bind(wx.EVT_MENU, self.OnClose, item)
 ##
 ##		filemenu.AppendSeparator()
-##		
+##
 ##		item = filemenu.Append(wx.ID_EXIT, text="&Quit")
 ##		self.Bind(wx.EVT_MENU, self.OnQuit, item)
-##		
+##
 ##		menubar.Append(filemenu, "&File")
 ##		self.SetMenuBar(menubar)
-##		
+##
 ##		#self.Panel = DemoPanel(self)
-##		
+##
 ##		self.iconviewer = DMIDE_IconViewer(self)
 ####		sizer = wx.BoxSizer(wx.VERTICAL)
 ####		sizer.Add(self.Panel, 1, wx.EXPAND | wx.ALL)
 ####		self.SetSizer(sizer)
 ####		self.Layout()
-##		
+##
 ##		#self.Fit()
-##		
+##
 ##	def OnQuit(self, event=None):
 ##		"""Exit application."""
 ##		self.Close()
-##		
+##
 ##	def OnNew(self, event=None):
 ##		"""Exit application."""
 ##		self.Close()
-##		
+##
 ##	def OnOpen(self, event=None):
 ##		"""Open a DMI File."""
-##		
+##
 ##		dlg = wx.FileDialog(self, 'Open File', os.getcwd(), '', imagefiles_wildcard, wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST)
 ##		if dlg.ShowModal() == wx.ID_OK:
 ##			path = dlg.GetPath()
 ##			dlg.Destroy()
 ##			self.Open(path)
-##		
+##
 ##	def Open(self, image):
 ##		self.dmi_path = image
 ##		self.iconviewer.Open(image)
 ##		#self.GetSizer().Fit(self)
 ##		#self.Layout()
-##		
+##
 ##	def OnClose(self, event=None):
 ##		"""Exit application."""
 ##		self.Close()
@@ -147,10 +147,10 @@ class DMIDE_DMIEditor(wx.Panel):
 ##if __name__ == '__main__':
 ##
 ##	import sys, os
-##	if hasattr(sys, 'frozen'): 
+##	if hasattr(sys, 'frozen'):
 ##		mypath = os.path.split(sys.executable)[0]
-##		
-##	else: 
+##
+##	else:
 ##		mypath = os.path.split(os.path.abspath(sys.argv[0]))[0]
 ##
 ##	mypath = os.path.join(mypath, "..")
@@ -168,7 +168,7 @@ class DMIDE_DMIEditor(wx.Panel):
 ##
 ##
 ##if __name__ == '__main__':
-##	
+##
 ##	# TODO: Come up with a standard/nice-ish way of getting a full shiny interface here
 ##
 ##	# if possible, optimize with psyco
@@ -176,10 +176,10 @@ class DMIDE_DMIEditor(wx.Panel):
 ##		import psyco
 ##		psyco.full()
 ##	except ImportError:
-##		pass	
-##	
+##		pass
+##
 ##	app = wx.App(redirect = 0) #stdio will stay at the console
 ##	frame = StandaloneDMIEditor(None, title="DMIDE Icon Editor (standalone)")
 ##	frame.Show()
 ##	app.MainLoop()
-##	
+##
