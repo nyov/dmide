@@ -52,7 +52,7 @@ def WxToImg(img):
 
 """ Settings """
 dmide_art_quality = wx.IMAGE_QUALITY_HIGH
-dmide_menu_type = 0#'fancy'
+dmide_menu_type = 'fancy'
 dmide_menu_art_size = 16
 dmide_filetree_icon_size = 16
 dmide_objtree_icon_size = 16
@@ -61,6 +61,7 @@ dmide_editor_tab_art = wxAui.AuiDefaultTabArt #AuiDefaultTabArt AuiSimpleTabArt 
 dmide_editor_style = wxAui.AUI_NB_SMART_TABS|wxAui.AUI_NB_SCROLL_BUTTONS|\
                      wxAui.AUI_NB_WINDOWLIST_BUTTON|wxAui.AUI_NB_TAB_SPLIT|\
                      wxAui.AUI_NB_TAB_MOVE|wxAui.AUI_NB_CLOSE_ON_ACTIVE_TAB|wxAui.AUI_NB_USE_IMAGES_DROPDOWN|wx.NO_BORDER
+dmide_tree_dmi_tree = True
 
 
 """ Art """

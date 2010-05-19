@@ -335,9 +335,10 @@ class FrameEditor(wx.ScrolledWindow):
 		""" Update PIL graphics buffer """
 		if not self.bufferdirty: return
 
-		self.pil_buffer = self.pil_background.copy()
-		self.pil_buffer.paste(self.image, mask=self.image)
-		self.pil_buffer.paste(self.fx_image, mask=self.fx_image)
+		#self.pil_buffer = self.pil_background.copy()
+		#self.pil_buffer.paste(self.image, mask=self.image)
+		#self.pil_buffer.paste(self.fx_image, mask=self.fx_image)
+		self.pil_buffer = self.image.copy()
 		self.bufferdirty = False
 		self.viewdirty = True
 
@@ -394,7 +395,7 @@ class FrameEditor2(wx.Panel):
 
 class FrameViewer(wxIconList.IconListCtrl):
 	def __init__(self, *args, **kwargs):
-		self.directions = 4
+		self.directions = 8
 		self.frames = 2
 
 		wxIconList.IconListCtrl.__init__(self, *args, **kwargs)
@@ -402,14 +403,17 @@ class FrameViewer(wxIconList.IconListCtrl):
 	def Open(self, icon):
 		self.icon = icon
 		self._max_cols = icon.dirs
+		self.directions = icon.dirs
+		self.frames = icon.frames
 		self.SetItemCount(icon.dirs * icon.frames)
+		self.SetIconSize(icon.icons[0][0].GetWidth(), icon.icons[0][0].GetHeight())
 
 	def OnGetItem(self, index):
 		col = index
 		row = 0
 
-		if col >= 4:
-			col -= 4
-			row = 1
+		while col >= self.icon.dirs:
+			col -= self.icon.dirs
+			row +=1
 
 		return ('%s %s' % (dir_text[col], row), self.icon.icons[col][row])

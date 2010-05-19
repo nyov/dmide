@@ -8,6 +8,10 @@ ID_FILETREE_RENAME = wx.NewId()
 ID_FILETREE_DELETE = wx.NewId()
 
 
+class DMFile(str):
+	pass
+
+
 class DMIDE_FileTree(wx.TreeCtrl):
 	""" Handles displaying the files in a project. """
 
@@ -37,9 +41,9 @@ class DMIDE_FileTree(wx.TreeCtrl):
 		item = event.GetItem()
 		path, name = self.getItem(item)
 
-		wx.FindWindowById(ID_EDITOR).Open(os.path.join(path, name))
-
-		event.Skip()
+		if not wx.FindWindowById(ID_EDITOR).Open(os.path.join(path, name)) and \
+			not wx.FindWindowById(ID_EDITOR).Open(os.path.join(path)):
+			event.Skip()
 
 	def OnRightDown(self, event):
 		""" Display a menu when right clicked. """
@@ -135,6 +139,8 @@ class DMIDE_FileTree(wx.TreeCtrl):
 			files = []
 			for item in os.listdir(dir):
 				path = os.path.join(dir, item)
+				item = DMFile(item)
+				item._dmide_path = path
 				if os.path.isdir(path):
 					if item[0] == '.':
 						continue
@@ -203,6 +209,31 @@ class DMIDE_FileTree(wx.TreeCtrl):
 					self.SetItemImage(new_root, images['dir-closed'], wx.TreeItemIcon_Normal)
 					self.SetItemImage(new_root, images['dir-open'], wx.TreeItemIcon_Expanded)
 					populate(file[file.keys()[0]], new_root, images)
+
+				elif dmide_tree_dmi_tree and os.path.splitext(file)[-1] == '.dmi':
+					new_root = self.AppendItem(root, file)
+
+					dmi_image = 'default'
+					if '.dmi' in images:
+						dmi_image = '.dmi'
+					dmi_image = images[dmi_image]
+
+					self.SetItemImage(new_root, dmi_image, wx.TreeItemIcon_Normal)
+					self.SetItemImage(new_root, dmi_image, wx.TreeItemIcon_Expanded)
+
+					icon_info = dmi.DMIINFOREAD(file._dmide_path)
+					if not icon_info:
+						continue
+					states, (width, height) = icon_info
+
+					for info in states:
+						try:
+							child = self.AppendItem(new_root, info[0])
+							self.SetItemImage(child, dmi_image, wx.TreeItemIcon_Normal)
+						except:
+							traceback.print_exc()
+							continue
+
 				else:
 					child = self.AppendItem(root, file)
 

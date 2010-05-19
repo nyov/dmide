@@ -95,6 +95,99 @@ class Icon:
 
 		return icon
 
+
+def DMIINFOREAD(path):
+	# Return DMI metadata without cropping images
+
+	try:
+		try:
+			states, (width, height) = DMIINFO(Image.open(path).info['Description'])
+			return states, (width, height)
+
+		except IOError:
+			return None
+
+		except KeyError:
+			dmif = open(path, 'rb')
+			if dmif.read(4).endswith('DMI'):
+				print >> sys.stderr, '[DMIREAD] Failed to load icon `%s`\n\Unable to load DMI v3 icons.\n' % path
+			return None
+
+	except IOError:
+		print >> sys.stderr, '[DMIREAD] File `%s` non existant.' % path
+		print >> sys.stderr, traceback.format_exc()
+
+	except Exception:
+		print >> sys.stderr, '[DMIREAD]', traceback.format_exc()
+
+	return None
+
+
+def DMIINFO(info):
+	# Parses DMI information.
+
+	icon_states = [] #[(name, dirs, frames), ]
+	width = -1
+	height = -1
+
+	if len(info) < 11: return -1
+	if info[0:11] != '# BEGIN DMI': return -2
+
+	groups = re.findall('(.+) = (.+)', info)
+	if not groups or not len(groups): return -3
+
+	def split_delays(delay):
+		# delays are saved as 1,2,1,1 - we want to split this into a list
+		if not ',' in delay and str(int(delay)) == delay:
+			return delay
+
+		return [int(x) for x in delay.split(',')]
+
+	for x in xrange(len(groups)):
+		index, value = groups[x]
+		if index == 'version':
+			if value != '4.0':
+				return -4
+
+			if groups[x + 1][0] == '\twidth':
+				x += 1
+				width = int(groups[x][1])
+
+			if groups[x + 1][0] == '\theight':
+				x += 1
+				height = int(groups[x][1])
+
+		if index == 'state':
+			try:
+				state = unicode(value, 'utf-8')
+			except:
+				value
+			x += 1
+			dirs = int(groups[x][1])
+			x += 1
+			frames = int(groups[x][1])
+			delays = [1]
+			if len(groups) > x + 1 and groups[x + 1][0] == '\tdelay':
+				x += 1
+				delays = split_delays(groups[x][1])
+			loops = 0
+			if len(groups) > x + 1 and groups[x + 1][0] == '\tloop':
+				x += 1
+				loops = int(groups[x][1])
+			rewind = 0
+			if len(groups) > x + 1 and groups[x + 1][0] == '\trewind':
+				x += 1
+				rewind = int(groups[x][1])
+			movement = 0
+			if len(groups) > x + 1 and groups[x + 1][0] == '\tmovement':
+				x += 1
+				movement = int(groups[x][1])
+
+			icon_states.append( (state, dirs, frames, delays, rewind, loops, movement) )
+
+	return icon_states, (width, height)
+
+
 def DMIREAD(path):
 	# Takes a path to a dmi file and splits it up into multiple Icon objects
 
@@ -110,67 +203,6 @@ def DMIREAD(path):
 			dmis.append(dmi.crop((x, 0, x + width, height)))
 
 		return dmis
-
-	def DMIINFO(info):
-		# Parses DMI information.
-
-		icon_states = [] #[(name, dirs, frames), ]
-		width = -1
-		height = -1
-
-		if len(info) < 11: return -1
-		if info[0:11] != '# BEGIN DMI': return -2
-
-		groups = re.findall('(.+) = (.+)', info)
-		if not groups or not len(groups): return -3
-
-		def split_delays(delay):
-			# delays are saved as 1,2,1,1 - we want to split this into a list
-			if not ',' in delay and str(int(delay)) == delay:
-				return delay
-
-			return [int(x) for x in delay.split(',')]
-
-		for x in xrange(len(groups)):
-			index, value = groups[x]
-			if index == 'version':
-				if value != '4.0':
-					return -4
-
-				if groups[x + 1][0] == '\twidth':
-					x += 1
-					width = int(groups[x][1])
-
-				if groups[x + 1][0] == '\theight':
-					x += 1
-					height = int(groups[x][1])
-
-			if index == 'state':
-				state = value
-				x += 1
-				dirs = int(groups[x][1])
-				x += 1
-				frames = int(groups[x][1])
-				delays = [1]
-				if len(groups) > x + 1 and groups[x + 1][0] == '\tdelay':
-					x += 1
-					delays = split_delays(groups[x][1])
-				loops = 0
-				if len(groups) > x + 1 and groups[x + 1][0] == '\tloop':
-					x += 1
-					loops = int(groups[x][1])
-				rewind = 0
-				if len(groups) > x + 1 and groups[x + 1][0] == '\trewind':
-					x += 1
-					rewind = int(groups[x][1])
-				movement = 0
-				if len(groups) > x + 1 and groups[x + 1][0] == '\tmovement':
-					x += 1
-					movement = int(groups[x][1])
-
-				icon_states.append( (state, dirs, frames, delays, rewind, loops, movement) )
-
-		return icon_states, (width, height)
 
 	try:
 		print 'DMIREAD:', os.path.split(path)[-1]

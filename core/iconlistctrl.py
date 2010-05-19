@@ -67,6 +67,11 @@ class IconListCtrl(wx.PyScrolledWindow):
 
 		wx.CallAfter(refresh)
 
+	def BestBoxSize(self, size):
+		if isinstance(size, tuple):
+			self._icon_size = size
+			self._spacing = (min(8, 8 * (32 / size[0])), min(8, 8 * (32 / size[1])))
+
 	def Layout(self):
 		if self._items > 0:
 			boxwidth, boxheight = self._box_size[0] + self._spacing[0], self._box_size[1] + self._spacing[1]
