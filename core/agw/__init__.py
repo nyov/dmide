@@ -107,11 +107,11 @@ You can contact me at:
 andrea.gavana@gmail.com
 gavana@kpo.kz
 
-AGW version: 0.7.0
+AGW version: 0.8.0
 
-Last updated: 25 Mar 2010, 22.00 GMT
+Last updated: 28 Apr 2010, 14.00 GMT
 
 """
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 __author__ = "Andrea Gavana <andrea.gavana@gmail.com>"

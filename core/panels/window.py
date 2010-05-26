@@ -30,7 +30,7 @@ class DMIDE_Window(wx.Frame):
 	def initAll(self):
 		""" Initialize all the UI widgets and display them. """
 
-		self.SetDoubleBuffered(True)
+		#self.SetDoubleBuffered(True)
 
 		self.aui_manager = DMIDE_AuiManager()#wxAui.AuiManager()
 		self.aui_manager.SetManagedWindow(self)
