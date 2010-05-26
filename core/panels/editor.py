@@ -17,9 +17,7 @@ class DMIDE_Editor(wxAui.AuiNotebook):
 
 		self.initBindings()
 		self.SetArtProvider(dmide_editor_tab_art())
-		self.hidden_codeeditor = DMIDE_DMEditor(self, "")
-		self.hidden_codeeditor.Hide()
-		self.SetWindowStyleFlag(self._flags | wx.NO_BORDER)
+		self.SetAGWWindowStyleFlag(dmide_editor_style) # redundant but works
 
 	def initBindings(self):
 		""" Assign event handlers. """
@@ -75,10 +73,10 @@ class DMIDE_Editor(wxAui.AuiNotebook):
 
 				elif ext in INTERFACE_FILE_TYPES:
 					page = DMIDE_DMEditor(self, "dmf")
-				
+
 				elif ext in DM_FILE_TYPES:
 					page = DMIDE_DMEditor(self, "dm")
-					
+
 				else:
 					page = DMIDE_DMEditor(self, "")
 
@@ -381,7 +379,7 @@ class DMIDE_Editor(wxAui.AuiNotebook):
 			if all:
 				if context == 'Selection':
 					page.SetSelection(old_select[0], old_select[1] + (len(replace) - len(find)))
-	
+
 				self.Replace(data, page, all)
 
 		return pos
@@ -597,7 +595,7 @@ class NewFileDialog(wx.Dialog):
 
 			def OnMeasureItem(self, n):
 				""" Return the measurements for each item. """
-	
+
 				return max(self.GetTextExtent(self.types[n])[1] + 5, 32 + 5)
 
 		if not dme:

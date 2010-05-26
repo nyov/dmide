@@ -61,7 +61,7 @@ dmide_editor_tab_art = wxAui.AuiDefaultTabArt #AuiDefaultTabArt AuiSimpleTabArt 
 dmide_editor_style = wxAui.AUI_NB_SMART_TABS|wxAui.AUI_NB_SCROLL_BUTTONS|\
                      wxAui.AUI_NB_WINDOWLIST_BUTTON|wxAui.AUI_NB_TAB_SPLIT|\
                      wxAui.AUI_NB_TAB_MOVE|wxAui.AUI_NB_CLOSE_ON_ACTIVE_TAB|wxAui.AUI_NB_USE_IMAGES_DROPDOWN|wx.NO_BORDER
-dmide_tree_dmi_tree = True
+dmide_tree_dmi_tree = False
 
 
 """ Art """
