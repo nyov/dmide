@@ -63,6 +63,8 @@ class DMIDE_BuildInfo(wxGizmos.TreeListCtrl):
 		#p = subprocess.Popen([dm_path, '-v'], stdout=subprocess.PIPE) --grab version
 
 		def compile_after(self):
+			busy = wx.BusyInfo('Compiling...', wx.FindWindowById(ID_WINDOW))
+
 			self.SetItemText(self.AppendItem(self.root, ' '), 'Compiling...', 1)
 			self.error_parent = None
 			self.errors = 0
@@ -83,6 +85,8 @@ class DMIDE_BuildInfo(wxGizmos.TreeListCtrl):
 				self.SetItemText(self.error_parent, '%i Errors' % self.errors, 1)
 			if self.warning_parent:
 				self.SetItemText(self.warning_parent, '%i Warnings' % self.warnings, 1)
+
+			del busy
 
 			self.get_object_tree()
 
