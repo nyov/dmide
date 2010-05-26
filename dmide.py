@@ -8,8 +8,8 @@ if __name__ == '__main__':
 
 		# if possible, optimize with psyco
 		try:
-			import psyco
-			psyco.full()
+			#import psyco
+			#psyco.full()
 			print 'Optimizing with psyco'
 		except ImportError:
 			pass

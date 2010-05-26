@@ -79,6 +79,17 @@ class IconViewer(wxIconList.IconListCtrl):
 		self.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
 		self.Bind(wx.EVT_LEFT_DCLICK, self.OnDoubleClick)
 
+	def ClearBackground(self, dc):
+		old_brush = dc.GetBrush()
+
+		brush = wx.Brush(wx.Color(0, 0, 0), wx.SOLID)
+		brush.SetStipple(wx.Bitmap('stipple.png'))
+		dc.SetBrush(brush)
+		dc.SetPen(wx.TRANSPARENT_PEN)
+		w,h = self.GetVirtualSize()
+		dc.DrawRectangle(0, 0, w, h)
+
+
 	def update(self):
 
 		# TODO: Do IconViewer update() more efficiently

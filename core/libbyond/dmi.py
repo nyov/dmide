@@ -34,13 +34,10 @@ import re
 import os
 import sys
 sys.path.insert(0, os.path.split(__file__)[0])
-import math
-import zlib
-import thread
-import subprocess
 import PngImagePlugin
 import traceback
 import copy
+
 
 optipng = os.getcwd()
 
@@ -388,6 +385,7 @@ def DMIWRITE(icons, path=None, crush=None):
 			os.chdir(curdir)
 
 		if crush:
+			import thread
 			thread.start_new_thread(optimize_optipng, (path,))
 
 	else:

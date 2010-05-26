@@ -8,29 +8,21 @@ Icons are arranged left-to-right, top-to-bottom.
 
 import wx
 import sys
-from agw.ultimatelistctrl import SelectionStore
-
-
-
-ITEM_STATE_DEFAULT = 0
-ITEM_STATE_SELECTED = 1
 
 
 class IconListCtrl(wx.PyScrolledWindow):
 	"""
 	IconListCtrl
-
 	"""
 
 	def __init__(self, *args, **kwargs):
 		wx.PyScrolledWindow.__init__(self, *args, **kwargs)
 
 		self._items = 0
-		self._selStore = SelectionStore()
+		self._items_cache = []
 		self._buffer = wx.EmptyBitmap(1, 1)
 
 		self._box_size = (32, 32) # total size including label spacing of an item this value is soon replaced anyways
-		# label_spacing needs to be based on font and size of leftoficon (M)
 		self._label_spacing = (32,20) # extra spacing added below and to the left of the icon, that the label takes up
 		self._spacing = (8, 8) # totally empty spacing between 'IconListItem's
 		self._icon_size = (32, 32) # size of the actual bitmap that will be drawn
@@ -42,7 +34,7 @@ class IconListCtrl(wx.PyScrolledWindow):
 		self._max_rows = sys.maxint
 		self._max_cols = sys.maxint
 
-		self._selected_index = -1
+		self._selected = []
 
 		self.SetScrollRate(8, 8)
 
@@ -57,6 +49,7 @@ class IconListCtrl(wx.PyScrolledWindow):
 		self.Bind(wx.EVT_MOUSE_EVENTS, self.OnMouse)
 		self.Bind(wx.EVT_IDLE, self.OnIdle)
 		self.Bind(wx.EVT_SCROLLWIN, self.OnScroll)
+		self.Bind(wx.EVT_TIMER, self.OnTimer)
 
 		wx.CallAfter(self.Bind, wx.EVT_SIZE, self.OnSize)
 
@@ -66,11 +59,6 @@ class IconListCtrl(wx.PyScrolledWindow):
 			self.Refresh(False)
 
 		wx.CallAfter(refresh)
-
-	def BestBoxSize(self, size):
-		if isinstance(size, tuple):
-			self._icon_size = size
-			self._spacing = (min(8, 8 * (32 / size[0])), min(8, 8 * (32 / size[1])))
 
 	def Layout(self):
 		if self._items > 0:
@@ -143,6 +131,10 @@ class IconListCtrl(wx.PyScrolledWindow):
 			#TODO: Calculate the appropriate wx.LIST flag to be returned
 			return index, wx.LIST_HITTEST_ONITEM
 
+	def ClearBackground(self, dc):
+		dc.SetBrush(wx.WHITE_BRUSH)
+		dc.Clear()
+
 	def Draw(self):
 		# TODO: Change draw to be more efficient and not re-draw things that aren't visible
 		self._buffer = wx.EmptyBitmap(*self.GetVirtualSize())
@@ -150,8 +142,7 @@ class IconListCtrl(wx.PyScrolledWindow):
 		dc = wx.BufferedDC(None, self._buffer)
 		gcdc = wx.GCDC(dc)
 
-		dc.SetBrush(wx.WHITE_BRUSH)
-		dc.Clear()
+		self.ClearBackground(dc)
 
 		gcdc.SetFont(self._font)
 
@@ -187,15 +178,23 @@ class IconListCtrl(wx.PyScrolledWindow):
 				x = col * (boxwidth + spacing_h) + (spacing_h / 2)
 				y = row * (boxheight + spacing_v) + (spacing_v / 2)
 
-				item = self.OnGetItem(item_count-1)
+				item = None
 
-				if isinstance(item, tuple) or isinstance(item, list):
-					item = IconListItem(*item)
+				if len(self._items_cache) < item_count:
+					item = self.OnGetItem(item_count-1)
 
-				if not isinstance(item, IconListItem):
-					raise AssertionError, 'Item passed from OnGetItem is not a tuple or IconListItem.'
+					if isinstance(item, tuple) or isinstance(item, list):
+						item = IconListItem(*item)
 
-				item.Draw(gcdc, (x, y, boxwidth, boxheight), self._selected_index == item_count-1)
+					if not isinstance(item, IconListItem):
+						raise AssertionError, 'Item passed from OnGetItem is not a tuple or IconListItem.'
+
+					self._items_cache.append(item)
+
+				else:
+					item = self._items_cache[item_count-1]
+
+				item.Draw(gcdc, (x, y, boxwidth, boxheight), (item_count-1 in self._selected))
 
 	def OnPaint(self, event):
 		temp_buffer = wx.EmptyBitmap(*self.GetClientSize())
@@ -232,6 +231,7 @@ class IconListCtrl(wx.PyScrolledWindow):
 
 		if self.Layout():
 			self.dirty = True
+			# force an idle event
 			idle_event = wx.IdleEvent()
 			idle_event.SetEventType(wx.EVT_IDLE.typeId)
 			wx.CallAfter(wx.PostEvent, self, idle_event)
@@ -255,17 +255,42 @@ class IconListCtrl(wx.PyScrolledWindow):
 			if self.HasCapture():
 				self.ReleaseMouse()
 
-			itemIndex, hitResult = self.HitTest(*event_pos)
+			if self._action_position == event_pos:
+				itemIndex, hitResult = self.HitTest(*event_pos)
+
+				self._selected = [itemIndex]
+				self.dirty = True
 
 			self._action_position = (-1, -1)
-			self._selected_index = itemIndex
-
-			self.dirty = True
-			#self.Draw()
-			#self.Refresh(False)
+			self.Refresh(False)
 
 		elif event.Dragging():
-			self.Refresh()
+			last_selected = self._selected[:]
+			self._selected = []
+			h_dir, v_dir = self._icon_size
+			if self._action_position[0] > event_pos[0]:
+				h_dir = -h_dir
+			if self._action_position[1] > event_pos[1]:
+				v_dir = -v_dir
+			for x in xrange(self._action_position[0], event_pos[0], h_dir):
+				for y in xrange(self._action_position[1], event_pos[1], v_dir):
+					itemIndex, hitResult = self.HitTest(x, y)
+					if itemIndex != -1:
+						self._selected.append(itemIndex)
+
+			if len(self._selected) and last_selected != self._selected:
+				self.dirty = True
+			else:
+				self.Refresh(False)
+
+		else:
+			itemIndex, hitResult = self.HitTest(*event_pos)
+
+			if itemIndex != -1:
+				self.timer = wx.Timer(self)
+				self.timer._dmide_pos = event_pos
+				self.timer._dmide_index = itemIndex
+				self.timer.Start(500)
 
 		event.Skip()
 
@@ -328,14 +353,28 @@ class IconListCtrl(wx.PyScrolledWindow):
 			self.Draw()
 			self.Refresh(False)
 
+		event.Skip()
+
+	def OnTimer(self, event):
+		timer = event.GetEventObject()
+		timer.Stop()
+
+		pos = self.ScreenToClient(wx.GetMousePosition())
+
+		itemIndex, hitResult = self.HitTest(*pos)
+		if itemIndex != -1 and itemIndex == timer._dmide_index:
+			self.ToolTip(itemIndex, pos)
+
+	def ToolTip(self, index, pos):
+		pass
+
 
 class IconListItem:
-	def __init__(self, label = '', image = None):
+	def __init__(self, label = '', image = None, selected = False):
 		self._label = label
 		self._image = image
 
-	def Draw(self, dc, rect, highlight=False):
-
+	def Draw(self, dc, rect, highlight=None):
 		if self._image:
 			dc.DrawBitmap(self._image, rect[0] + (rect[2] - self._image.Width) / 2, rect[1], True)
 
