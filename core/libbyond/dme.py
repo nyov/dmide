@@ -44,6 +44,8 @@ class DME:
     def get_file_path(self, name, case=False):
         path = None
 
+        name = os.path.normpath(name)
+
         if not case:
             name = name.lower()
 
