@@ -21,47 +21,44 @@ Note: This class could also be done as a panel.
 It would have its own child IconListCtrl, but would (probably?) need a few callbacks.
 
 For an IconViewer that only shows a list of states, this works well, but
-any future designs that move away from how DreamMaker displys icons could mean
+any future designs that move away from how DreamMaker displys icons could mean 
 that this code will need to be changed a lot.
 """
 class IconViewer(wxIconList.IconListCtrl):
 	""" Displays the contents of a DMI file for editing. """
 	def __init__(self, root, *args, **kwargs):
 		wxIconList.IconListCtrl.__init__(self, root, *args, **kwargs)
-
+		
 		# use Crashed's IconList widget to display icons
 		#self.iconlist = wxIconList.IconListCtrl(self)
-
+		
 		#self.SetItemCount(100)
-
+		
 		#self.iconlist = MyIconListCtrl(self)
-
-		# Layout maybe not necessary, but not hurting anything?
-		#self.Layout()
-
+		
 		self.initAll()
 		self.initBinds()
-
+		
 		#self.modified_callback = root.TitlePage
-
-
-
+		
+		
+	
 	def initAll(self):
 		# Is last_pos really needed at all?
 		#self.last_pos = -1
-
+		
 		# TODO: Make these comments better
 		# TODO: Maybe give an 'image' attribute to each icon rather than an extra list?
 		# Replace this  with DMIIconState objects?
 		# Is the seperate list necessary?
 		self.icons = [] # The icon_states from the DMI File
 		self.images = [] # The wxBitmap (immediately dispalyable) version of icons
-
+		
 ##		#image_list contains the graphical rep. of the states that go in the iconlist
 ##		self.image_list = None
-
+		
 		self.select_callback = self.GetParent()
-
+		
 		self.undo_buffer = None
 		self.redo_buffer = None
 		self.copy_buffer = None
@@ -69,16 +66,44 @@ class IconViewer(wxIconList.IconListCtrl):
 		self.modified = False
 
 		self.modified_callback = None
-
+	
 	def initBinds(self):
 		##self.Bind(wx.EVT_SIZE, self.OnSize)
-
+		
 		#self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnIconSelect)
 		#self.Bind(wx.EVT_LIST_END_LABEL_EDIT, self.OnIconStateEdit)
-
+		
 		self.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
 		self.Bind(wx.EVT_LEFT_DCLICK, self.OnDoubleClick)
+		
+	def update(self):
+		
+		# TODO: Do IconViewer update() more efficiently
+		# 		no need to re-update the whole set of icons if only 1 changed
+		self.images = []
+		if not len(self.icons):
+			self.SetItemCount(len(self.icons))
+			return
+	
+		#TODO: Store the width and height variables
+		width, height = self.icons[0].icons[0][0].size
+		
+		for icon in self.icons:
+			img = ImgToWx(icon.icons[0][0])
+			self.images.append(img)
 
+		# TODO: Make this virtual and pythonic somehow
+		self.SetIconSize(width, height)
+
+		self.SetItemCount(len(self.icons))
+			
+		self.dirty = True
+		# Window needs updating, so update it
+		#	# Already done by SetItemCount()
+##		self.Layout()
+##		self.Draw()
+##		self.Refresh(False)
+		
 	def ClearBackground(self, dc):
 		old_brush = dc.GetBrush()
 
@@ -88,52 +113,24 @@ class IconViewer(wxIconList.IconListCtrl):
 		dc.SetPen(wx.TRANSPARENT_PEN)
 		w,h = self.GetVirtualSize()
 		dc.DrawRectangle(0, 0, w, h)
-
-
-	def update(self):
-
-		# TODO: Do IconViewer update() more efficiently
-		# 		no need to re-update the whole set of icons if only 1 changed
-		self.images = []
-		if not len(self.icons):
-			self.SetItemCount(len(self.icons))
-			return
-
-		#TODO: Store the width and height variables
-		width, height = self.icons[0].icons[0][0].size
-
-		for icon in self.icons:
-			img = ImgToWx(icon.icons[0][0])
-			self.images.append(img)
-
-		self.SetItemCount(len(self.icons))
-
-		# TODO: Make this virtual and pythonic somehow
-		self.SetIconSize(width, height)
-
-		# Window needs updating, so update it
-		self.Layout()
-		self.Draw()
-		self.Refresh(False)
-
-
+	
 	def Open(self, path):
 		# Is doing threading here safe?
 		thread.start_new_thread(self._open, (path,))
 		#self._open(path)
-
+		
 	def _open(self, path):
 		self.dmi_path = path
 		self.redo_buffer = None
 		self.undo_buffer = None
 		self.icons = cache.read(path, self) #dmi.DMIREAD(path)
-
+		
 		self.modified = False
 		if self.modified_callback:
 			self.modified_callback(self)
 		wx.CallAfter(self.update)
 		#self.update()
-
+	
 	def Save(self, path):
 		if not path:
 			if not self.dmi_path:
@@ -145,8 +142,8 @@ class IconViewer(wxIconList.IconListCtrl):
 		self.modified = False
 		if self.modified_callback:
 			self.modified_callback(self)
-
-
+	
+	
 	def New(self, path):
 		self.dmi_path = path
 		self.redo_buffer = None
@@ -156,7 +153,7 @@ class IconViewer(wxIconList.IconListCtrl):
 		if self.modified_callback:
 			self.modified_callback(self)
 		self.update()
-
+	
 	def Close(self):
 		# TODO: Look at all this stuff
 		if self.modified:
@@ -175,141 +172,149 @@ class IconViewer(wxIconList.IconListCtrl):
 			elif value == wx.ID_CANCEL:
 				return -1
 
+	def CopyIcons(self, icons):
+		copy = []
+		for icon in icons:
+			new_icon = dmi.Icon()
+			new_icon.state = icon.state
+			new_icon.dirs = icon.dirs
+			new_icon.frames = icon.frames
+			for x in icon.icons:
+				new_icon.icons.append([y.copy() for y in x])
+			new_icon.delays = icon.delays
+			new_icon.loops = icon.loops
+			new_icon.rewind = icon.rewind
+			copy.append(new_icon)
+		return copy
 
+	def register_undo(self):
+		self.modified = True
+		if self.modified_callback:
+			self.modified_callback(self)
+		self.undo_buffer = self.CopyIcons(self.icons)
+		self.redo_buffer = None
 
-		def CopyIcons(self, icons):
-			copy = []
-			for icon in icons:
-				new_icon = dmi.Icon()
-				new_icon.state = icon.state
-				new_icon.dirs = icon.dirs
-				new_icon.frames = icon.frames
-				for x in icon.icons:
-					new_icon.icons.append([y.copy() for y in x])
-				new_icon.delays = icon.delays
-				new_icon.loops = icon.loops
-				new_icon.rewind = icon.rewind
-				copy.append(new_icon)
-			return copy
+	def register_redo(self):
+		self.modified = True
+		if self.modified_callback:
+			self.modified_callback(self)
+		self.redo_buffer = self.CopyIcons(self.icons)
 
-		def register_undo(self):
-			self.modified = True
-			if self.modified_callback:
-				self.modified_callback(self)
-			self.undo_buffer = self.CopyIcons(self.icons)
-			self.redo_buffer = None
+	def Redo(self, event=None):
+		if self.redo_buffer != None:
+			buffer = self.redo_buffer
+			self.register_undo()
+			self.icons = buffer
+			self.update()
 
-		def register_redo(self):
-			self.modified = True
-			if self.modified_callback:
-				self.modified_callback(self)
-			self.redo_buffer = self.CopyIcons(self.icons)
+	def Undo(self, event=None):
+		if self.undo_buffer != None:
+			self.register_redo()
+			self.icons = self.undo_buffer
+			self.undo_buffer = None
+			self.update()
 
-		def Redo(self, event=None):
-			if self.redo_buffer != None:
-				buffer = self.redo_buffer
-				self.register_undo()
-				self.icons = buffer
-				self.update()
+	def Cut(self, event=None):
+		selection = self.GetIconSelection()
+		if len(selection):
+			self.register_undo()
+			self.Copy()
+			for icon in selection:
+				self.icons.remove(icon)
+			# Could also just clear the whole selection, but this code could
+			#  also be used when cutting only part of a selection
+			itemsSelected = list(self.GetSelection())
+			while len(itemsSelected):
+				x = itemsSelected.pop()
+				self._selStore.OnItemDelete(x)
+				self._selStore.SetItemCount(self._selStore._count-1)
+				
+			self.update()
 
-		def Undo(self, event=None):
-			if self.undo_buffer != None:
-				self.register_redo()
-				self.icons = self.undo_buffer
-				self.undo_buffer = None
-				self.update()
-
-		def Cut(self, event=None):
-			selection = self.GetIconSelection()
-			if len(selection):
-				self.register_undo()
-				self.Copy()
-				for icon in selection:
-					self.icons.remove(icon)
-				for x in self.GetSelection():
-					self.Select(x, 0)
-				self.update()
-
-		def Copy(self, event=None):
-			if self.icons:
-				self.copy_buffer = self.CopyIcons(self.GetIconSelection())
-				try:
-					clip_img = self.copy_buffer[0].icons[0][0]
-				except:
-					return
-
-				clip_obj = wx.BitmapDataObject()
-				clip_obj.SetBitmap(ImgToWx(clip_img))
-				wx.TheClipboard.Open()
-				wx.TheClipboard.SetData(clip_obj)
-				wx.TheClipboard.Close()
-
-		def Paste(self, event=None):
-			if not self.dmi_path:
+	def Copy(self, event=None):
+		if self.icons:
+			self.copy_buffer = self.CopyIcons(self.GetIconSelection())
+			try:
+				clip_img = self.copy_buffer[0].icons[0][0]
+			except:
 				return
 
 			clip_obj = wx.BitmapDataObject()
+			clip_obj.SetBitmap(ImgToWx(clip_img))
 			wx.TheClipboard.Open()
-			success = wx.TheClipboard.GetData(clip_obj)
+			wx.TheClipboard.SetData(clip_obj)
 			wx.TheClipboard.Close()
 
-			def paste_buffer():
-				if not self.copy_buffer:
-					return
+	def Paste(self, event=None):
+		if not self.dmi_path:
+			return
 
-				self.register_undo()
-				for icon in self.copy_buffer:
-					self.icons.append(icon)
-				self.update()
+		clip_obj = wx.BitmapDataObject()
+		wx.TheClipboard.Open()
+		success = wx.TheClipboard.GetData(clip_obj)
+		wx.TheClipboard.Close()
 
-			def paste_clip(img):
-				self.register_undo()
-				new_icon = dmi.Icon()
-				new_icon.icons = [[img]]
-				self.icons.append(new_icon)
-				self.update()
+		def paste_buffer():
+			if not self.copy_buffer:
+				return
 
-			if success:
-				clip_img = clip_obj.GetBitmap()
-				img = WxToImg(clip_img)
+			self.register_undo()
+			for icon in self.copy_buffer:
+				self.icons.append(icon)
+			self.update()
 
-				if self.copy_buffer:
-					test = 0
-					try:
-						test = WxToImg(ImgToWx(self.copy_buffer[0].icons[0][0]))
-					except:
-						pass
+		def paste_clip(img):
+			self.register_undo()
+			new_icon = dmi.Icon()
+			new_icon.icons = [[img]]
+			self.icons.append(new_icon)
+			self.update()
 
-					if test:
-						if list(test.getdata()) == list(img.getdata()):
-							paste_buffer()
-						else:
-							paste_clip(img)
+		if success:
+			clip_img = clip_obj.GetBitmap()
+			img = WxToImg(clip_img)
+
+			if self.copy_buffer:
+				test = 0
+				try:
+					test = WxToImg(ImgToWx(self.copy_buffer[0].icons[0][0]))
+				except:
+					pass
+
+				if test:
+					if list(test.getdata()) == list(img.getdata()):
+						paste_buffer()
 					else:
 						paste_clip(img)
-
 				else:
 					paste_clip(img)
 
 			else:
-				paste_buffer()
+				paste_clip(img)
 
-		def Delete(self, event=None):
-			if not self.icons or not len(self.icons):
-				return
+		else:
+			paste_buffer()
 
-			self.register_undo()
-			icons = [self.icons[index] for index in self.GetSelection()]
+	def Delete(self, event=None):
+		if not self.icons or not len(self.icons):
+			return
 
-			for x in self.GetSelection():
-				self.Select(x, 0)
+		self.register_undo()
+		icons = [self.icons[index] for index in self.GetSelection()]
 
-			for icon in icons:
-				self.icons.remove(icon)
+		# Could also just clear the whole selection, but this code could
+		#  also be used when deleting only part of a selection
+		itemsSelected = list(self.GetSelection())
+	
+		while len(itemsSelected):
+			x = itemsSelected.pop()
+			self._selStore.OnItemDelete(x)
+			self._selStore.SetItemCount(self._selStore._count-1)
 
-			self.update()
-			self.Refresh(True)
+		for icon in icons:
+			self.icons.remove(icon)
 
+		self.update()
 
 	def GetSelection(self):
 		return self._selStore._itemsSel
@@ -318,7 +323,7 @@ class IconViewer(wxIconList.IconListCtrl):
 ##
 ##	def GetSelection(self):
 ##		selected = []
-##
+##		
 ##		for o in xrange(self.GetSelectedItemCount()):
 ##			sel = -1
 ##			if len(selected): sel = selected[-1]
@@ -326,10 +331,9 @@ class IconViewer(wxIconList.IconListCtrl):
 ##			if x == -1:
 ##				break;
 ##			selected.append(x)
-##
+##		
 ##		return selected
 
-	# What is this procedure for?
 	def GetIconSelection(self):
 		selected = self.GetSelection()
 		icons = []
@@ -340,10 +344,10 @@ class IconViewer(wxIconList.IconListCtrl):
 ##	def OnSize(self, event):
 ##		# Is self.Refresh() needed?
 ##		self.Refresh()
-##
+##		
 ##		#Layout() IS needed if OnSize is bound
 ##		self.Layout()
-
+		
 	def OnIconSelect(self, event):
 		pass
 		#index = event.GetIndex()
@@ -362,10 +366,10 @@ class IconViewer(wxIconList.IconListCtrl):
 		self.icons[index].state = state
 		self.RefreshItem(index)
 		self.OnIconSelect(event)
-
-
+		
+		
 	def OnDoubleClick(self, event):
-
+		
 		pos = event.GetPosition()
 		# print pos.x, ", ", pos.y
 
@@ -378,9 +382,9 @@ class IconViewer(wxIconList.IconListCtrl):
 
 		if self.select_callback:
 			self.select_callback.selected(self.icons[item])
-
+	
 	def OnContextMenu(self, event):
-
+		
 		if not len(self.GetSelection()):
 				return
 
@@ -461,6 +465,5 @@ class IconListItem(wxIconList.IconListItem):
 		if self._movement:
 			prev_font = dc.GetFont()
 			dc.SetFont(wx.Font(7, wx.DEFAULT, wx.NORMAL, wx.FONTWEIGHT_BOLD, False, 'verdana'))
-			rect = rect[0] - 4, rect[1] - 4, rect[2], rect[3]
 			dc.DrawLabel('m', rect, wx.ALIGN_TOP | wx.ALIGN_LEFT)
 			dc.SetFont(prev_font)
