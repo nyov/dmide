@@ -21,44 +21,50 @@ Note: This class could also be done as a panel.
 It would have its own child IconListCtrl, but would (probably?) need a few callbacks.
 
 For an IconViewer that only shows a list of states, this works well, but
-any future designs that move away from how DreamMaker displys icons could mean 
+any future designs that move away from how DreamMaker displys icons could mean
 that this code will need to be changed a lot.
 """
 class IconViewer(wxIconList.IconListCtrl):
 	""" Displays the contents of a DMI file for editing. """
+
+	stipple = None
+
 	def __init__(self, root, *args, **kwargs):
+		if not IconViewer.stipple:
+			IconViewer.stipple = wx.Bitmap(os.path.join(wx.GetApp().get_dir(), 'stipple.png'))
+
 		wxIconList.IconListCtrl.__init__(self, root, *args, **kwargs)
-		
+
 		# use Crashed's IconList widget to display icons
 		#self.iconlist = wxIconList.IconListCtrl(self)
-		
+
 		#self.SetItemCount(100)
-		
+
 		#self.iconlist = MyIconListCtrl(self)
-		
+
 		self.initAll()
 		self.initBinds()
-		
+
 		#self.modified_callback = root.TitlePage
-		
-		
-	
+
+
+
 	def initAll(self):
 		# Is last_pos really needed at all?
 		#self.last_pos = -1
-		
+
 		# TODO: Make these comments better
 		# TODO: Maybe give an 'image' attribute to each icon rather than an extra list?
 		# Replace this  with DMIIconState objects?
 		# Is the seperate list necessary?
 		self.icons = [] # The icon_states from the DMI File
 		self.images = [] # The wxBitmap (immediately dispalyable) version of icons
-		
+
 ##		#image_list contains the graphical rep. of the states that go in the iconlist
 ##		self.image_list = None
-		
+
 		self.select_callback = self.GetParent()
-		
+
 		self.undo_buffer = None
 		self.redo_buffer = None
 		self.copy_buffer = None
@@ -66,28 +72,28 @@ class IconViewer(wxIconList.IconListCtrl):
 		self.modified = False
 
 		self.modified_callback = None
-	
+
 	def initBinds(self):
 		##self.Bind(wx.EVT_SIZE, self.OnSize)
-		
+
 		#self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnIconSelect)
 		#self.Bind(wx.EVT_LIST_END_LABEL_EDIT, self.OnIconStateEdit)
-		
+
 		self.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
 		self.Bind(wx.EVT_LEFT_DCLICK, self.OnDoubleClick)
-		
+
 	def update(self):
-		
+
 		# TODO: Do IconViewer update() more efficiently
 		# 		no need to re-update the whole set of icons if only 1 changed
 		self.images = []
 		if not len(self.icons):
 			self.SetItemCount(len(self.icons))
 			return
-	
+
 		#TODO: Store the width and height variables
 		width, height = self.icons[0].icons[0][0].size
-		
+
 		for icon in self.icons:
 			img = ImgToWx(icon.icons[0][0])
 			self.images.append(img)
@@ -96,41 +102,41 @@ class IconViewer(wxIconList.IconListCtrl):
 		self.SetIconSize(width, height)
 
 		self.SetItemCount(len(self.icons))
-			
+
 		self.dirty = True
 		# Window needs updating, so update it
 		#	# Already done by SetItemCount()
 ##		self.Layout()
 ##		self.Draw()
 ##		self.Refresh(False)
-		
+
 	def ClearBackground(self, dc):
 		old_brush = dc.GetBrush()
 
 		brush = wx.Brush(wx.Color(0, 0, 0), wx.SOLID)
-		brush.SetStipple(wx.Bitmap('stipple.png'))
+		brush.SetStipple(IconViewer.stipple)
 		dc.SetBrush(brush)
 		dc.SetPen(wx.TRANSPARENT_PEN)
 		w,h = self.GetVirtualSize()
 		dc.DrawRectangle(0, 0, w, h)
-	
+
 	def Open(self, path):
 		# Is doing threading here safe?
 		thread.start_new_thread(self._open, (path,))
 		#self._open(path)
-		
+
 	def _open(self, path):
 		self.dmi_path = path
 		self.redo_buffer = None
 		self.undo_buffer = None
 		self.icons = cache.read(path, self) #dmi.DMIREAD(path)
-		
+
 		self.modified = False
 		if self.modified_callback:
 			self.modified_callback(self)
 		wx.CallAfter(self.update)
 		#self.update()
-	
+
 	def Save(self, path):
 		if not path:
 			if not self.dmi_path:
@@ -142,8 +148,8 @@ class IconViewer(wxIconList.IconListCtrl):
 		self.modified = False
 		if self.modified_callback:
 			self.modified_callback(self)
-	
-	
+
+
 	def New(self, path):
 		self.dmi_path = path
 		self.redo_buffer = None
@@ -153,7 +159,7 @@ class IconViewer(wxIconList.IconListCtrl):
 		if self.modified_callback:
 			self.modified_callback(self)
 		self.update()
-	
+
 	def Close(self):
 		# TODO: Look at all this stuff
 		if self.modified:
@@ -228,7 +234,7 @@ class IconViewer(wxIconList.IconListCtrl):
 				x = itemsSelected.pop()
 				self._selStore.OnItemDelete(x)
 				self._selStore.SetItemCount(self._selStore._count-1)
-				
+
 			self.update()
 
 	def Copy(self, event=None):
@@ -305,7 +311,7 @@ class IconViewer(wxIconList.IconListCtrl):
 		# Could also just clear the whole selection, but this code could
 		#  also be used when deleting only part of a selection
 		itemsSelected = list(self.GetSelection())
-	
+
 		while len(itemsSelected):
 			x = itemsSelected.pop()
 			self._selStore.OnItemDelete(x)
@@ -323,7 +329,7 @@ class IconViewer(wxIconList.IconListCtrl):
 ##
 ##	def GetSelection(self):
 ##		selected = []
-##		
+##
 ##		for o in xrange(self.GetSelectedItemCount()):
 ##			sel = -1
 ##			if len(selected): sel = selected[-1]
@@ -331,7 +337,7 @@ class IconViewer(wxIconList.IconListCtrl):
 ##			if x == -1:
 ##				break;
 ##			selected.append(x)
-##		
+##
 ##		return selected
 
 	def GetIconSelection(self):
@@ -344,10 +350,10 @@ class IconViewer(wxIconList.IconListCtrl):
 ##	def OnSize(self, event):
 ##		# Is self.Refresh() needed?
 ##		self.Refresh()
-##		
+##
 ##		#Layout() IS needed if OnSize is bound
 ##		self.Layout()
-		
+
 	def OnIconSelect(self, event):
 		pass
 		#index = event.GetIndex()
@@ -366,10 +372,10 @@ class IconViewer(wxIconList.IconListCtrl):
 		self.icons[index].state = state
 		self.RefreshItem(index)
 		self.OnIconSelect(event)
-		
-		
+
+
 	def OnDoubleClick(self, event):
-		
+
 		pos = event.GetPosition()
 		# print pos.x, ", ", pos.y
 
@@ -382,9 +388,9 @@ class IconViewer(wxIconList.IconListCtrl):
 
 		if self.select_callback:
 			self.select_callback.selected(self.icons[item])
-	
+
 	def OnContextMenu(self, event):
-		
+
 		if not len(self.GetSelection()):
 				return
 
