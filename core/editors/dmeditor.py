@@ -356,8 +356,8 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 		state = STATE_DEFAULT
 		last_style = self.GetStyleAt(start - 1)
 		
-		while self.GetLineState(self.LineFromPosition(start)-1) == LINE_STATE_ESCAPED or last_style == self.DM_STYLE_MULTISTRING or last_style == self.DM_STYLE_COMMENTLINE:
-			start = self.PositionFromLine(self.LineFromPosition(start) - 1)
+		while self.GetLineState( max((self.LineFromPosition(start)-1), 0) ) == LINE_STATE_ESCAPED or last_style == self.DM_STYLE_MULTISTRING or last_style == self.DM_STYLE_COMMENTLINE:
+			start = self.PositionFromLine(max((self.LineFromPosition(start) - 1), 0))
 			last_style = self.GetStyleAt(start - 1)
 
 		self.StartStyling(start, 31)
