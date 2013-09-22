@@ -16,11 +16,11 @@ import bisect
 
 
 class IconListCtrl(wx.PyScrolledWindow):
-	""" 
-	IconListCtrl
-	
 	"""
-	
+	IconListCtrl
+
+	"""
+
 	def __init__(self, *args, **kwargs):
 		wx.PyScrolledWindow.__init__(self, *args, **kwargs)
 
@@ -37,7 +37,7 @@ class IconListCtrl(wx.PyScrolledWindow):
 
 		self._cols = 0
 		self._rows = 0
-		
+
 		self._max_rows = sys.maxint
 		self._max_cols = sys.maxint
 
@@ -48,11 +48,11 @@ class IconListCtrl(wx.PyScrolledWindow):
 
 		# tell the control it needs to redraw
 		self.dirty = False
-		
+
 		self._current = -1
 		self._itemTo = -1
 		self._itemFrom = -1
-		
+
 		self._buffer = wx.EmptyBitmap(*self.GetVirtualSize())
 		dc = wx.BufferedDC(None, self._buffer)
 		self.ClearBackground(dc)
@@ -75,10 +75,10 @@ class IconListCtrl(wx.PyScrolledWindow):
 	def Layout(self):
 		if self._items > 0:
 			##boxwidth, boxheight = self._box_size[0] + self._spacing[0], self._box_size[1] + self._spacing[1]
-			
+
 			colwidth = self.GetColWidth()
 			rowheight = self.GetRowHeight()
-			
+
 			hspace, vspace = self.GetClientSizeTuple()
 
 			cols = min(self._max_cols, max(1, hspace / colwidth))
@@ -170,19 +170,19 @@ class IconListCtrl(wx.PyScrolledWindow):
 		# None - Refresh everything, empty list: refresh nothing
 		if itemsChanged==None or (itemsChanged and len(itemsChanged)):
 			self.RefreshItems(itemsChanged)
-	
+
 	def HighlightItem(self, item, highlight=True):
 		changed = False
 		changed = self._selStore.SelectItem(item, highlight)
 		return changed
-	
+
 	def ReverseHighlight(self, item):
 		self.HighlightItem(item, not self.IsHighlighted(item))
 		self.RefreshItem(item)
-	
+
 	def IsHighlighted(self, item):
 		return self._selStore.IsSelected(item)
-	
+
 	def RefreshItems(self, itemsToRefresh):
 		self.Draw(itemsToRefresh)
 		self.Refresh(False)
@@ -191,7 +191,7 @@ class IconListCtrl(wx.PyScrolledWindow):
 	def RefreshItem(self, item):
 		self.Draw(item)
 		self.Refresh(False)
-	
+
 	def ChangeCurrent(self, current):
 		self._current = current
 		#TODO: event notification
@@ -216,41 +216,41 @@ class IconListCtrl(wx.PyScrolledWindow):
 		dc.Clear()
 
 	def Draw(self, itemsToUpdate=None):
-		
+
 		dc = wx.BufferedDC(None, self._buffer)
 		gcdc = wx.GCDC(dc)
-		
+
 		if itemsToUpdate==None:
 			itemsToUpdate = xrange(0, self.GetItemCount())
-		
+
 		if not (isinstance(itemsToUpdate, xrange) or isinstance(itemsToUpdate, list)):
 			itemsToUpdate = [itemsToUpdate]
-		
+
 		boxwidth, boxheight = self.GetBoxSize()
 		rowheight = self.GetRowHeight()
 		colwidth = self.GetColWidth()
 		spacing_width, spacing_height = self.GetBoxSpacing()
-		
+
 		for item in itemsToUpdate:
 			x = self.GetItemX(item) + spacing_width / 2
 			y = self.GetItemY(item) + spacing_height / 2
-			
+
 			# TODO: Move this within the item's draw code?
 			dc.SetClippingRect( (x, y, boxwidth, boxheight) )
 			self.ClearBackground(dc)
 			dc.DestroyClippingRegion()
-			
+
 			if item < self.GetItemCount():
 				itemObj = self.OnGetItem(item)
-				
+
 				if isinstance(itemObj, tuple) or isinstance(itemObj, list):
 					itemObj = IconListItem(*itemObj)
-				
+
 				if not isinstance(itemObj, IconListItem):
 					raise AssertionError, 'Item passed from OnGetItem is not a typle or IconListItem'
-				
+
 				itemishighlighted = self._selStore.IsSelected(item)
-				
+
 				itemObj.Draw(gcdc, (x, y, boxwidth, boxheight), itemishighlighted)
 
 	def OnPaint(self, event):
@@ -283,7 +283,7 @@ class IconListCtrl(wx.PyScrolledWindow):
 				gcdc.DrawRectangle(ax, ay, width, height)
 		except Exception, e:
 			print e
-			
+
 	def OnSize(self, event):
 		event.Skip()
 
@@ -301,17 +301,17 @@ class IconListCtrl(wx.PyScrolledWindow):
 	def OnMouse(self, event):
 		if event.LeftDown():
 			self.SetFocusIgnoringChildren()
-		
+
 		event.SetEventObject(self.GetParent())
 		if self.GetParent().GetEventHandler().ProcessEvent(event) :
 			return
-		
+
 		if event.GetEventType() == wx.wxEVT_MOUSEWHEEL:
 			# let the base handle mouse wheel events.
 			self.Refresh(False)
 			event.Skip()
 			return
-		
+
 		if not self.HasCurrent() or self.IsEmpty():
 			if event.RightDown():
 				#self.SendNotify(-1, wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK, event.GetPosition())
@@ -322,11 +322,11 @@ class IconListCtrl(wx.PyScrolledWindow):
 ##				self.GetParent().GetEventHandler().ProcessEvent(evtCtx)
 				event.Skip()
 				return
-		
+
 		if not (event.Dragging() or event.ButtonDown() or event.LeftUp() or \
 				event.ButtonDClick() or event.Moving() or event.RightUp()):
 			return
-		
+
 		x = event.GetX()
 		y = event.GetY()
 		#x, y = self.CalcUnscrolledPosition(x, y)
@@ -337,14 +337,14 @@ class IconListCtrl(wx.PyScrolledWindow):
 		#count = self.GetItemCount()
 
 		newItem, hitResult = self.HitTest(x, y)
-		
+
 		# simple click-drag selection: doesn't update until done
 		self._mouse_position = self.CalcUnscrolledPosition((x, y))
 		if event.LeftDown():
 			self._action_position = self._mouse_position
 			self.CaptureMouse()
 			self.Refresh(False)
-			
+
 		elif event.LeftUp():
 			if self.HasCapture():
 				self.ReleaseMouse()
@@ -355,11 +355,11 @@ class IconListCtrl(wx.PyScrolledWindow):
 				startx, starty = self._action_position
 				startcol = startx / (boxwidth + self._spacing[0])
 				startrow = starty / (boxheight + self._spacing[1])
-				
+
 				endx, endy = self._mouse_position
 				endcol = endx / (boxwidth + self._spacing[0])
 				endrow = endy / (boxheight + self._spacing[1])
-					
+
 				rowFrom, rowTo = startrow, endrow
 				if rowTo < rowFrom:
 					rowTo = rowFrom
@@ -367,20 +367,20 @@ class IconListCtrl(wx.PyScrolledWindow):
 
 				if rowFrom < 0:
 					rowFrom = 0
-				
+
 				colFrom, colTo = startcol, endcol
 				if colTo < colFrom:
 					colTo = colFrom
 					colFrom = endcol
-					
+
 				if colFrom < 0:
 					colFrom = 0
-				
+
 				#enditem = endrow * self.GetCols() + endcol
 				#self.ChangeCurrent(enditem)
-				
+
 				rowTo = rowTo + 1
-				
+
 				rowTo = min(rowTo, self.GetRows())
 				colTo = min(colTo, self.GetCols()-1)
 
@@ -391,13 +391,13 @@ class IconListCtrl(wx.PyScrolledWindow):
 					self.HighlightItems(itemFrom, itemTo)
 
 				self._action_position = (-1, -1)
-				
+
 				self.Refresh(False)
-		
+
 		elif event.Dragging():
 			self.Refresh(False)
-		
-		
+
+
 		if not hitResult:
 			# outside of any item
 			if event.RightDown():
@@ -412,9 +412,9 @@ class IconListCtrl(wx.PyScrolledWindow):
 			elif event.LeftDown() and not (event.CmdDown() or event.ShiftDown()):
 				self.HighlightAll(False)
 			return
-			
+
 		current = newItem
-		
+
 		if event.RightDown():
 
 			#if self.SendNotify(current, wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK, event.GetPosition()):
@@ -433,7 +433,7 @@ class IconListCtrl(wx.PyScrolledWindow):
 
 		elif event.MiddleDown():
 			event.Skip()
-		
+
 		elif event.LeftDown():
 			oldCurrent = self._current
 			oldWasSelected = self.IsHighlighted(oldCurrent)
@@ -446,7 +446,7 @@ class IconListCtrl(wx.PyScrolledWindow):
 					self.HighlightAll(False)
 					self.ChangeCurrent(current)
 					self.ReverseHighlight(self._current)
-					
+
 				else: # multi sel & current is highlighted & no mod keys
 					self.ChangeCurrent(current) # change focus
 					# other items, if selected, remain selected
@@ -463,7 +463,7 @@ class IconListCtrl(wx.PyScrolledWindow):
 					if itemTo < itemFrom:
 						itemTo = itemFrom
 						itemFrom = self._current
-					
+
 					if itemFrom == -1:
 						itemFrom = 0
 
@@ -473,7 +473,7 @@ class IconListCtrl(wx.PyScrolledWindow):
 
 					# test in the enclosing if should make it impossible
 					raise Exception("how did we get here?")
-					
+
 			if self._current != oldCurrent:
 				if oldCurrent != -1:
 					self.RefreshItem(oldCurrent)
@@ -486,9 +486,9 @@ class IconListCtrl(wx.PyScrolledWindow):
 				self.timer._dmide_index = itemIndex
 				self.timer.Start(500)
 
-		event.Skip()	
+		event.Skip()
 
-		
+
 	def GetRows(self):
 		return self._rows
 
@@ -510,7 +510,7 @@ class IconListCtrl(wx.PyScrolledWindow):
 	def GetItemRow(self, item):
 		row = item / self.GetCols()
 		return row
-		
+
 	def GetItemCol(self, item):
 		col = item % self.GetCols()
 		return col
@@ -518,7 +518,7 @@ class IconListCtrl(wx.PyScrolledWindow):
 	def GetItemX(self, item):
 		col = self.GetItemCol(item)
 		return col * self.GetColWidth()
-		
+
 	def GetItemY(self, item):
 		row = self.GetItemRow(item)
 		return row * self.GetRowHeight()
@@ -569,10 +569,10 @@ class IconListCtrl(wx.PyScrolledWindow):
 
 	def SetItemCount(self, items):
 		if items >= 0:
-			
+
 			# reducing item count, item_diff is +ve
 			item_diff = self._items - items
-			
+
 			self._items = items
 ##			self.Layout()
 			self._selStore.SetItemCount(items)
@@ -616,12 +616,12 @@ class IconListItem:
 		self._image = image
 
 	def Draw(self, dc, rect, highlight=False):
-		
+
 		dc.SetClippingRect(rect)
 		#dc.SetBrush(wx.RED_BRUSH)
 ##		dc.SetBackground(wx.WHITE_BRUSH)
 ##		dc.Clear()
-		
+
 		if self._image:
 			dc.DrawBitmap(self._image, rect[0] + (rect[2] - self._image.Width) / 2, rect[1], True)
 
@@ -644,11 +644,11 @@ class IconListItem:
 			dc.SetBrush(wx.Brush(highlight_colour))
 			dc.DrawRoundedRectangle(*rect, radius=4)
 			dc.SetBrush(old_brush)
-			
-				
-	
+
+
+
 		dc.DrawLabel(new_label, rect, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_BOTTOM)
-		
+
 		dc.DestroyClippingRegion()
 
 
@@ -664,7 +664,7 @@ Also to provide differentiation between 'no items changed' and 'many items chang
 class SelectionStore(ulcSelectionStore):
 	def __init__(self, *args, **kwargs):
 		ulcSelectionStore.__init__(self, *args, **kwargs)
-	
+
 	def SelectRange(self, itemFrom, itemTo, select=True):
 		"""
 		Selects a range of items.
@@ -672,24 +672,24 @@ class SelectionStore(ulcSelectionStore):
 		:param `itemFrom`: the first index of the selection range;
 		:param `itemTo`: the last index of the selection range;
 		:param `select`: ``True`` to select the items, ``False`` otherwise.
-		
+
 		:return: The `itemsChanged` array, unless MANY_ITEMS changed, in
 		 which case, return `None`
 		"""
-	
+
 		# 100 is hardcoded but it shouldn't matter much: the important thing is
 		# that we don't refresh everything when really few (e.g. 1 or 2) items
 		# change state
 		MANY_ITEMS = 100
 
 		# many items (> half) changed state
-		itemsChanged = []        
+		itemsChanged = []
 
 		# are we going to have more [un]selected items than the other ones?
 		if itemTo - itemFrom > self._count/2:
 
 			if select != self._defaultState:
-			
+
 				# the default state now becomes the same as 'select'
 				self._defaultState = select
 
@@ -704,31 +704,31 @@ class SelectionStore(ulcSelectionStore):
 				for item in xrange(itemFrom):
 					if item not in selOld:
 						self._itemsSel.append(item)
-				
+
 				for item in xrange(itemTo + 1, self._count):
 					if item not in selOld:
 						self._itemsSel.append(item)
-				
+
 				itemsChanged = None
 
 			else: # select == self._defaultState
-			
+
 				# get the inclusive range of items between itemFrom and itemTo
 				count = len(self._itemsSel)
 				#start = bisect.bisect_right(self._itemsSel, itemFrom)
 				start = bisect.bisect_left(self._itemsSel, itemFrom)
 				end = bisect.bisect_right(self._itemsSel, itemTo)
-				
+
 				if start == count or self._itemsSel[start] < itemFrom:
 					start += 1
-				
+
 				if end == count or self._itemsSel[end] > itemTo:
 					end -= 1
-					
+
 				if start <= end:
-				
+
 					keepCounting = True
-				
+
 					# delete all of them (from end to avoid changing indices)
 					for i in xrange(end, start-1, -1):
 						if keepCounting:
@@ -736,15 +736,15 @@ class SelectionStore(ulcSelectionStore):
 								# stop counting (see comment below)
 								itemsChanged = None
 								keepCounting = False
-							else:                            
+							else:
 								itemsChanged.append(self._itemsSel[i])
-							
+
 						self._itemsSel.pop(i)
 				else:
 					self._itemsSel = []
 
 		else: # "few" items change state
-		
+
 			keepCounting = True
 
 			# just add the items to the selection
@@ -776,9 +776,9 @@ class SelectionStore(ulcSelectionStore):
 			# this item itself was in m_itemsSel, remove it from there
 			self._itemsSel.pop(i)
 			count -= 1
-		
+
 		# and adjust the index of all which follow it
 		while i < count-1:
 
-			i += 1        
+			i += 1
 			self._itemsSel[i] -= 1

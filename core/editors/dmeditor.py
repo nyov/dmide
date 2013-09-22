@@ -355,7 +355,7 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 
 		state = STATE_DEFAULT
 		last_style = self.GetStyleAt(start - 1)
-		
+
 		while self.GetLineState( max((self.LineFromPosition(start)-1), 0) ) == LINE_STATE_ESCAPED or last_style == self.DM_STYLE_MULTISTRING or last_style == self.DM_STYLE_COMMENTLINE:
 			start = self.PositionFromLine(max((self.LineFromPosition(start) - 1), 0))
 			last_style = self.GetStyleAt(start - 1)
@@ -408,7 +408,7 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 					last_styled = pos
 					word = ''
 					word_end = self.WordEndPosition(pos+1, False)
-					
+
 				elif current_char == '#': state = STATE_PREPROCESSOR
 
 				else:
@@ -438,7 +438,7 @@ class DMIDE_DMEditor(wxStc.StyledTextCtrl):
 					embed_count = 1
 					self.SetStyling(pos - last_styled - 1, self.DM_STYLE_STRING)
 					last_styled = pos - 1
-					
+
 			elif state == STATE_SINGLESTRING:
 				if (current_char == "'" or current_char == '\n') and (not escaped):
 					if current_char == '\n': self.SetStyling(pos - last_styled, self.DM_STYLE_BADSTRING)

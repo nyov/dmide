@@ -30,7 +30,7 @@ FlatMenu is a generic menu implementation.
 Description
 ===========
 
-FlatMenu, like the name implies, it is a generic menu implementation. 
+FlatMenu, like the name implies, it is a generic menu implementation.
 I tried to provide a full functionality for menus, menubar and toolbar.
 
 
@@ -59,7 +59,7 @@ FlatMenu supports the following features:
   (c) Control various options, such as: colour for highlight menu item, draw
       border around menus (classic look only);
   (d) Toolbar floating appearance.
-  
+
 - Allows user to specify grey bitmap for disabled menus/toolbar tools;
 - If no grey bitmap is provided, it generates one from the existing bitmap;
 - Hidden toolbar items / menu bar items - will appear in a small popmenu
@@ -74,7 +74,7 @@ FlatMenu supports the following features:
 - First attempt in adding controls to FlatToolbar;
 - Added a MiniBar (thanks to Vladiuz);
 - Added `wx.ToolBar` methods AddCheckTool/AddRadioTool (thanks to Vladiuz).
-  
+
 
 Supported Platforms
 ===================
@@ -136,7 +136,7 @@ import math
 from fmcustomizedlg import FMCustomizeDlg
 from artmanager import ArtManager, DCSaver
 from fmresources import *
-            
+
 # FlatMenu styles
 FM_OPT_IS_LCD = 1
 """ Use this style if your computer uses a LCD screen. """
@@ -233,7 +233,7 @@ def ConvertToMonochrome(bmp):
     mem_dc.SelectObject(wx.NullBitmap)
     img = shadow.ConvertToImage()
     img = img.ConvertToMono(0, 0, 0)
-    
+
     # we now have black where the original bmp was drawn,
     # white elsewhere
     shadow = wx.BitmapFromImage(img)
@@ -249,7 +249,7 @@ def ConvertToMonochrome(bmp):
     mem_dc.DrawBitmap(shadow, 0, 0, True)   # now contains a bitmap with grey where the image was, white elsewhere
     mem_dc.SelectObject(wx.NullBitmap)
     shadow = tmp
-    shadow.SetMask(wx.Mask(shadow, wx.WHITE)) 
+    shadow.SetMask(wx.Mask(shadow, wx.WHITE))
 
     return shadow
 
@@ -263,7 +263,7 @@ class FlatMenuEvent(wx.PyCommandEvent):
     Event class that supports the FlatMenu-compatible event called
     ``EVT_FLAT_MENU_SELECTED``.
     """
-        
+
     def __init__(self, eventType, eventId=1, nSel=-1, nOldSel=-1):
         """
         Default class constructor.
@@ -301,7 +301,7 @@ class MenuEntryInfo(object):
 
          ==================== ======= ==========================
          Item State            Value  Description
-         ==================== ======= ==========================         
+         ==================== ======= ==========================
          ``ControlPressed``         0 The item is pressed
          ``ControlFocus``           1 The item is focused
          ``ControlDisabled``        2 The item is disabled
@@ -320,11 +320,11 @@ class MenuEntryInfo(object):
             self._state = state
             if cmd == wx.ID_ANY:
                 cmd = wx.NewId()
-                
+
             self._cmd = cmd             # the menu itself accelerator id
 
         else:
-            
+
             self._title = titleOrMenu._title
             self._menu = titleOrMenu._menu
             self._rect = titleOrMenu._rect
@@ -332,19 +332,19 @@ class MenuEntryInfo(object):
             self._cmd = titleOrMenu._cmd
 
         self._textBmp = wx.NullBitmap
-        
+
 
     def GetTitle(self):
         """ Returns the associated menu title. """
 
-        return self._title 
-    
+        return self._title
+
 
     def GetMenu(self):
         """ Returns the associated menu. """
-        
-        return self._menu 
-    
+
+        return self._menu
+
 
     def SetRect(self, rect):
         """
@@ -360,7 +360,7 @@ class MenuEntryInfo(object):
         """ Returns the associated menu client rectangle. """
 
         return self._rect
-    
+
 
     def SetState(self, state):
         """
@@ -370,7 +370,7 @@ class MenuEntryInfo(object):
 
          ==================== ======= ==========================
          Item State            Value  Description
-         ==================== ======= ==========================         
+         ==================== ======= ==========================
          ``ControlPressed``         0 The item is pressed
          ``ControlFocus``           1 The item is focused
          ``ControlDisabled``        2 The item is disabled
@@ -389,7 +389,7 @@ class MenuEntryInfo(object):
         """
 
         return self._state
-    
+
 
     def SetTextBitmap(self, bmp):
         """
@@ -399,14 +399,14 @@ class MenuEntryInfo(object):
         """
 
         self._textBmp = bmp
-    
+
 
     def GetTextBitmap(self):
         """ Returns the associated menu bitmap. """
 
         return self._textBmp
 
-  
+
     def GetCmdId(self):
         """ Returns the associated menu accelerator identifier. """
 
@@ -427,9 +427,9 @@ class StatusBarTimer(wx.Timer):
 
         :param `owner`: the `wx.Timer` owner (L{FlatMenuBar}).
         """
-        
+
         wx.Timer.__init__(self)
-        self._owner = owner        
+        self._owner = owner
 
 
     def Notify(self):
@@ -463,7 +463,7 @@ class FlatMenuBar(wx.Panel):
          ``LargeIcons``            32 Use large 32x32 icons
          ``SmallIcons``            16 Use standard 16x16 icons
          ==================== ======= =============================
-         
+
         :param `spacer`: the space between the menu bar text and the menu bar border;
         :param `options`: a combination of the following bits:
 
@@ -475,7 +475,7 @@ class FlatMenuBar(wx.Panel):
          ``FM_OPT_SHOW_CUSTOMIZE``       0x4 Show "customize link" in more menus, you will need to write your own handler. See demo.
          ``FM_OPT_SHOW_TOOLBAR``         0x8 Set this option is you are planing to use the toolbar
          ========================= ========= =============================
-         
+
         """
 
         self._parent = parent
@@ -487,17 +487,17 @@ class FlatMenuBar(wx.Panel):
         self._tbButtons = []
         self._interval = 20      # 20 milliseconds
         self._showTooltip = -1
-        
+
         self._haveTip = False
         self._statusTimer = None
         self._spacer = spacer
-        
+
         self._showToolbar = options & FM_OPT_SHOW_TOOLBAR
         self._showCustomize = options & FM_OPT_SHOW_CUSTOMIZE
         self._isLCD = options & FM_OPT_IS_LCD
         self._isMinibar = options & FM_OPT_MINIBAR
         self._options = options
-        
+
         self._dropDownButtonState = ControlNormal
         self._moreMenu = None
         self._dlg = None
@@ -520,12 +520,12 @@ class FlatMenuBar(wx.Panel):
         self.Bind(wx.EVT_LEFT_DCLICK, self.OnLeftDown)
         self.Bind(wx.EVT_LEFT_UP, self.OnLeftUp)
         self.Bind(wx.EVT_IDLE, self.OnIdle)
-        
+
         if "__WXGTK__" in wx.Platform:
             self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeaveWindow)
 
         self.SetFocus()
-        
+
         # start the stop watch
         self._watch = wx.StopWatch()
         self._watch.Start()
@@ -554,9 +554,9 @@ class FlatMenuBar(wx.Panel):
         """
 
         refresh = False
-        
+
         if self._watch.Time() > self._interval:
-        
+
             # it is time to process UpdateUIEvents
             for but in self._tbButtons:
                 event = wx.UpdateUIEvent(but._tbItem.GetId())
@@ -571,9 +571,9 @@ class FlatMenuBar(wx.Panel):
 
                 but._tbItem.SetLabel(event.GetText())
                 but._tbItem.Enable(event.GetEnabled())
-            
+
             self._watch.Start() # Reset the timer
-        
+
         # we need to update the menu bar
         if refresh:
             self.Refresh()
@@ -586,7 +586,7 @@ class FlatMenuBar(wx.Panel):
         mem_dc.SelectObject(wx.EmptyBitmap(1, 1))
         dummy, self._barHeight = mem_dc.GetTextExtent("Tp")
         mem_dc.SelectObject(wx.NullBitmap)
-        
+
         if not self._isMinibar:
             self._barHeight += 4*self._spacer
         else:
@@ -604,13 +604,13 @@ class FlatMenuBar(wx.Panel):
         self._mgr.Update()
         self.Refresh()
 
-        
+
     def SetOptions(self, options):
         """
         Sets the L{FlatMenuBar} options, whether to show a toolbar, to use LCD screen settings etc...
 
         :param `options`: a combination of the following bits:
-        
+
          ========================= ========= =============================
          `options` Bit             Hex Value  Description
          ========================= ========= =============================
@@ -630,10 +630,10 @@ class FlatMenuBar(wx.Panel):
         self._isMinibar = options & FM_OPT_MINIBAR
 
         self.SetBarHeight()
-        
+
         self.Refresh()
         self.Update()
-                    
+
 
     def GetOptions(self):
         """
@@ -641,14 +641,14 @@ class FlatMenuBar(wx.Panel):
         """
 
         return self._options
-        
+
 
     def UpdateItem(self, item):
         """
         An item was modified. This function is called by L{FlatMenu} in case
         an item was modified directly and not via a `wx.UpdateUIEvent` event.
 
-        :param `item`: an instance of L{FlatMenu}.        
+        :param `item`: an instance of L{FlatMenu}.
         """
 
         if not self._showToolbar:
@@ -661,13 +661,13 @@ class FlatMenuBar(wx.Panel):
             if but._tbItem.GetId() == item.GetId():
                 if but._tbItem.IsEnabled() != item.IsEnabled():
                     refresh = True
-                    
+
                 but._tbItem.Enable(item.IsEnabled())
                 break
-            
-        if refresh:        
+
+        if refresh:
             self.Refresh()
-        
+
 
     def OnPaint(self, event):
         """
@@ -676,7 +676,7 @@ class FlatMenuBar(wx.Panel):
         :param `event`: a `wx.PaintEvent` event to be processed.
         """
 
-        # on GTK, dont use the bitmap for drawing, 
+        # on GTK, dont use the bitmap for drawing,
         # draw directly on the DC
 
         if "__WXGTK__" in wx.Platform and not self._isLCD:
@@ -685,7 +685,7 @@ class FlatMenuBar(wx.Panel):
         dc = wx.BufferedPaintDC(self)
         self.DrawAll(dc)
 
-        
+
     def DrawAll(self, dc):
         """
         Draws everything for L{FlatMenuBar}.
@@ -697,16 +697,16 @@ class FlatMenuBar(wx.Panel):
         fnt = artMgr.GetFont()
         textColour = artMgr.GetTextColourEnable()
         theme = artMgr.GetMenuTheme()
-        
+
         dc.SetFont(fnt)
         dc.SetTextForeground(textColour)
-        
+
         clientRect = self.GetClientRect()
 
         artMgr.DrawMenuBarBg(dc, clientRect)
 
         padding, dummy = dc.GetTextExtent("W")
-        
+
         posx = self._spacer
         posy = self._spacer * 2
 
@@ -724,12 +724,12 @@ class FlatMenuBar(wx.Panel):
 
         for item in self._items:
 
-            # Handle accelerator ('&')        
+            # Handle accelerator ('&')
             title = item.GetTitle()
 
             fixedText = title
             location, labelOnly = artMgr.GetAccelIndex(fixedText)
-            
+
             # Get the menu item length, add some padding to it
             textWidth, textHeight = dc.GetTextExtent(fixedText)
             rect = wx.Rect(posx, posy, textWidth + self._spacer + padding, textHeight)
@@ -744,7 +744,7 @@ class FlatMenuBar(wx.Panel):
             copy = wx.Rect(*rect)
             copy.Inflate(0, self._spacer)
             item.SetRect(copy)
-            
+
             if item.GetState() == ControlFocus:
                 artMgr.SetMS2007ButtonSunken(True)
                 artMgr.DrawButton(dc, item.GetRect(), theme, ControlFocus, False)
@@ -756,7 +756,7 @@ class FlatMenuBar(wx.Panel):
                 dc.DrawBitmap(item.GetTextBitmap(), rect.x, rect.y, True)
             else:
                 if not self._isLCD:
-                    # Draw the text on a bitmap using memory dc, 
+                    # Draw the text on a bitmap using memory dc,
                     # so on following calls we will use this bitmap instead
                     # of calculating everything from scratch
                     bmp = wx.EmptyBitmap(rect.width, rect.height)
@@ -774,12 +774,12 @@ class FlatMenuBar(wx.Panel):
                     if not self._isLCD:
                         memDc.DrawText(title, textOffset, 0)
                     dc.DrawText(title, rect.x + textOffset, rect.y)
-                
+
                 else:
-                    
+
                     # underline the first '&'
                     before = labelOnly[0:location]
-                    underlineLetter = labelOnly[location] 
+                    underlineLetter = labelOnly[location]
                     after = labelOnly[location+1:]
 
                     # before
@@ -796,16 +796,16 @@ class FlatMenuBar(wx.Panel):
                         if not self._isLCD:
                             memDc.SetFont(fnt)
                             memDc.DrawText(underlineLetter, textOffset + w1, 0)
-                        
+
                     else:
                         w1, h = dc.GetTextExtent(before)
                         dc.DrawText(underlineLetter, rect.x + w1 + textOffset, rect.y)
                         if not self._isLCD:
                             memDc.DrawText(underlineLetter, textOffset + w1, 0)
 
-                        # Draw the underline ourselves since using the Underline in GTK, 
+                        # Draw the underline ourselves since using the Underline in GTK,
                         # causes the line to be too close to the letter
-                        
+
                         uderlineLetterW, uderlineLetterH = dc.GetTextExtent(underlineLetter)
                         dc.DrawLine(rect.x + w1 + textOffset, rect.y + uderlineLetterH - 2,
                                     rect.x + w1 + textOffset + uderlineLetterW, rect.y + uderlineLetterH - 2)
@@ -813,7 +813,7 @@ class FlatMenuBar(wx.Panel):
                     # after
                     w2, h = dc.GetTextExtent(underlineLetter)
                     fnt.SetUnderlined(False)
-                    dc.SetFont(fnt)                
+                    dc.SetFont(fnt)
                     dc.DrawText(after, rect.x + w1 + w2 + textOffset, rect.y)
                     if not self._isLCD:
                         memDc.SetFont(fnt)
@@ -823,8 +823,8 @@ class FlatMenuBar(wx.Panel):
                         memDc.SelectObject(wx.NullBitmap)
                         # Set masking colour to the bitmap
                         bmp.SetMask(wx.Mask(bmp, wx.Colour(0, 128, 128)))
-                        item.SetTextBitmap(bmp)                        
-                    
+                        item.SetTextBitmap(bmp)
+
             posx += rect.width
 
         # Get a backgroud image of the more menu button
@@ -860,7 +860,7 @@ class FlatMenuBar(wx.Panel):
             # Set the button rect
             self._dropDownButtonArea = moreMenubtnBgBmpRect
 
-            
+
     def DrawToolbar(self, dc, rect):
         """
         Draws the toolbar (if present).
@@ -875,7 +875,7 @@ class FlatMenuBar(wx.Panel):
         yy = rect.y + (rect.height - height)/2
 
         artMgr = ArtManager.Get()
-        
+
         # by default set all toolbar items as invisible
         for but in self._tbButtons:
             but._visible = False
@@ -909,7 +909,7 @@ class FlatMenuBar(wx.Panel):
             # special handling for separator
             #------------------------------------------
             if tbItem.IsSeparator():
-            
+
                 # Place a separator bitmap
                 bmp = wx.EmptyBitmap(12, rect.height - 2)
                 mem_dc = wx.MemoryDC()
@@ -948,11 +948,11 @@ class FlatMenuBar(wx.Panel):
 
                 if not control.IsShown():
                     control.Show()
-                    
+
                 buttonRect = wx.RectPS(ctrlPos, ctrlSize)
                 xx += buttonRect.width
                 self._tbButtons[i]._rect = buttonRect
-                continue            
+                continue
             else:
                 if tbItem.IsEnabled():
                     bmp = tbItem.GetBitmap()
@@ -964,9 +964,9 @@ class FlatMenuBar(wx.Panel):
 
                 x = xx
                 y = yy + (height - bmp.GetHeight())/2 - 1
-                
+
                 buttonRect = wx.Rect(x, y, width, height)
-                
+
                 if i < len(self._tbButtons) and i >= 0:
 
                     if self._tbButtons[i]._tbItem.IsSelected():
@@ -983,8 +983,8 @@ class FlatMenuBar(wx.Panel):
                 imgy = buttonRect.y + (buttonRect.height - bmp.GetHeight())/2
 
                 if self._tbButtons[i]._state == ControlFocus and not self._tbButtons[i]._tbItem.IsSelected():
-                
-                    # in case we the button is in focus, place it 
+
+                    # in case we the button is in focus, place it
                     # once pixle up and left
                     # place a dark image under the original image to provide it
                     # with some shadow
@@ -993,13 +993,13 @@ class FlatMenuBar(wx.Panel):
 
                     imgx -= 1
                     imgy -= 1
-                    
+
                 dc.DrawBitmap(bmp, imgx, imgy, True)
                 xx += buttonRect.width
-                
+
                 self._tbButtons[i]._rect = buttonRect
-                #Edited by P.Kort  
-                
+                #Edited by P.Kort
+
                 if self._showTooltip == -1:
                     self.RemoveHelp()
                 else:
@@ -1025,10 +1025,10 @@ class FlatMenuBar(wx.Panel):
         rect.SetX(clientRect.GetWidth() + rect.GetX() - DROP_DOWN_ARROW_WIDTH - 3)
         rect.SetY(2)
         rect.SetHeight(rect.GetHeight() - self._spacer)
-        
+
         return rect
 
-            
+
     def DrawMoreButton(self, dc, fr, state):
         """
         Draws 'more' button to the right side of the menu bar.
@@ -1042,7 +1042,7 @@ class FlatMenuBar(wx.Panel):
 
         if (not self._showCustomize) and self.GetInvisibleMenuItemCount() < 1 and  self.GetInvisibleToolbarItemCount() < 1:
             return
-        
+
         # Draw a drop down menu at the right position of the menu bar
         # we use xpm file with 16x16 size, another 4 pixels we take as spacer
         # from the right side of the frame, this will create a DROP_DOWN_ARROW_WIDTH  pixels width
@@ -1066,8 +1066,8 @@ class FlatMenuBar(wx.Panel):
         # Calc the image coordinates
         xx = rect.x + (DROP_DOWN_ARROW_WIDTH - dropArrowBmp.GetWidth())/2
         yy = rect.y + (rect.height - dropArrowBmp.GetHeight())/2
-        
-        dc.DrawBitmap(dropArrowBmp, xx, yy + self._spacer, True)        
+
+        dc.DrawBitmap(dropArrowBmp, xx, yy + self._spacer, True)
         self._dropDownButtonState = state
 
 
@@ -1132,10 +1132,10 @@ class FlatMenuBar(wx.Panel):
 
         :param `event`: a `wx.EraseEvent` event to be processed.
 
-        :note: This method is intentionally empty to reduce flicker.        
+        :note: This method is intentionally empty to reduce flicker.
         """
 
-        pass    
+        pass
 
 
     def ShowCustomize(self, show=True):
@@ -1165,7 +1165,7 @@ class FlatMenuBar(wx.Panel):
 
         self._isLCD = lcd
         self.Refresh()
-    
+
 
     def ProcessMouseMoveFromMenu(self, pt):
         """
@@ -1187,7 +1187,7 @@ class FlatMenuBar(wx.Panel):
         :param `pt`: an instance of `wx.Point`;
         :param `leftIsDown`: ``True`` is the left mouse button is down, ``False`` otherwise.
         """
-        
+
         # Reset items state
         for item in self._items:
             item.SetState(ControlNormal)
@@ -1253,7 +1253,7 @@ class FlatMenuBar(wx.Panel):
                     refresh = True
 
             if self._curretHiliteItem != -1:
-            
+
                 self._items[self._curretHiliteItem].SetState(ControlNormal)
                 self._curretHiliteItem = -1
                 self.Refresh()
@@ -1281,7 +1281,7 @@ class FlatMenuBar(wx.Panel):
 
         :note: This method is for MSW only.
         """
-        
+
         pt = event.GetPosition()
         self.DoMouseMove(pt, event.LeftIsDown())
 
@@ -1297,10 +1297,10 @@ class FlatMenuBar(wx.Panel):
         """ Returns the active toolbar item. """
 
         for but in self._tbButtons:
-        
+
             if but._state == ControlFocus or but._state == ControlPressed:
                 return self._tbButtons.index(but)
-        
+
         return wx.NOT_FOUND
 
 
@@ -1344,7 +1344,7 @@ class FlatMenuBar(wx.Panel):
             self._curretHiliteItem = -1
             for item in self._items:
                 item.SetState(ControlNormal)
-                
+
             self.Refresh()
 
 
@@ -1368,7 +1368,7 @@ class FlatMenuBar(wx.Panel):
             # of the button relative to its parent, we need to translate
             # them into the screen coords
             self.ActivateMenu(self._items[idx])
-            
+
         elif where == ToolbarItem:
             redrawAll = False
             item = self._tbButtons[idx]._tbItem
@@ -1408,7 +1408,7 @@ class FlatMenuBar(wx.Panel):
 
         pt = event.GetPosition()
         idx, where = self.HitTest(pt)
-        
+
         if where == ToolbarItem:
             # Over a toolbar item
             dc = wx.ClientDC(self)
@@ -1423,30 +1423,30 @@ class FlatMenuBar(wx.Panel):
         :param `idx`: the tool index in the toolbar;
         :param `state`: the button state.
 
-        :see: L{MenuEntryInfo.SetState} for a list of valid menu states.        
+        :see: L{MenuEntryInfo.SetState} for a list of valid menu states.
         """
 
         if idx >= len(self._tbButtons) or idx < 0:
             return
-        
+
         if self._tbButtons[idx]._tbItem.IsSelected():
             state = ControlPressed
         rect = self._tbButtons[idx]._rect
         ArtManager.Get().DrawButton(dc, rect, ArtManager.Get().GetMenuTheme(), state, False)
-        
-        # draw the bitmap over the highlight 
+
+        # draw the bitmap over the highlight
         buttonRect = wx.Rect(*rect)
         x = rect.x + (buttonRect.width - self._tbButtons[idx]._tbItem.GetBitmap().GetWidth())/2
         y = rect.y + (buttonRect.height - self._tbButtons[idx]._tbItem.GetBitmap().GetHeight())/2
 
         if state == ControlFocus:
-        
+
             # place a dark image under the original image to provide it
             # with some shadow
             # shadow = ConvertToMonochrome(self._tbButtons[idx]._tbItem.GetBitmap())
             # dc.DrawBitmap(shadow, x, y, True)
 
-            # in case we the button is in focus, place it 
+            # in case we the button is in focus, place it
             # once pixle up and left
             x -= 1
             y -= 1
@@ -1457,7 +1457,7 @@ class FlatMenuBar(wx.Panel):
         """
         Activates a menu.
 
-        :param `menuInfo`: an instance of L{MenuEntryInfo}.                
+        :param `menuInfo`: an instance of L{MenuEntryInfo}.
         """
 
         # first make sure all other menus are not popedup
@@ -1465,7 +1465,7 @@ class FlatMenuBar(wx.Panel):
             return
 
         idx = wx.NOT_FOUND
-        
+
         for item in self._items:
             item.GetMenu().Dismiss(False, True)
             if item.GetMenu() == menuInfo.GetMenu():
@@ -1497,7 +1497,7 @@ class FlatMenuBar(wx.Panel):
 
         :param `idx`: the tool index in the toolbar.
         """
-        
+
         # we handle only button clicks
         if self._tbButtons[idx]._tbItem.IsRegularItem() or \
             self._tbButtons[idx]._tbItem.IsCheckItem():
@@ -1524,7 +1524,7 @@ class FlatMenuBar(wx.Panel):
 
             if labelOnly == title or item.GetTitle() == title:
                 return ii
-        
+
         return wx.NOT_FOUND
 
 
@@ -1537,14 +1537,14 @@ class FlatMenuBar(wx.Panel):
 
         if menuIdx >= len(self._items) or menuIdx < 0:
             return None
-        
+
         return self._items[menuIdx].GetMenu()
 
 
     def GetMenuCount(self):
         """ Returns the number of menus in the menubar. """
 
-        return len(self._items)        
+        return len(self._items)
 
 
     def Insert(self, pos, menu, title):
@@ -1564,7 +1564,7 @@ class FlatMenuBar(wx.Panel):
         self.UpdateAcceleratorTable()
 
         self.ClearBitmaps(pos)
-        self.Refresh()        
+        self.Refresh()
         return True
 
 
@@ -1574,7 +1574,7 @@ class FlatMenuBar(wx.Panel):
         caller is responsible for deleting it.
 
         :param `pos`: the position of the menu in the menu bar.
-        
+
         :note: This function may be used together with L{Insert} to change the menubar
          dynamically.
         """
@@ -1599,38 +1599,38 @@ class FlatMenuBar(wx.Panel):
 
     def UpdateAcceleratorTable(self):
         """ Updates the parent accelerator table. """
-        
+
         # first get the number of items we have
         updatedTable = []
         parent = self.GetParent()
 
         for item in self._items:
-        
-            updatedTable = item.GetMenu().GetAccelArray() + updatedTable 
+
+            updatedTable = item.GetMenu().GetAccelArray() + updatedTable
 
             # create accelerator for every menu (if it exist)
             title = item.GetTitle()
             mnemonic, labelOnly = ArtManager.Get().GetAccelIndex(title)
-            
+
             if mnemonic != wx.NOT_FOUND:
-            
+
                 # Get the accelrator character
-                accelChar = labelOnly[mnemonic] 
+                accelChar = labelOnly[mnemonic]
                 accelString = "\tAlt+" + accelChar
                 title += accelString
 
                 accel = wx.GetAccelFromString(title)
                 itemId = item.GetCmdId()
-                
+
                 if accel:
-                
+
                     # connect an event to this cmd
                     parent.Connect(itemId, -1, wxEVT_FLAT_MENU_SELECTED, self.OnAccelCmd)
                     accel.Set(accel.GetFlags(), accel.GetKeyCode(), itemId)
                     updatedTable.append(accel)
-                
+
         entries = [wx.AcceleratorEntry() for ii in xrange(len(updatedTable))]
-                    
+
         # Add the new menu items
         for i in xrange(len(updatedTable)):
             entries[i] = updatedTable[i]
@@ -1650,7 +1650,7 @@ class FlatMenuBar(wx.Panel):
 
         if self._isLCD:
             return
-        
+
         for item in self._items[start:]:
             item.SetTextBitmap(wx.NullBitmap)
 
@@ -1665,11 +1665,11 @@ class FlatMenuBar(wx.Panel):
         for item in self._items:
             if item.GetCmdId() == event.GetId():
                 self.ActivateMenu(item)
-        
+
 
     def ActivateNextMenu(self):
         """ Activates next menu and make sure all others are non-active. """
-        
+
         last_item = self.GetLastVisibleMenu()
         # find the current active menu
         for i in xrange(last_item+1):
@@ -1679,7 +1679,7 @@ class FlatMenuBar(wx.Panel):
                     nextMenu = 0
                 self.ActivateMenu(self._items[nextMenu])
                 return
-            
+
 
     def GetLastVisibleMenu(self):
         """ Returns the index of the last visible menu on the menu bar. """
@@ -1688,7 +1688,7 @@ class FlatMenuBar(wx.Panel):
 
         # find the last visible item
         rect = wx.Rect()
-        
+
         for item in self._items:
 
             if item.GetRect() == rect:
@@ -1720,20 +1720,20 @@ class FlatMenuBar(wx.Panel):
 
     def CreateMoreMenu(self):
         """ Creates the drop down menu and populate it. """
-        
-        if not self._moreMenu: 
+
+        if not self._moreMenu:
             # first time
             self._moreMenu = FlatMenu(self)
             self._popupDlgCmdId = wx.NewId()
 
             # Connect an event handler for this event
             self.Connect(self._popupDlgCmdId, -1, wxEVT_FLAT_MENU_SELECTED, self.OnCustomizeDlg)
-        
+
         # Remove all items from the popup menu
         self._moreMenu.Clear()
-        
+
         invM = self.GetInvisibleMenuItemCount()
-        
+
         for i in xrange(len(self._items) - invM, len(self._items)):
             item = FlatMenuItem(self._moreMenu, wx.ID_ANY, self._items[i].GetTitle(),
                                 "", wx.ITEM_NORMAL, self._items[i].GetMenu())
@@ -1741,7 +1741,7 @@ class FlatMenuBar(wx.Panel):
 
         # Add invisible toolbar items
         invT = self.GetInvisibleToolbarItemCount()
-        
+
         if self._showToolbar and invT > 0:
             if self.GetInvisibleMenuItemCount() > 0:
                 self._moreMenu.AppendSeparator()
@@ -1754,7 +1754,7 @@ class FlatMenuBar(wx.Panel):
                     item = FlatMenuItem(self._tbMenu, tbitem.GetId(), tbitem.GetLabel(), "", wx.ITEM_NORMAL, None, tbitem.GetBitmap(), tbitem.GetDisabledBitmap())
                     item.Enable(tbitem.IsEnabled())
                     self._moreMenu.AppendItem(item)
-            
+
 
         if self._showCustomize:
             if invT + invM > 0:
@@ -1769,17 +1769,17 @@ class FlatMenuBar(wx.Panel):
 
         :note: Valid only after the `wx.PaintEvent` has been processed after a resize.
         """
-        
+
         return len(self._items) - self.GetLastVisibleMenu()
 
-    
+
     def GetInvisibleToolbarItemCount(self):
         """
         Returns the number of invisible toolbar items.
 
         :note: Valid only after the `wx.PaintEvent` has been processed after a resize.
         """
-        
+
         count = 0
         for i in xrange(len(self._tbButtons)):
             if self._tbButtons[i]._visible == False:
@@ -1788,13 +1788,13 @@ class FlatMenuBar(wx.Panel):
 
         return len(self._tbButtons) - count - 1
 
-    
+
     def PopupMoreMenu(self):
         """ Popups the 'more' menu. """
 
         if (not self._showCustomize) and self.GetInvisibleMenuItemCount() + self.GetInvisibleToolbarItemCount() < 1:
             return
-        
+
         self.CreateMoreMenu()
 
         pt = self._dropDownButtonArea.GetTopLeft()
@@ -1815,11 +1815,11 @@ class FlatMenuBar(wx.Panel):
         else:
             # intialize the dialog
             self._dlg.Initialise()
-        
+
         if self._dlg.ShowModal() == wx.ID_OK:
             # Handle customize requests here
             pass
-        
+
         if "__WXGTK__" in wx.Platform:
             # Reset the more button
             dc = wx.ClientDC(self)
@@ -1829,10 +1829,10 @@ class FlatMenuBar(wx.Panel):
     def AppendToolbarItem(self, item):
         """
         Appends a tool to the L{FlatMenuBar}.
-        
+
         :warning: This method is now deprecated.
 
-        :see: L{AddTool}        
+        :see: L{AddTool}
         """
 
         newItem = ToolBarItem(item, wx.Rect(), ControlNormal)
@@ -1843,7 +1843,7 @@ class FlatMenuBar(wx.Panel):
                 kind=wx.ITEM_NORMAL, shortHelp="", longHelp=""):
         """
         Adds a tool to the toolbar.
-        
+
         :param `toolId`: an integer by which the tool may be identified in subsequent
          operations;
         :param `kind`: may be ``wx.ITEM_NORMAL`` for a normal button (default),
@@ -1859,7 +1859,7 @@ class FlatMenuBar(wx.Panel):
         :param `longHelp`: this string is shown in the `wx.StatusBar` (if any) of the
          parent frame when the mouse pointer is inside the tool.
         """
-        
+
         self._tbButtons.append(ToolBarItem(FlatToolbarItem(bitmap1, toolId, label, bitmap2, kind, shortHelp, longHelp), wx.Rect(), ControlNormal))
 
 
@@ -1869,14 +1869,14 @@ class FlatMenuBar(wx.Panel):
         if len(self._tbButtons) > 0 and not self._tbButtons[len(self._tbButtons)-1]._tbItem.IsSeparator():
             self._tbButtons.append(ToolBarItem(FlatToolbarItem(), wx.Rect(), ControlNormal))
 
-        
+
     def AddControl(self, control):
         """
         Adds any control to the toolbar, typically e.g. a combobox.
-        
+
         :param `control`: the control to be added.
         """
-        
+
         self._tbButtons.append(ToolBarItem(FlatToolbarItem(control), wx.Rect(), ControlNormal))
 
 
@@ -1886,10 +1886,10 @@ class FlatMenuBar(wx.Panel):
 
         :see: L{AddTool} for parameter descriptions.
         """
-        
+
         self.AddTool(toolId, label, bitmap1, bitmap2, kind=wx.ITEM_CHECK, shortHelp=shortHelp, longHelp=longHelp)
 
-        
+
     def AddRadioTool(self, toolId, label= "", bitmap1=wx.NullBitmap, bitmap2=wx.NullBitmap, shortHelp="", longHelp=""):
         """
         Adds a new radio tool to the toolbar. Consecutive radio tools form a radio group
@@ -1901,16 +1901,16 @@ class FlatMenuBar(wx.Panel):
         impossible for the user to use such button.
 
         By default, the first button in the radio group is initially pressed, the others are not.
-        
+
         :see: L{AddTool} for parameter descriptions.
         """
-        
+
         self.AddTool(toolId, label, bitmap1, bitmap2, kind=wx.ITEM_RADIO, shortHelp=shortHelp, longHelp=longHelp)
-        
+
         if len(self._tbButtons)<1 or not self._tbButtons[len(self._tbButtons)-2]._tbItem.IsRadioItem():
             self._tbButtons[len(self._tbButtons)-1]._tbItem.Select(True)
             self._lastRadioGroup += 1
-            
+
         self._tbButtons[len(self._tbButtons)-1]._tbItem.SetGroup(self._lastRadioGroup)
 
 
@@ -1919,7 +1919,7 @@ class FlatMenuBar(wx.Panel):
         Sets the updateUI interval for toolbar items. All UpdateUI events are
         sent from within L{OnIdle} handler, the default is 20 milliseconds.
 
-        :param `interval`: the updateUI interval in milliseconds.        
+        :param `interval`: the updateUI interval in milliseconds.
         """
 
         self._interval = interval
@@ -1937,7 +1937,7 @@ class FlatMenuBar(wx.Panel):
             pn = AuiPaneInfo()
         else:
             pn = PyAuiPaneInfo()
-            
+
         xx = wx.SystemSettings_GetMetric(wx.SYS_SCREEN_X)
 
         # We add our menu bar as a toolbar, with the following settings
@@ -1949,7 +1949,7 @@ class FlatMenuBar(wx.Panel):
         pn.LeftDockable(False)
         pn.RightDockable(False)
         pn.ToolbarPane()
-        
+
         if not fixToolbar:
             # We add our menu bar as a toolbar, with the following settings
             pn.BestSize(wx.Size(xx, self._barHeight))
@@ -1957,7 +1957,7 @@ class FlatMenuBar(wx.Panel):
             pn.Floatable(True)
             pn.MaxSize(wx.Size(xx, self._barHeight))
             pn.Gripper(True)
-            
+
         else:
             pn.BestSize(wx.Size(xx, self._barHeight))
             pn.Gripper(False)
@@ -1966,7 +1966,7 @@ class FlatMenuBar(wx.Panel):
         pn.PaneBorder(False)
         mgr.AddPane(self, pn)
 
-        self._mgr = mgr        
+        self._mgr = mgr
 
 
     def DoGiveHelp(self, hit):
@@ -1984,16 +1984,16 @@ class FlatMenuBar(wx.Panel):
         longHelp = hit.GetLongHelp()
         if not longHelp:
             return
-        
+
         topLevel = wx.GetTopLevelParent(self)
-        
+
         if isinstance(topLevel, wx.Frame) and topLevel.GetStatusBar():
             statusBar = topLevel.GetStatusBar()
 
             if self._statusTimer and self._statusTimer.IsRunning():
                 self._statusTimer.Stop()
                 statusBar.PopStatusText(0)
-                
+
             statusBar.PushStatusText(longHelp, 0)
             self._statusTimer = StatusBarTimer(self)
             self._statusTimer.Start(_DELAY, wx.TIMER_ONE_SHOT)
@@ -2018,7 +2018,7 @@ class FlatMenuBar(wx.Panel):
         """ Handles the timer expiring to delete the `longHelp` string in the `wx.StatusBar`. """
 
         topLevel = wx.GetTopLevelParent(self)
-        statusBar = topLevel.GetStatusBar()        
+        statusBar = topLevel.GetStatusBar()
         statusBar.PopStatusText(0)
 
 
@@ -2037,7 +2037,7 @@ class mcPopupWindow(wx.MiniFrame):
         self.SetExtraStyle(wx.WS_EX_TRANSIENT)
         self._parent = parent
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeaveWindow)
-        
+
 
     def OnLeaveWindow(self, event):
         """
@@ -2059,17 +2059,17 @@ if wx.Platform == '__WXMAC__':
 # ---------------------------------------------------------------------------- #
 # Class ShadowPopupWindow
 # ---------------------------------------------------------------------------- #
-    
+
 class ShadowPopupWindow(wx.PopupWindow):
     """ Base class for generic L{FlatMenu} derived from `wx.PopupWindow`. """
-    
+
     def __init__(self, parent=None):
         """
         Default class constructor.
 
         :param `parent`: the L{ShadowPopupWindow} parent (tipically your main frame).
         """
-        
+
         if not parent:
             parent = wx.GetApp().GetTopWindow()
 
@@ -2089,7 +2089,7 @@ class ShadowPopupWindow(wx.PopupWindow):
         # popup windows are created hidden by default
         self.Hide()
 
-    
+
 #--------------------------------------------------------
 # Class FlatMenuButton
 #--------------------------------------------------------
@@ -2120,9 +2120,9 @@ class FlatMenuButton(object):
 
         if not disabledBmp.Ok():
             self._disabledBmp = ArtManager.Get().CreateGreyBitmap(self._normalBmp)
-        else: 
+        else:
             self._disabledBmp = disabledBmp
-        
+
         self._state = ControlNormal
         self._timer = wx.Timer(self._parent, self._timerID)
         self._timer.Stop()
@@ -2134,19 +2134,19 @@ class FlatMenuButton(object):
         if self._timer:
             if self._timer.IsRunning():
                 self._timer.Stop()
-                
+
             del self._timer
 
 
     def Contains(self, pt):
         """ Used internally. """
-    
+
         rect = wx.RectPS(self._pos, self._size)
         if not rect.Contains(pt):
             return False
 
         return True
-    
+
 
     def Draw(self, dc):
         """
@@ -2175,12 +2175,12 @@ class FlatMenuButton(object):
 
         self._state = ControlPressed
         self._parent.Refresh()
-        
+
         if self._up:
             self._parent.ScrollUp()
         else:
             self._parent.ScrollDown()
-            
+
         self._timer.Start(100)
         return True
 
@@ -2213,21 +2213,21 @@ class FlatMenuButton(object):
 
         # pt is in parent coordiantes, convert it to our
         if not self.Contains(pt):
-        
+
             self._timer.Stop()
             if self._state != ControlNormal:
-            
+
                 self._state = ControlNormal
                 self._parent.Refresh()
-            
+
             return False
-        
+
         # Process mouse move event
         if self._state != ControlFocus:
             if self._state != ControlPressed:
                 self._state = ControlFocus
                 self._parent.Refresh()
-        
+
         return True
 
 
@@ -2250,7 +2250,7 @@ class FlatMenuButton(object):
             self._pos = wx.Point(input1, input2)
         else:
             self._pos = input1
-            
+
 
     def SetSize(self, input1, input2=None):
         """
@@ -2266,7 +2266,7 @@ class FlatMenuButton(object):
             self._size = wx.Size(input1, input2)
         else:
             self._size = input1
-                
+
 
     def GetClientRect(self):
         """ Returns the client rectangle for L{FlatMenuButton}. """
@@ -2282,12 +2282,12 @@ class FlatMenuItemGroup(object):
     """
     A class that manages a group of radio menu items.
     """
- 
+
     def __init__(self):
         """ Default class constructor. """
 
         self._items = []
-        
+
 
     def GetSelectedItem(self):
         """ Returns the selected item. """
@@ -2295,7 +2295,7 @@ class FlatMenuItemGroup(object):
         for item in self._items:
             if item.IsChecked():
                 return item
-        
+
         return None
 
 
@@ -2310,7 +2310,7 @@ class FlatMenuItemGroup(object):
             # uncheck all other items
             for exitem in self._items:
                 exitem._bIsChecked = False
-        
+
         self._items.append(item)
 
 
@@ -2323,7 +2323,7 @@ class FlatMenuItemGroup(object):
 
         if item in self._items:
             return True
-        
+
         return False
 
 
@@ -2341,7 +2341,7 @@ class FlatMenuItemGroup(object):
         # uncheck all other items
         for exitem in self._items:
             exitem._bIsChecked = False
-        
+
         item._bIsChecked = True
 
 
@@ -2389,7 +2389,7 @@ class FlatMenuBase(ShadowPopupWindow):
         self._is_dismiss = False
 
         ShadowPopupWindow.__init__(self, parent)
-                    
+
 
     def OnDismiss(self):
         """ Fires an event ``EVT_FLAT_MENU_DISMISSED`` and handle menu dismiss. """
@@ -2399,7 +2399,7 @@ class FlatMenuBase(ShadowPopupWindow):
             self.ReleaseMouse()
 
         self._is_dismiss = True
-        
+
         # send an event about our dismissal to the parent (unless we are a sub menu)
         if self.IsShown() and not self._parentMenu:
 
@@ -2411,7 +2411,7 @@ class FlatMenuBase(ShadowPopupWindow):
                 self.GetMenuOwner().GetEventHandler().ProcessEvent(event)
             else:
                 self.GetEventHandler().ProcessEvent(event)
-        
+
 
     def Popup(self, pt, parent):
         """
@@ -2426,14 +2426,14 @@ class FlatMenuBase(ShadowPopupWindow):
         # some controls update themselves from OnIdle() call - let them do it
         wx.GetApp().ProcessIdle()
 
-        # The mouse was pressed in the parent coordinates, 
+        # The mouse was pressed in the parent coordinates,
         # e.g. pressing on the left top of a text ctrl
         # will result in (1, 1), these coordinates needs
         # to be converted into screen coords
         self._parentMenu = parent
 
         # If we are topmost menu, we use the given pt
-        # else we use the logical 
+        # else we use the logical
         # parent (second argument provided to this function)
 
         if self._parentMenu:
@@ -2445,11 +2445,11 @@ class FlatMenuBase(ShadowPopupWindow):
         pos = self.AdjustPosition(pos)
 
         if self._showScrollButtons:
-            
+
             sz = self.GetSize()
             # Get the screen height
             scrHeight = wx.SystemSettings_GetMetric(wx.SYS_SCREEN_Y)
-            
+
             if not self._upButton:
                 self._upButton = FlatMenuButton(self, True, ArtManager.Get().GetStockBitmap("arrow_up"))
 
@@ -2463,13 +2463,13 @@ class FlatMenuBase(ShadowPopupWindow):
             self._upButton.Move((sz.x - SCROLL_BTN_HEIGHT - 4, 4))
             self._downButton.Move((sz.x - SCROLL_BTN_HEIGHT - 4, scrHeight - pos.y - 2 - SCROLL_BTN_HEIGHT))
 
-        self.Move(pos)        
+        self.Move(pos)
         self.Show()
 
         # Capture mouse event and direct them to us
         self.CaptureMouse()
         self._is_dismiss = False
-        
+
 
     def AdjustPosition(self, pos):
         """
@@ -2487,7 +2487,7 @@ class FlatMenuBase(ShadowPopupWindow):
         # always assume that we have scrollbuttons on
         self._showScrollButtons = False
         pos.y += self._popupPtOffset
-        
+
         if size.y + pos.y > scrHeight:
             # the menu will be truncated
             if self._parentMenu is None:
@@ -2498,16 +2498,16 @@ class FlatMenuBase(ShadowPopupWindow):
                 if flippedPosy >= 0 and flippedPosy + size.y < scrHeight:
                     pos.y = flippedPosy
                     return pos
-                else: 
+                else:
                     # We need to popup scrollbuttons!
                     self._showScrollButtons = True
-                
-            else: 
+
+            else:
                 # we are a submenu
                 # try to decrease the y value of the menu position
                 newy = pos.y
                 newy -= (size.y + pos.y) - scrHeight
-                
+
                 if newy + size.y > scrHeight:
                     # probably the menu size is too high to fit
                     # the screen, we need scrollbuttons
@@ -2520,24 +2520,24 @@ class FlatMenuBase(ShadowPopupWindow):
         if menuMaxX > scrWidth and pos.x < scrWidth:
 
             if self._parentMenu:
-            
+
                 # We are submenu
                 self._shiftePos = (size.x + self._parentMenu.GetSize().x)
                 pos.x -= self._shiftePos
                 pos.x += 10
-                            
+
             else:
 
-                self._shiftePos  = ((size.x + pos.x) - scrWidth)            
+                self._shiftePos  = ((size.x + pos.x) - scrWidth)
                 pos.x -= self._shiftePos
 
         else:
 
             if self._parentMenu:
                 pos.x += 5
-                
+
         return pos
-    
+
 
     def Dismiss(self, dismissParent, resetOwner):
         """
@@ -2545,7 +2545,7 @@ class FlatMenuBase(ShadowPopupWindow):
 
         :param `dismissParent`: whether to dismiss the parent menu or not;
         :param `resetOwner`: ``True`` to delete the link between this menu and the
-         owner menu, ``False`` otherwise.        
+         owner menu, ``False`` otherwise.
         """
 
         # Check if child menu is poped, if so, dismiss it
@@ -2561,10 +2561,10 @@ class FlatMenuBase(ShadowPopupWindow):
         self.Show(False)
 
         if self._parentMenu and dismissParent:
-        
+
             self._parentMenu.OnChildDismiss()
             self._parentMenu.Dismiss(dismissParent, resetOwner)
-        
+
         self._parentMenu = None
 
 
@@ -2580,7 +2580,7 @@ class FlatMenuBase(ShadowPopupWindow):
         root = self
         while root._parentMenu:
             root = root._parentMenu
-            
+
         return root
 
 
@@ -2589,19 +2589,19 @@ class FlatMenuBase(ShadowPopupWindow):
         Sets the menu owner height, this will be used to position the menu below
         or above the owner.
 
-        :param `height`: an integer representing the menu owner height.        
+        :param `height`: an integer representing the menu owner height.
         """
 
         self._popupPtOffset = height
-        
-    
+
+
     # by default do nothing
     def ScrollDown(self):
         """
         Scroll one unit down.
         By default this function is empty, let derived class do something.
         """
-        
+
         pass
 
 
@@ -2611,7 +2611,7 @@ class FlatMenuBase(ShadowPopupWindow):
         Scroll one unit up.
         By default this function is empty, let derived class do something.
         """
-        
+
         pass
 
 
@@ -2622,7 +2622,7 @@ class FlatMenuBase(ShadowPopupWindow):
         """
 
         return self._owner
-        
+
 
 #--------------------------------------------------------
 # Class ToolBarItem
@@ -2632,7 +2632,7 @@ class ToolBarItem(object):
     """
     A simple class that holds information about a toolbar item.
     """
-    
+
     def __init__(self, tbItem, rect, state):
         """
         Default class constructor.
@@ -2641,7 +2641,7 @@ class ToolBarItem(object):
         :param `rect`: the client rectangle for the toolbar item;
         :param `state`: the toolbar item state.
 
-        :see: L{MenuEntryInfo.SetState} for a list of valid item states.        
+        :see: L{MenuEntryInfo.SetState} for a list of valid item states.
         """
 
         self._tbItem = tbItem
@@ -2683,7 +2683,7 @@ class FlatToolbarItem(object):
         :param `longHelp`: this string is shown in the `wx.StatusBar` (if any) of the
          parent frame when the mouse pointer is inside the tool.
         """
-        
+
         if id == wx.ID_ANY:
             id = wx.NewId()
 
@@ -2702,14 +2702,14 @@ class FlatToolbarItem(object):
             self._disabledImg = wx.NullBitmap
             self._customCtrl = controlType
             kind = FTB_ITEM_CUSTOM
-            
+
         elif isinstance(controlType, wx.Bitmap):   # Bitmap construction, simple tool
             self._normalBmp = controlType
             self._id = id
             self._label = label
             self._disabledImg = disabledBmp
             self._customCtrl = None
-            
+
             if not self._disabledImg.Ok():
                 # Create a grey bitmap from the normal bitmap
                 self._disabledImg = ArtManager.Get().CreateGreyBitmap(self._normalBmp)
@@ -2721,7 +2721,7 @@ class FlatToolbarItem(object):
 
         if not shortHelp:
             shortHelp = label
-            
+
         self._shortHelp = shortHelp
         self._longHelp = longHelp
 
@@ -2755,7 +2755,7 @@ class FlatToolbarItem(object):
         """
 
         self._normalBmp = bmp
-        
+
 
     def GetDisabledBitmap(self):
         """ Returns the tool disabled bitmap. """
@@ -2771,7 +2771,7 @@ class FlatToolbarItem(object):
         """
 
         self._disabledImg = bmp
-        
+
 
     def GetId(self):
         """ Gets the tool id. """
@@ -2787,16 +2787,16 @@ class FlatToolbarItem(object):
 
     def IsRadioItem(self):
         """ Returns True if the item is a radio item. """
-        
+
         return self._kind == wx.ITEM_RADIO
 
 
     def IsCheckItem(self):
         """ Returns True if the item is a radio item. """
-        
+
         return self._kind == wx.ITEM_CHECK
 
-    
+
     def IsCustomControl(self):
         """ Returns whether the tool is a custom control or not. """
 
@@ -2817,13 +2817,13 @@ class FlatToolbarItem(object):
 
     def IsSelected(self):
         """ Returns whether the tool is selected or checked."""
-        
+
         return self._selected
 
 
     def IsChecked(self):
         """ Same as L{IsSelected}. More intuitive for check items though. """
-        
+
         return self._selected
 
 
@@ -2834,40 +2834,40 @@ class FlatToolbarItem(object):
         :param `select`: ``True`` to select or check a tool, ``False`` to unselect
          or uncheck it.
         """
-        
+
         self._selected = select
 
-        
+
     def Toggle(self):
         """ Toggles a check item. """
-        
+
         if self.IsCheckItem():
             self._selected = not self._selected
 
-            
+
     def SetGroup(self, group):
         """
         Sets group id for a radio item, for other items does nothing.
 
         :param `group`: an instance of L{FlatMenuItemGroup}.
         """
-        
+
         if self.IsRadioItem():
             self._group = group
 
-            
+
     def GetGroup(self):
         """ Returns group id for radio item, or -1 for other item types. """
-        
+
         return self._group
-    
-    
+
+
     def IsEnabled(self):
         """ Returns whether the tool is enabled or not. """
 
         return self._enabled
-    
-    
+
+
     def Enable(self, enable=True):
         """
         Enables or disables the tool.
@@ -2980,7 +2980,7 @@ class FlatMenuItem(object):
         self._radioMarkBmp = wx.BitmapFromXPMData(radio_item_xpm)
         self._radioMarkBmp.SetMask(wx.Mask(self._radioMarkBmp, wx.WHITE))
 
-                
+
     def SetLongHelp(self, help):
         """
         Sets the item long help string (displayed in the parent frame `wx.StatusBar`).
@@ -2989,7 +2989,7 @@ class FlatMenuItem(object):
         """
 
         self._helpString = help
-        
+
 
     def GetLongHelp(self):
         """ Returns the item long help string (displayed in the parent frame `wx.StatusBar`). """
@@ -3001,7 +3001,7 @@ class FlatMenuItem(object):
         """ Returns the item short help string (displayed in the tool's tooltip). """
 
         return ""
-    
+
 
     def Enable(self, enable=True):
         """
@@ -3021,7 +3021,7 @@ class FlatMenuItem(object):
         none has been supplied.
         """
 
-        return self._normalBmp 
+        return self._normalBmp
 
 
     def GetDisabledBitmap(self):
@@ -3030,7 +3030,7 @@ class FlatMenuItem(object):
         if none has been supplied.
         """
 
-        return self._disabledBmp 
+        return self._disabledBmp
 
 
     def GetHotBitmap(self):
@@ -3039,19 +3039,19 @@ class FlatMenuItem(object):
         none has been supplied.
         """
 
-        return self._hotBmp 
+        return self._hotBmp
 
-    
+
     def GetHelp(self):
         """ Returns the item help string. """
 
-        return self._helpString 
+        return self._helpString
 
 
     def GetId(self):
         """ Returns the item id. """
 
-        return self._id 
+        return self._id
 
 
     def GetKind(self):
@@ -3060,19 +3060,19 @@ class FlatMenuItem(object):
         ``wx.ITEM_CHECK`` or ``wx.ITEM_RADIO``.
         """
 
-        return self._kind 
+        return self._kind
 
 
     def GetLabel(self):
         """ Returns the menu item label (without the accelerator if it is part of the string). """
 
-        return self._label 
+        return self._label
 
 
     def GetMenu(self):
         """ Returns the parent menu. """
 
-        return self._parentMenu 
+        return self._parentMenu
 
 
     def GetContextMenu(self):
@@ -3089,12 +3089,12 @@ class FlatMenuItem(object):
         """
 
         self._contextMenu = context_menu
-        
+
 
     def GetText(self):
         """ Returns the text associated with the menu item including the accelerator. """
 
-        return self._text 
+        return self._text
 
 
     def GetSubMenu(self):
@@ -3117,7 +3117,7 @@ class FlatMenuItem(object):
          ``wx.ITEM_RADIO``.
         """
 
-        return self._bIsChecked 
+        return self._bIsChecked
 
 
     def IsRadioItem(self):
@@ -3129,20 +3129,20 @@ class FlatMenuItem(object):
     def IsEnabled(self):
         """ Returns whether an item is enabled or not. """
 
-        return self._bIsEnabled 
+        return self._bIsEnabled
 
 
     def IsSeparator(self):
         """ Returns ``True`` if this item is of type ``wx.ITEM_SEPARATOR``, ``False`` otherwise. """
 
         return self._id == wx.ID_SEPARATOR
-    
+
 
     def IsSubMenu(self):
         """ Returns whether an item is a sub-menu or not. """
 
         return self._subMenu != None
-    
+
 
     def SetNormalBitmap(self, bmp):
         """
@@ -3151,7 +3151,7 @@ class FlatMenuItem(object):
         :param `bmp`: an instance of `wx.Bitmap`.
         """
 
-        self._normalBmp = bmp 
+        self._normalBmp = bmp
 
 
     def SetDisabledBitmap(self, bmp):
@@ -3161,7 +3161,7 @@ class FlatMenuItem(object):
         :param `bmp`: an instance of `wx.Bitmap`.
         """
 
-        self._disabledBmp = bmp 
+        self._disabledBmp = bmp
 
 
     def SetHotBitmap(self, bmp):
@@ -3171,7 +3171,7 @@ class FlatMenuItem(object):
         :param `bmp`: an instance of `wx.Bitmap`.
         """
 
-        self._hotBmp = bmp 
+        self._hotBmp = bmp
 
 
     def SetHelp(self, helpString):
@@ -3181,7 +3181,7 @@ class FlatMenuItem(object):
         :param `helpString`: the new menu item help string.
         """
 
-        self._helpString = helpString 
+        self._helpString = helpString
 
 
     def SetMenu(self, menu):
@@ -3191,7 +3191,7 @@ class FlatMenuItem(object):
         :param `menu`: an instance of L{FlatMenu}.
         """
 
-        self._parentMenu = menu 
+        self._parentMenu = menu
 
 
     def SetSubMenu(self, menu):
@@ -3202,7 +3202,7 @@ class FlatMenuItem(object):
         """
 
         self._subMenu = menu
-        
+
         # Fix toolbar update
         self.SetMenuBar()
 
@@ -3210,7 +3210,7 @@ class FlatMenuItem(object):
     def GetAccelString(self):
         """ Returns the accelerator string. """
 
-        return self._accelStr 
+        return self._accelStr
 
 
     def SetRect(self, rect):
@@ -3220,13 +3220,13 @@ class FlatMenuItem(object):
         :param `rect`: the menu item client rectangle.
         """
 
-        self._rect = rect 
+        self._rect = rect
 
 
     def GetRect(self):
         """ Returns the menu item client rectangle. """
 
-        return self._rect 
+        return self._rect
 
 
     def IsShown(self):
@@ -3260,19 +3260,19 @@ class FlatMenuItem(object):
         :param `selected`: ``True`` if this menu item is currentl hovered by the mouse,
          ``False`` otherwise.
         """
- 
+
         borderXSize = self._parentMenu.GetBorderXWidth()
         itemHeight = self._parentMenu.GetItemHeight()
         menuWidth  = self._parentMenu.GetMenuWidth()
 
         artMgr = ArtManager.Get()
-        
+
         theme = artMgr.GetMenuTheme()
 
         # Define the item actual rectangle area
         itemRect = wx.Rect(xCoord, yCoord, menuWidth, itemHeight)
 
-        # Define the drawing area 
+        # Define the drawing area
         rect = wx.Rect(xCoord+2, yCoord, menuWidth - 4, itemHeight)
 
         # Draw the background
@@ -3281,7 +3281,7 @@ class FlatMenuItem(object):
         backBrush = wx.Brush(backColour)
         lightColour = wx.NamedColour("LIGHT GREY")
         leftMarginWidth = self._parentMenu.GetLeftMarginWidth()
-        
+
         pen = wx.Pen(penColour)
         dc.SetPen(pen)
         dc.SetBrush(backBrush)
@@ -3292,30 +3292,30 @@ class FlatMenuItem(object):
 
         # check if separator
         if self.IsSeparator():
-        
-            # Separator is a small grey line separating between 
+
+            # Separator is a small grey line separating between
             # menu item. the separator height is 3 pixels
             sepWidth = xCoord + menuWidth - textX - 1
             sepRect1 = wx.Rect(xCoord + textX, yCoord + 1, sepWidth/2, 1)
             sepRect2 = wx.Rect(xCoord + textX + sepWidth/2, yCoord + 1, sepWidth/2-1, 1)
-        
+
             artMgr.PaintStraightGradientBox(dc, sepRect1, backColour, lightColour, False)
             artMgr.PaintStraightGradientBox(dc, sepRect2, lightColour, backColour, False)
             return
-        
+
         # Keep the item rect
         self._rect = itemRect
 
         # Get the bitmap base on the item state (disabled, selected ..)
         bmp = self.GetSuitableBitmap(selected)
-        
+
         # First we draw the selection rectangle
         if selected:
             artMgr.SetMS2007ButtonSunken(False)
             artMgr.DrawButton(dc, rect, theme, ControlFocus, False)
 
         if bmp.Ok():
-        
+
             # Calculate the postion to place the image
             imgHeight = bmp.GetHeight()
             imgWidth  = bmp.GetWidth()
@@ -3327,12 +3327,12 @@ class FlatMenuItem(object):
 
             yy = rect.y + (rect.height - imgHeight)/2
             dc.DrawBitmap(bmp, xx, yy, True)
-        
+
         if self.GetKind() == wx.ITEM_CHECK:
-        
+
             # Checkable item
             if self.IsChecked():
-            
+
                 # Draw surrounding rectangle around the selection box
                 xx = rect.x + 1
                 yy = rect.y + 1
@@ -3341,14 +3341,14 @@ class FlatMenuItem(object):
                 if not selected:
                     artMgr.SetMS2007ButtonSunken(False)
                     artMgr.DrawButton(dc, rr, theme, ControlFocus, False)
-                    
+
                 dc.DrawBitmap(self._checkMarkBmp, rr.x + (rr.width - 16)/2, rr.y + (rr.height - 16)/2, True)
 
         if self.GetKind() == wx.ITEM_RADIO:
-            
+
             # Checkable item
             if self.IsChecked():
-                
+
                 # Draw surrounding rectangle around the selection box
                 xx = rect.x + 1
                 yy = rect.y + 1
@@ -3357,12 +3357,12 @@ class FlatMenuItem(object):
                 if not selected:
                     artMgr.SetMS2007ButtonSunken(False)
                     artMgr.DrawButton(dc, rr, theme, ControlFocus, False)
-                
+
                 dc.DrawBitmap(self._radioMarkBmp, rr.x + (rr.width - 16)/2, rr.y + (rr.height - 16)/2, True)
 
         # Draw text - without accelerators
         text = self.GetLabel()
-        
+
         if text:
 
             font = artMgr.GetFont()
@@ -3375,7 +3375,7 @@ class FlatMenuItem(object):
             dc.SetTextForeground(textColour)
 
             if self._mnemonicIdx != wx.NOT_FOUND:
-            
+
                 # We divide the drawing to 3 parts
                 text1 = text[0:self._mnemonicIdx]
                 text2 = text[self._mnemonicIdx]
@@ -3388,10 +3388,10 @@ class FlatMenuItem(object):
                 posx = xCoord + textX + borderXSize
                 posy = (itemHeight - h)/2 + yCoord
 
-                # Draw first part 
+                # Draw first part
                 dc.DrawText(text1, posx, posy)
 
-                # mnemonic 
+                # mnemonic
                 if "__WXGTK__" not in wx.Platform:
                     font.SetUnderlined(True)
                     dc.SetFont(font)
@@ -3404,32 +3404,32 @@ class FlatMenuItem(object):
                 dc.SetFont(font)
                 posx += w2
                 dc.DrawText(text3, posx, posy)
-            
+
             else:
-            
+
                 w, h = dc.GetTextExtent(text)
                 dc.DrawText(text, xCoord + textX + borderXSize, (itemHeight - h)/2 + yCoord)
-            
-        
+
+
         # Now draw accelerator
         # Accelerators are aligned to the right
         if self.GetAccelString():
-        
+
             accelWidth, accelHeight = dc.GetTextExtent(self.GetAccelString())
             dc.DrawText(self.GetAccelString(), xCoord + rightMarginX - accelWidth, (itemHeight - accelHeight)/2 + yCoord)
-        
-        # Check if this item has sub-menu - if it does, draw 
+
+        # Check if this item has sub-menu - if it does, draw
         # right arrow on the right margin
         if self.GetSubMenu():
-        
-            # Draw arrow 
+
+            # Draw arrow
             rightArrowBmp = wx.BitmapFromXPMData(menu_right_arrow_xpm)
             rightArrowBmp.SetMask(wx.Mask(rightArrowBmp, wx.WHITE))
 
-            xx = xCoord + rightMarginX + borderXSize 
+            xx = xCoord + rightMarginX + borderXSize
             rr = wx.Rect(xx, rect.y + 1, rect.height-2, rect.height-2)
             dc.DrawBitmap(rightArrowBmp, rr.x + 4, rr.y +(rr.height-16)/2, True)
-        
+
 
     def GetHeight(self):
         """ Returns the menu item height. """
@@ -3466,7 +3466,7 @@ class FlatMenuItem(object):
 
         :param `text`: the new item label (excluding the accelerator).
         """
- 
+
         if text:
 
             indx = text.find("\t")
@@ -3478,9 +3478,9 @@ class FlatMenuItem(object):
                 label = text
 
             self._mnemonicIdx, self._label = ArtManager.Get().GetAccelIndex(label)
-            
+
         else:
-        
+
             self._mnemonicIdx = wx.NOT_FOUND
             self._label = ""
 
@@ -3494,7 +3494,7 @@ class FlatMenuItem(object):
 
         :param `text`: the new item label (including the accelerator).
         """
-     
+
         self._text = text
         self.SetLabel(self._text)
 
@@ -3532,14 +3532,14 @@ class FlatMenuItem(object):
         :note: This method is meaningful only for menu items of ``wx.ITEM_CHECK``
          or ``wx.ITEM_RADIO`` kind.
         """
- 
+
         if self.IsRadioItem() and not self._isAttachedToMenu:
-        
+
             # radio items can be checked only after they are attached to menu
             return
-        
+
         self._bIsChecked = check
-        
+
         # update group
         if self.IsRadioItem() and check:
             self._groupPtr.SetSelection(self)
@@ -3557,7 +3557,7 @@ class FlatMenu(FlatMenuBase):
     """
     A Flat popup menu generic implementation.
     """
-    
+
     def __init__(self, parent=None):
         """
         Default class constructor.
@@ -3565,7 +3565,7 @@ class FlatMenu(FlatMenuBase):
         :param `parent`: the L{FlatMenu} parent window (used to initialize the
          underlying L{ShadowPopupWindow}).
         """
-                        
+
         self._menuWidth = 2*26
         self._leftMarginWidth = 26
         self._rightMarginWidth = 30
@@ -3595,7 +3595,7 @@ class FlatMenu(FlatMenuBase):
         self._is_dismiss = False
         self._numCols = 1
 
-        FlatMenuBase.__init__(self, parent)        
+        FlatMenuBase.__init__(self, parent)
 
         self.SetSize(wx.Size(self._menuWidth, self._itemHeight+4))
 
@@ -3663,7 +3663,7 @@ class FlatMenu(FlatMenuBase):
 
         # each time we popup, need to reset the starting index
         self._first = 0
-        
+
         # Loop over self menu and send update UI event for
         # every item in the menu
         numEvents = len(self._itemsArr)
@@ -3687,11 +3687,11 @@ class FlatMenu(FlatMenuBase):
         # all keyboard events to us and the focused window to direct char events to us
         self._activeWin = wx.GetActiveWindow()
         if self._activeWin:
-        
+
             oldHandler = self._activeWin.GetEventHandler()
             newEvtHandler = MenuKbdRedirector(self, oldHandler)
             self._activeWin.PushEventHandler(newEvtHandler)
-        
+
         if "__WXMSW__" in wx.Platform:
             self._focusWin = wx.Window.FindFocus()
         elif "__WXGTK__" in wx.Platform:
@@ -3703,7 +3703,7 @@ class FlatMenu(FlatMenuBase):
             newEvtHandler = FocusHandler(self)
             self._focusWin.PushEventHandler(newEvtHandler)
 
-        
+
     def Append(self, id, item, helpString="", kind=wx.ITEM_NORMAL):
         """
         Appends an item to this menu.
@@ -3727,13 +3727,13 @@ class FlatMenu(FlatMenuBase):
     def AppendSubMenu(self, subMenu, item, helpString=""):
         """
         Adds a pull-right submenu to the end of the menu. See AppendMenu()
-        
+
         This function is added to duplicate the API of wx.Menu
         """
-        
+
         return self.AppendMenu(wx.ID_ANY, item, subMenu, helpString)
-        
-        
+
+
     def AppendMenu(self, id, item, subMenu, helpString=""):
         """
         Adds a pull-right submenu to the end of the menu.
@@ -3761,9 +3761,9 @@ class FlatMenu(FlatMenuBase):
         if not menuItem:
             raise Exception("Adding None item?")
             return
-        
+
         # Reparent to us
-        menuItem.SetMenu(self) 
+        menuItem.SetMenu(self)
         self._itemsArr.append(menuItem)
         menuItem._isAttachedToMenu = True
 
@@ -3774,29 +3774,29 @@ class FlatMenu(FlatMenuBase):
 
         menuHeight = 0
         switch = 1e6
-        
+
         if self._numCols > 1:
             nItems = len(self._itemsArr)
             switch = int(math.ceil((nItems - self._first)/float(self._numCols)))
-            
+
         for indx, item in enumerate(self._itemsArr):
 
             if indx >= switch:
                 break
-            
+
             if item.IsSeparator():
                 menuHeight += 3
             else:
                 menuHeight += self._itemHeight
-                    
+
         self.SetSize(wx.Size(self._menuWidth*self._numCols, menuHeight+4))
 
         # Add accelerator entry to the menu if needed
         accel = menuItem.GetAcceleratorEntry()
-        
+
         if accel:
             accel.Set(accel.GetFlags(), accel.GetKeyCode(), menuItem.GetId())
-            self._accelArray.append(accel)        
+            self._accelArray.append(accel)
 
         self.UpdateRadioGroup(menuItem)
 
@@ -3807,7 +3807,7 @@ class FlatMenu(FlatMenuBase):
         """ Returns the list of menu items in the menu. """
 
         return self._itemsArr
-    
+
 
     def GetMenuItemWidth(self, menuItem):
         """
@@ -3832,13 +3832,13 @@ class FlatMenu(FlatMenuBase):
         width, height = dc.GetTextExtent(text)
         accelWidth, accelHeight = dc.GetTextExtent(accel)
         filler, dummy = dc.GetTextExtent(accelFiller)
-        
+
         bmpHeight = bmpWidth = 0
-        
+
         if menuItem.GetBitmap().Ok():
             bmpHeight = menuItem.GetBitmap().GetHeight()
             bmpWidth  = menuItem.GetBitmap().GetWidth()
-        
+
         if itemHeight < self._marginHeight:
             itemHeight = self._marginHeight
 
@@ -3858,24 +3858,24 @@ class FlatMenu(FlatMenuBase):
         # left margin
         factor = (((menuItem.GetBitmap() != wx.NullBitmap) and \
                    (menuItem.IsCheckable() or (menuItem.GetKind() == wx.ITEM_RADIO))) and [2] or [1])[0]
-        
+
         if factor == 2:
-        
+
             self._imgMarginX = self._marginWidth + 2*self._borderXWidth
             self._leftMarginWidth = 2 * self._marginWidth + 2*self._borderXWidth
-        
+
         else:
-            
+
             self._leftMarginWidth = ((self._leftMarginWidth > self._marginWidth + 2*self._borderXWidth) and \
                                     [self._leftMarginWidth] or [self._marginWidth + 2*self._borderXWidth])[0]
-        
+
         menuItemWidth = self.GetLeftMarginWidth() + 2*self.GetBorderXWidth() + width + self.GetRightMarginWidth()
         self._textX = self._imgMarginX + self._marginWidth + self._textPadding
 
         # update the rightMargin X position
         self._rightMarginPosX = ((self._textX + width + self._accelWidth> self._rightMarginPosX) and \
                                  [self._textX + width + self._accelWidth] or [self._rightMarginPosX])[0]
-        
+
         return menuItemWidth
 
 
@@ -3884,19 +3884,19 @@ class FlatMenu(FlatMenuBase):
 
         return self._menuWidth
 
-    
+
     def GetLeftMarginWidth(self):
         """ Returns the menu left margin width. """
 
         return self._leftMarginWidth
 
-    
+
     def GetRightMarginWidth(self):
         """ Returns the menu right margin width. """
 
         return self._rightMarginWidth
 
-    
+
     def GetBorderXWidth(self):
         """ Returns the menu border x-width. """
 
@@ -3908,7 +3908,7 @@ class FlatMenu(FlatMenuBase):
 
         return self._borderYWidth
 
-    
+
     def GetItemHeight(self):
         """ Returns the height of a particular item. """
 
@@ -3919,7 +3919,7 @@ class FlatMenu(FlatMenuBase):
         """
         Adds a checkable item to the end of the menu.
 
-        :see: L{Append} for the explanation of the input parameters.        
+        :see: L{Append} for the explanation of the input parameters.
         """
 
         newItem = FlatMenuItem(self, id, item, helpString, wx.ITEM_CHECK)
@@ -3932,16 +3932,16 @@ class FlatMenu(FlatMenuBase):
         All consequent radio items form a group and when an item in the group is
         checked, all the others are automatically unchecked.
 
-        :see: L{Append} for the explanation of the input parameters.        
+        :see: L{Append} for the explanation of the input parameters.
         """
-        
+
         newItem = FlatMenuItem(self, id, item, helpString, wx.ITEM_RADIO)
         return self.AppendItem(newItem)
 
 
     def AppendSeparator(self):
         """ Appends a separator item to teh end of this menu. """
-        
+
         newItem = FlatMenuItem(self)
         return self.AppendItem(newItem)
 
@@ -3950,7 +3950,7 @@ class FlatMenu(FlatMenuBase):
         """
         Inserts a separator at the given position.
 
-        :param `pos`: the index at which we want to insert the separator.    
+        :param `pos`: the index at which we want to insert the separator.
         """
 
         newItem = FlatMenuItem(self)
@@ -3963,23 +3963,23 @@ class FlatMenu(FlatMenuBase):
 
         :param `dismissParent`: whether to dismiss the parent menu or not;
         :param `resetOwner`: ``True`` to delete the link between this menu and the
-         owner menu, ``False`` otherwise.        
+         owner menu, ``False`` otherwise.
         """
 
         if self._activeWin:
-        
+
             self._activeWin.PopEventHandler(True)
             self._activeWin = None
 
         if self._focusWin:
-        
+
             self._focusWin.PopEventHandler(True)
             self._focusWin = None
-        
+
         self._selectedItem = -1
-        
+
         if self._mb:
-            self._mb.RemoveHelp()   
+            self._mb.RemoveHelp()
 
         FlatMenuBase.Dismiss(self, dismissParent, resetOwner)
 
@@ -3990,7 +3990,7 @@ class FlatMenu(FlatMenuBase):
 
         :param `event`: a `wx.PaintEvent` event to be processed.
         """
-        
+
         dc = wx.PaintDC(self)
         self.DoDrawMenu(dc)
 
@@ -4016,12 +4016,12 @@ class FlatMenu(FlatMenuBase):
 
         :param `event`: a `wx.EraseEvent` event to be processed.
 
-        :note: This method is intentionally empty to avoid flicker.        
+        :note: This method is intentionally empty to avoid flicker.
         """
 
         pass
 
-    
+
     def DoDrawMenu(self, dc):
         """
         Actually draws the menu.
@@ -4045,7 +4045,7 @@ class FlatMenu(FlatMenuBase):
         mem_dc.SetPen(pen)
         mem_dc.SetBrush(backBrush)
         mem_dc.DrawRectangleRect(menuRect)
-        
+
         # draw items
         posy = 2
         nItems = len(self._itemsArr)
@@ -4061,23 +4061,23 @@ class FlatMenu(FlatMenuBase):
         switch, posx, index = 1e6, 0, 0
         if numCols > 1:
             switch = int(math.ceil((nItems - self._first)/float(numCols)))
-            
+
         for nCount in xrange(self._first, nItems):
 
             visibleItems += 1
             item = self._itemsArr[nCount]
             item.DrawSelf(mem_dc,
                           posx,
-                          posy,     
+                          posy,
                           self._imgMarginX,
                           self._markerMarginX,
-                          self._textX, 
+                          self._textX,
                           self._rightMarginPosX,
-                          nCount == self._selectedItem 
+                          nCount == self._selectedItem
                           )
             posy += item.GetHeight()
             item.Show()
-            
+
             if visibleItems >= switch:
                 posy = 2
                 index += 1
@@ -4086,7 +4086,7 @@ class FlatMenu(FlatMenuBase):
 
             # make sure we draw only visible items
             pp = self.ClientToScreen(wx.Point(0, posy))
-            
+
             if pp.y > screenHeight:
                 break
 
@@ -4109,7 +4109,7 @@ class FlatMenu(FlatMenuBase):
         """
 
         self.Refresh()
-        
+
 
     def RefreshChilds(self):
         """
@@ -4139,7 +4139,7 @@ class FlatMenu(FlatMenuBase):
         # Set the gradient colours
         artMgr = ArtManager.Get()
         faceColour = artMgr.GetMenuFaceColour()
-        
+
         if Style2007 == artMgr.GetMenuTheme():
 
             dcsaver = DCSaver(dc)
@@ -4185,7 +4185,7 @@ class FlatMenu(FlatMenuBase):
 
         :param `key`: the keyboard key integer code.
         """
-        
+
         processed = True
 
         if key == wx.WXK_ESCAPE:
@@ -4200,14 +4200,14 @@ class FlatMenu(FlatMenuBase):
             if self._parentMenu:
                 # We are a submenu, dismiss us.
                 self._parentMenu.CloseSubMenu(-1)
-            else:               
+            else:
                 # try to find our root menu, if we are attached to menubar,
                 # let it try and open the previous menu
                 root = self.GetRootMenu()
                 if root:
                     if root._mb:
                         root._mb.ActivatePreviousMenu()
-                    
+
         elif key == wx.WXK_RIGHT:
 
             if not self.TryOpenSubMenu(self._selectedItem, True):
@@ -4217,19 +4217,19 @@ class FlatMenu(FlatMenuBase):
                 if root:
                     if root._mb:
                         root._mb.ActivateNextMenu()
-                            
+
         elif key == wx.WXK_UP:
             self.AdvanceSelection(False)
-            
+
         elif key == wx.WXK_DOWN:
-            
+
             self.AdvanceSelection()
 
         elif key in [wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER]:
             self.DoAction(self._selectedItem)
-            
+
         elif key == wx.WXK_HOME:
-            
+
             # Select first item of the menu
             if self._selectedItem != 0:
                 oldSel = self._selectedItem
@@ -4238,54 +4238,54 @@ class FlatMenu(FlatMenuBase):
                 self.DrawSelection(dc, oldSel)
 
         elif key == wx.WXK_END:
-            
+
             # Select last item of the menu
             if self._selectedItem != len(self._itemsArr)-1:
                 oldSel = self._selectedItem
                 self._selectedItem = len(self._itemsArr)-1
                 dc = wx.ClientDC(self)
                 self.DrawSelection(dc, oldSel)
-            
+
         elif key in [wx.WXK_CONTROL, wx.WXK_ALT]:
             # Alt was pressed
             root = self.GetRootMenu()
             root.Dismiss(False, True)
-            
+
         else:
             try:
                 chrkey = chr(key)
             except:
                 return processed
-            
+
             if chrkey.isalnum():
-            
+
                 ch = chrkey.lower()
 
-                # Iterate over all the menu items 
+                # Iterate over all the menu items
                 itemIdx = -1
                 occur = 0
-                
+
                 for i in xrange(len(self._itemsArr)):
-                
+
                     item = self._itemsArr[i]
                     mnemonic = item.GetMnemonicChar()
 
                     if mnemonic == ch:
-                    
+
                         if itemIdx == -1:
-                        
+
                             itemIdx = i
-                            # We keep the index of only 
+                            # We keep the index of only
                             # the first occurence
-                        
+
                         occur += 1
 
                         # Keep on looping until no more items for self menu
-                    
+
                 if itemIdx != -1:
-                
+
                     if occur > 1:
-                    
+
                         # We select the first item
                         if self._selectedItem == itemIdx:
                             return processed
@@ -4294,24 +4294,24 @@ class FlatMenu(FlatMenuBase):
                         self._selectedItem = itemIdx
                         dc = wx.ClientDC(self)
                         self.DrawSelection(dc, oldSel)
-                    
+
                     elif occur == 1:
-                    
+
                         # Activate the item, if self is a submenu item we first select it
                         item = self._itemsArr[itemIdx]
                         if item.IsSubMenu() and self._selectedItem != itemIdx:
-                        
+
                             oldSel = self._selectedItem
                             self._selectedItem = itemIdx
                             dc = wx.ClientDC(self)
                             self.DrawSelection(dc, oldSel)
-                        
+
                         self.DoAction(itemIdx)
-                    
+
                 else:
-                
+
                     processed = False
-        
+
         return processed
 
 
@@ -4322,23 +4322,23 @@ class FlatMenu(FlatMenuBase):
         :param `down`: ``True`` to advance the selection forward, ``False`` otherwise.
         """
 
-        # make sure we have at least two items in the menu (which are not 
+        # make sure we have at least two items in the menu (which are not
         # separators)
         num=0
         singleItemIdx = -1
 
         for i in xrange(len(self._itemsArr)):
-        
+
             item = self._itemsArr[i]
             if item.IsSeparator():
                 continue
             num += 1
             singleItemIdx = i
-        
+
         if num < 1:
             return
 
-        if num == 1: 
+        if num == 1:
             # Select the current one
             self._selectedItem = singleItemIdx
             dc = wx.ClientDC(self)
@@ -4346,29 +4346,29 @@ class FlatMenu(FlatMenuBase):
             return
 
         oldSelection = self._selectedItem
-        
+
         if not down:
-        
+
             # find the next valid item
             while 1:
-            
+
                 self._selectedItem -= 1
                 if self._selectedItem < 0:
                     self._selectedItem = len(self._itemsArr)-1
                 if not self._itemsArr[self._selectedItem].IsSeparator():
                     break
-            
+
         else:
-        
+
             # find the next valid item
             while 1:
-            
+
                 self._selectedItem += 1
                 if self._selectedItem > len(self._itemsArr)-1:
                     self._selectedItem = 0
                 if not self._itemsArr[self._selectedItem].IsSeparator():
                     break
-            
+
         dc = wx.ClientDC(self)
         self.DrawSelection(dc, oldSelection)
 
@@ -4384,15 +4384,15 @@ class FlatMenu(FlatMenuBase):
 
             if self._upButton and self._upButton.GetClientRect().Contains(pos):
                 return MENU_HT_SCROLL_UP, -1
-        
+
             if self._downButton and self._downButton.GetClientRect().Contains(pos):
                 return MENU_HT_SCROLL_DOWN, -1
 
         for ii, item in enumerate(self._itemsArr):
-                    
+
             if item.GetRect().Contains(pos) and item.IsEnabled() and item.IsShown():
                 return MENU_HT_ITEM, ii
-        
+
         return MENU_HT_NONE, -1
 
 
@@ -4408,7 +4408,7 @@ class FlatMenu(FlatMenuBase):
             pt = wx.GetMousePosition()
             if self._mousePtAtStartup == pt:
                 return
-        
+
         pos = event.GetPosition()
 
         # we need to ignore extra mouse events: example when this happens is when
@@ -4416,13 +4416,13 @@ class FlatMenu(FlatMenuBase):
         # then sends us a dummy mouse move event, we (correctly) determine that it
         # happens in the parent menu and so immediately close the just opened
         # submenunot
-        
+
         if "__WXMSW__" in wx.Platform:
 
             ptCur = self.ClientToScreen(pos)
             if ptCur == self._ptLast:
                 return
-        
+
             self._ptLast = ptCur
 
         # first let the scrollbar handle it
@@ -4456,41 +4456,41 @@ class FlatMenu(FlatMenuBase):
 
         pos = event.GetPosition()
         rect = self.GetClientRect()
-        
+
         if not rect.Contains(pos):
-        
-            # The event is not in our coords, 
+
+            # The event is not in our coords,
             # so we try our parent
             win = self._parentMenu
 
             while win:
-            
+
                 # we need to translate our client coords to the client coords of the
                 # window we forward this event to
                 ptScreen = self.ClientToScreen(pos)
                 p = win.ScreenToClient(ptScreen)
-                
+
                 if win.GetClientRect().Contains(p):
-                
+
                     event.m_x = p.x
                     event.m_y = p.y
                     win.OnMouseLeftUp(event)
                     return
-                
+
                 else:
                     # try the grandparent
                     win = win._parentMenu
 
         else:
             self.ProcessMouseLClickEnd(pos)
-            
+
         if self._showScrollButtons:
 
             if self._upButton:
                 self._upButton.ProcessLeftUp(pos)
             if self._downButton:
                 self._downButton.ProcessLeftUp(pos)
-            
+
 
     def OnMouseRightDown(self, event):
         """
@@ -4501,7 +4501,7 @@ class FlatMenu(FlatMenuBase):
 
         if self.TryScrollButtons(event):
             return
-        
+
         pos = event.GetPosition()
         self.ProcessMouseRClick(pos)
 
@@ -4514,33 +4514,33 @@ class FlatMenu(FlatMenuBase):
         """
 
         rect = self.GetClientRect()
-        
+
         if not rect.Contains(pos):
-        
-            # The event is not in our coords, 
+
+            # The event is not in our coords,
             # so we try our parent
 
             win = self._parentMenu
             while win:
-            
+
                 # we need to translate our client coords to the client coords of the
                 # window we forward self event to
                 ptScreen = self.ClientToScreen(pos)
                 p = win.ScreenToClient(ptScreen)
-                
+
                 if win.GetClientRect().Contains(p):
                     win.ProcessMouseRClick(p)
                     return
-                
+
                 else:
                     # try the grandparent
                     win = win._parentMenu
-            
-            # At this point we can assume that the event was not 
+
+            # At this point we can assume that the event was not
             # processed, so we dismiss the menu and its children
             self.Dismiss(True, True)
             return
-        
+
         # test if we are on a menu item
         res, itemIdx = self.HitTest(pos)
         if res == MENU_HT_ITEM:
@@ -4572,7 +4572,7 @@ class FlatMenu(FlatMenuBase):
             return True
 
         return False
-    
+
 
     def ProcessMouseLClick(self, pos):
         """
@@ -4580,31 +4580,31 @@ class FlatMenu(FlatMenuBase):
 
         :param `pos`: the position at which the mouse left button was pressed.
         """
-        
+
         rect = self.GetClientRect()
-        
+
         if not rect.Contains(pos):
-        
-            # The event is not in our coords, 
+
+            # The event is not in our coords,
             # so we try our parent
 
             win = self._parentMenu
             while win:
-            
+
                 # we need to translate our client coords to the client coords of the
                 # window we forward self event to
                 ptScreen = self.ClientToScreen(pos)
                 p = win.ScreenToClient(ptScreen)
-                
-                if win.GetClientRect().Contains(p):                
+
+                if win.GetClientRect().Contains(p):
                     win.ProcessMouseLClick(p)
                     return
-                
+
                 else:
                     # try the grandparent
                     win = win._parentMenu
-            
-            # At this point we can assume that the event was not 
+
+            # At this point we can assume that the event was not
             # processed, so we dismiss the menu and its children
             self.Dismiss(True, True)
             return
@@ -4619,9 +4619,9 @@ class FlatMenu(FlatMenuBase):
 
         self.ProcessMouseLClick(pos)
 
-        # test if we are on a menu item        
+        # test if we are on a menu item
         res, itemIdx = self.HitTest(pos)
-        
+
         if res == MENU_HT_ITEM:
             self.DoAction(itemIdx)
 
@@ -4645,15 +4645,15 @@ class FlatMenu(FlatMenuBase):
         """
 
         rect = self.GetClientRect()
-        
+
         if not rect.Contains(pos):
-        
-            # The event is not in our coords, 
+
+            # The event is not in our coords,
             # so we try our parent
 
             win = self._parentMenu
             while win:
-            
+
                 # we need to translate our client coords to the client coords of the
                 # window we forward self event to
                 ptScreen = self.ClientToScreen(pos)
@@ -4662,20 +4662,20 @@ class FlatMenu(FlatMenuBase):
                 if win.GetClientRect().Contains(p):
                     win.ProcessMouseMove(p)
                     return
-                
+
                 else:
                     # try the grandparent
                     win = win._parentMenu
-            
-            # If we are attached to a menu bar, 
+
+            # If we are attached to a menu bar,
             # let him process the event as well
             if self._mb:
-            
+
                 ptScreen = self.ClientToScreen(pos)
                 p = self._mb.ScreenToClient(ptScreen)
-                
+
                 if self._mb.GetClientRect().Contains(p):
-                
+
                     # let the menu bar process it
                     self._mb.ProcessMouseMoveFromMenu(p)
                     return
@@ -4689,7 +4689,7 @@ class FlatMenu(FlatMenuBase):
                     return
 
             return
-        
+
         # test if we are on a menu item
         res, itemIdx = self.HitTest(pos)
 
@@ -4718,7 +4718,7 @@ class FlatMenu(FlatMenuBase):
             if self._selectedItem != -1:
                 self.SendOverItem(self._selectedItem, False)
             self.SendOverItem(itemIdx, True)   # Message to send when over an item
-            
+
             oldSelection = self._selectedItem
             self._selectedItem = itemIdx
             self.CloseSubMenu(self._selectedItem)
@@ -4744,12 +4744,12 @@ class FlatMenu(FlatMenuBase):
                 # Message to send when out of last selected item
                 if self._selectedItem != -1:
                     self.SendOverItem(self._selectedItem, False)
-                    
+
             oldSelection = self._selectedItem
             self._selectedItem = -1
             dc = wx.ClientDC(self)
             self.DrawSelection(dc, oldSelection)
-            
+
 
     def OnMouseLeaveWindow(self, event):
         """
@@ -4760,7 +4760,7 @@ class FlatMenu(FlatMenuBase):
 
         if self._mb:
             self._mb.RemoveHelp()
-            
+
         if self._clearCurrentSelection:
 
             # Message to send when out of last selected item
@@ -4768,7 +4768,7 @@ class FlatMenu(FlatMenuBase):
                 item = self._itemsArr[self._selectedItem]
                 if item.IsSubMenu() and item.GetSubMenu().IsShown():
                     return
-                
+
                 # Message to send when out of last selected item
                 if self._selectedItem != -1:
                     self.SendOverItem(self._selectedItem, False)
@@ -4777,7 +4777,7 @@ class FlatMenu(FlatMenuBase):
             self._selectedItem = -1
             dc = wx.ClientDC(self)
             self.DrawSelection(dc, oldSelection)
-        
+
         self._clearCurrentSelection = True
 
         if "__WXMSW__" in wx.Platform:
@@ -4804,7 +4804,7 @@ class FlatMenu(FlatMenuBase):
 
         :param `event`: a `wx.FocusEvent` event to be processed.
         """
-        
+
         self.Dismiss(True, True)
 
 
@@ -4829,10 +4829,10 @@ class FlatMenu(FlatMenuBase):
 
         if self._openedSubMenu:
             if self._openedSubMenu != subMenu or alwaysClose:
-                # We have another sub-menu open, close it 
+                # We have another sub-menu open, close it
                 self._openedSubMenu.Dismiss(False, True)
                 self._openedSubMenu = None
-        
+
 
     def DoAction(self, itemIdx):
         """
@@ -4846,34 +4846,34 @@ class FlatMenu(FlatMenuBase):
             return
 
         item = self._itemsArr[itemIdx]
-        
+
         if not item.IsEnabled() or item.IsSeparator():
             return
 
         # Close sub-menu if needed
         self.CloseSubMenu(itemIdx)
-        
+
         if item.IsSubMenu() and not item.GetSubMenu().IsShown():
-        
+
             # Popup child menu
             self.TryOpenSubMenu(itemIdx)
             return
 
         if item.IsRadioItem():
-            # if the radio item is already checked, 
+            # if the radio item is already checked,
             # just send command event. Else, check it, uncheck the current
             # checked item in the radio item group, and send command event
             if not item.IsChecked():
                 item._groupPtr.SetSelection(item)
-            
+
         elif item.IsCheckable():
-            
+
             item.Check(not item.IsChecked())
             dc = wx.ClientDC(self)
             self.DrawSelection(dc)
-        
+
         if not item.IsSubMenu():
-        
+
             self.Dismiss(True, False)
 
             # Send command event
@@ -4888,13 +4888,13 @@ class FlatMenu(FlatMenuBase):
         :param `selectFirst`: if ``True``, the first item of the submenu will be shown
          as selected.
         """
-        
+
         if itemIdx < 0 or itemIdx >= len(self._itemsArr):
             return False
 
         item = self._itemsArr[itemIdx]
         if item.IsSubMenu() and not item.GetSubMenu().IsShown():
-            
+
             pos = wx.Point()
 
             # Popup child menu
@@ -4903,30 +4903,30 @@ class FlatMenu(FlatMenuBase):
             self._clearCurrentSelection = False
             self._openedSubMenu = item.GetSubMenu()
             item.GetSubMenu().Popup(pos, self._owner, self)
-            
+
             # Select the first child
             if selectFirst:
-            
+
                 dc = wx.ClientDC(item.GetSubMenu())
                 item.GetSubMenu()._selectedItem = 0
                 item.GetSubMenu().DrawSelection(dc)
-            
+
             return True
-        
+
         return False
 
 
     def _RemoveById(self, id):
         """ Used internally. """
-        
+
         # First we search for the menu item (recursively)
         menuParent = None
         item = None
         idx = wx.NOT_FOUND
         idx, menuParent = self.FindMenuItemPos(id)
-        
+
         if idx != wx.NOT_FOUND:
-        
+
             # Remove the menu item
             item = menuParent._itemsArr[idx]
             menuParent._itemsArr.pop(idx)
@@ -4934,10 +4934,10 @@ class FlatMenu(FlatMenuBase):
             # update group
             if item._groupPtr and item.IsRadioItem():
                 item._groupPtr.Remove(item)
-            
+
             # Resize the menu
             menuParent.ResizeMenu()
-        
+
         return item
 
 
@@ -4952,7 +4952,7 @@ class FlatMenu(FlatMenuBase):
 
         if type(item) != type(1):
             item = item.GetId()
-            
+
         return self._RemoveById(item)
 
 
@@ -4961,7 +4961,7 @@ class FlatMenu(FlatMenuBase):
 
         item = None
         item = self.Remove(id)
-        
+
         if item:
             del item
 
@@ -4972,14 +4972,14 @@ class FlatMenu(FlatMenuBase):
         deleted. Use L{Remove} if you want to keep the submenu (for example, to reuse
         it later).
 
-        :param `item`: can be either a menu item identifier or a plain L{FlatMenuItem}.        
+        :param `item`: can be either a menu item identifier or a plain L{FlatMenuItem}.
         """
 
         if type(item) != type(1):
             item = item.GetId()
 
         self._DestroyById(item)
-        
+
 
     def Insert(self, pos, id, item, helpString="", kind=wx.ITEM_NORMAL):
         """
@@ -4997,7 +4997,7 @@ class FlatMenu(FlatMenuBase):
          group of tools each of which is automatically unchecked whenever another button
          in the group is checked;
         """
-        
+
         newitem = FlatMenuItem(self, id, item, helpString, kind)
         return self.InsertItem(pos, newitem)
 
@@ -5014,13 +5014,13 @@ class FlatMenu(FlatMenuBase):
             # Append it
             return self.AppendItem(item)
 
-        # Insert the menu item 
+        # Insert the menu item
         self._itemsArr.insert(pos, item)
         item._isAttachedToMenu = True
 
         # Recalculate the menu geometry
         self.ResizeMenu()
-        
+
         # Update radio groups
         self.UpdateRadioGroup(item)
 
@@ -5035,26 +5035,26 @@ class FlatMenu(FlatMenuBase):
         """
 
         if item.IsRadioItem():
-    
+
             # Udpate radio groups in case this item is a radio item
             sibling = self.GetSiblingGroupItem(item)
             if sibling:
-            
+
                 item._groupPtr = sibling._groupPtr
                 item._groupPtr.Add(item)
 
                 if item.IsChecked():
-                
+
                     item._groupPtr.SetSelection(item)
-                
+
             else:
-            
+
                 # first item in group
                 item._groupPtr = FlatMenuItemGroup()
                 item._groupPtr.Add(item)
                 item._groupPtr.SetSelection(item)
 
-        
+
     def ResizeMenu(self):
         """ Resizes the menu to the correct size. """
 
@@ -5077,7 +5077,7 @@ class FlatMenu(FlatMenuBase):
         self._itemHeight = self._marginHeight
         self.SetSize(wx.Size(self._menuWidth*self._numCols, self._itemHeight+4))
 
-        # Now we simply add the items 
+        # Now we simply add the items
         for item in items:
             self.AppendItem(item)
 
@@ -5091,7 +5091,7 @@ class FlatMenu(FlatMenuBase):
 
         if self._numCols == numCols:
             return
-        
+
         self._numCols = numCols
         self.ResizeMenu()
         self.Refresh()
@@ -5101,36 +5101,36 @@ class FlatMenu(FlatMenuBase):
         """ Returns the number of columns for a menu window. """
 
         return self._numCols
-    
+
 
     def FindItem(self, itemId, menu=None):
         """
-        Finds the menu item object associated with the given menu item identifier and, 
+        Finds the menu item object associated with the given menu item identifier and,
         optionally, the (sub)menu it belongs to.
 
         :param `itemId`: menu item identifier;
         :param `menu`: if not ``None``, it will be filled with the item's parent menu
          (if the item was found).
         """
-        
+
         idx = wx.NOT_FOUND
-        
+
         if menu:
-        
+
             idx, menu = self.FindMenuItemPos(itemId, menu)
             if idx != wx.NOT_FOUND:
                 return menu._itemsArr[idx]
             else:
                 return None
-        
+
         else:
-        
+
             idx, parentMenu = self.FindMenuItemPos(itemId, None)
             if idx != wx.NOT_FOUND:
                 return parentMenu._itemsArr[idx]
             else:
                 return None
-            
+
 
     def FindMenuItemPos(self, itemId, menu=None):
         """
@@ -5140,47 +5140,47 @@ class FlatMenu(FlatMenuBase):
         :param `menu`: if not ``None``, it will be filled with the item's parent menu
          (if the item was found).
         """
-        
+
         menu = None
         item = None
 
         idx = wx.NOT_FOUND
 
         for i in xrange(len(self._itemsArr)):
-        
+
             item = self._itemsArr[i]
 
             if item.GetId() == itemId:
-            
+
                 menu = self
                 idx = i
                 break
-            
+
             elif item.IsSubMenu():
-            
+
                 idx, menu = item.GetSubMenu().FindMenuItemPos(itemId, menu)
                 if idx != wx.NOT_FOUND:
                     break
-            
+
             else:
-                
+
                 item = None
-            
+
         return idx, menu
 
 
     def GetAccelTable(self):
         """ Returns the menu accelerator table. """
-        
+
         n = len(self._accelArray)
         if n == 0:
             return wx.NullAcceleratorTable
-        
+
         entries = [wx.AcceleratorEntry() for ii in xrange(n)]
 
         for counter in len(entries):
             entries[counter] = self._accelArray[counter]
-        
+
         table = wx.AcceleratorTable(entries)
         del entries
 
@@ -5193,18 +5193,18 @@ class FlatMenu(FlatMenuBase):
         return self._accelArray
 
 
-    # events 
+    # events
     def SendCmdEvent(self, itemIdx):
         """
         Actually sends menu command events.
 
         :param `itemIdx`: the menu item index for which we want to send a command event.
         """
-        
+
         if itemIdx < 0 or itemIdx >= len(self._itemsArr):
             raise Exception("Invalid menu item")
             return
-        
+
         item = self._itemsArr[itemIdx]
 
         # Create the event
@@ -5213,7 +5213,7 @@ class FlatMenu(FlatMenuBase):
         # For checkable item, set the IsChecked() value
         if item.IsCheckable():
             event.SetInt((item.IsChecked() and [1] or [0])[0])
-        
+
         event.SetEventObject(self)
 
         if self._owner:
@@ -5240,7 +5240,7 @@ class FlatMenu(FlatMenuBase):
         # For checkable item, set the IsChecked() value
         if item.IsCheckable():
             event.SetInt((item.IsChecked() and [1] or [0])[0])
-            
+
         event.SetEventObject(self)
 
         if self._owner:
@@ -5255,14 +5255,14 @@ class FlatMenu(FlatMenuBase):
 
         :param `itemIdx`: the menu item index for which we want to send a UI event.
         """
-        
+
         if itemIdx < 0 or itemIdx >= len(self._itemsArr):
             raise Exception("Invalid menu item")
             return
-        
+
         item = self._itemsArr[itemIdx]
         event = wx.UpdateUIEvent(item.GetId())
-        
+
         event.Check(item.IsChecked())
         event.Enable(item.IsEnabled())
         event.SetText(item.GetText())
@@ -5273,7 +5273,7 @@ class FlatMenu(FlatMenuBase):
         else:
             self.GetEventHandler().ProcessEvent(event)
 
-        item.Check(event.GetChecked()) 
+        item.Check(event.GetChecked())
         item.SetLabel(event.GetText())
         item.Enable(event.GetEnabled())
 
@@ -5307,7 +5307,7 @@ class FlatMenu(FlatMenuBase):
         for i in xrange(len(self._itemsArr)):
             if self._itemsArr[i] == item:
                 return i
-        
+
         return wx.NOT_FOUND
 
 
@@ -5324,15 +5324,15 @@ class FlatMenu(FlatMenuBase):
 
         if not menu:
             return newitems
-        
+
         # if any item in this menu has sub-menu, copy them as well
         for i in xrange(len(menu._itemsArr)):
             if menu._itemsArr[i].IsSubMenu():
                 newitems = self.GetAllItems(menu._itemsArr[i].GetSubMenu(), newitems)
 
         return newitems
-    
-    
+
+
     def GetSiblingGroupItem(self, item):
         """
         Used internally.
@@ -5346,7 +5346,7 @@ class FlatMenu(FlatMenuBase):
 
         if self._itemsArr[pos-1].IsRadioItem():
             return self._itemsArr[pos-1]
-        
+
         return None
 
 
@@ -5354,16 +5354,16 @@ class FlatMenu(FlatMenuBase):
         """ Scrolls the menu down (for very tall menus). """
 
         # increase the self._from index
-        if not self._itemsArr[-1].IsShown():        
+        if not self._itemsArr[-1].IsShown():
             self._first += 1
             self.Refresh()
-            
+
             return True
-        
+
         else:
             if self._downButton:
                 self._downButton.GetTimer().Stop()
-        
+
             return False
 
 
@@ -5373,20 +5373,20 @@ class FlatMenu(FlatMenuBase):
         if self._first == 0:
             if self._upButton:
                 self._upButton.GetTimer().Stop()
-                
+
             return False
-            
+
         else:
-        
+
             self._first -= 1
             self.Refresh()
             return True
 
-        
+
     # Not used anymore
     def TryScrollButtons(self, event):
         """ Used internally. """
-        
+
         return False
 
 
@@ -5394,7 +5394,7 @@ class FlatMenu(FlatMenuBase):
         """
         Handles the ``wx.EVT_TIMER`` event for L{FlatMenu}.
 
-        :param `event`: a `wx.TimerEvent` event to be processed.        
+        :param `event`: a `wx.TimerEvent` event to be processed.
         """
 
         if self._upButton and self._upButton.GetTimerId() == event.GetId():
@@ -5406,7 +5406,7 @@ class FlatMenu(FlatMenuBase):
             self.ScrollDown()
 
         else:
-            
+
             event.Skip()
 
 
@@ -5416,7 +5416,7 @@ class FlatMenu(FlatMenuBase):
 
 class MenuKbdRedirector(wx.EvtHandler):
     """ A keyboard event handler. """
-    
+
     def __init__(self, menu, oldHandler):
         """
         Default class constructor.
@@ -5430,7 +5430,7 @@ class MenuKbdRedirector(wx.EvtHandler):
         self._oldHandler = oldHandler
         self.SetMenu(menu)
         wx.EvtHandler.__init__(self)
-        
+
 
     def SetMenu(self, menu):
         """
@@ -5458,10 +5458,10 @@ class MenuKbdRedirector(wx.EvtHandler):
 #--------------------------------------------------------
 # Class FocusHandler
 #--------------------------------------------------------
- 
+
 class FocusHandler(wx.EvtHandler):
     """ A focus event handler. """
-    
+
     def __init__(self, menu):
         """
         Default class constructor.
@@ -5475,7 +5475,7 @@ class FocusHandler(wx.EvtHandler):
 
         self.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
         self.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
-        
+
 
     def SetMenu(self, menu):
         """
@@ -5504,7 +5504,7 @@ class FocusHandler(wx.EvtHandler):
 
         :param `event`: a `wx.FocusEvent` event to be processed.
         """
-        
+
         wx.PostEvent(self._menu, event)
 
 
