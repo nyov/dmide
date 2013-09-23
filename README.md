@@ -7,7 +7,7 @@ dmide is a multiplatform open source IDE for [BYOND].
 
 (The original googlecode project can be found [here](https://code.google.com/p/dmide/).)
 
-It is written in Python and using the wxPython GUI toolkit.
+It is written in Python and using the wxPython GUI toolkit.  
 Unlike the original BYOND Dream Maker, it is not limited to Windows and also
 works on Linux and possibly FreeBSD, MacOS X and others.
 
@@ -17,12 +17,12 @@ Running dmide
 dmide is a python project, the base requirements are python (2.6 should work)
 and wxPython.
 
-Then simply executing the main python file should get you runnning.
+Then simply executing the main python file should get you runnning.  
 No fancy installer exists. Copy it where needed.
 
 Note: dmide still requires the original BYOND binaries for your platform,
 in particular the DreamMaker command line compiler, which can be found at
-http://www.byond.com/download/.
+http://www.byond.com/download/.  
 Currently dmide looks for them in hardcoded paths at /usr/local/byond/bin or
 C:\\Program Files\\BYOND\\bin -- search and replace them to your needs (ugh).
 
@@ -33,9 +33,9 @@ available (on debian or derivatives use multi-arch).
 State of the software
 -------------------------------------------------------------------------------
 
-Development has been abandoned or on hold for quite some time.
+Development has been abandoned or on hold for quite some time.  
 Code quality is not especially great and there are known bugs and missing
-features.
+features.  
 Using dmide as anything more than a plain code editor is currently not
 recommended (editing map files, compiling projects), unless you
 know what you're doing and can fix the code when it breaks for your project.

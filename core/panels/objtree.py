@@ -35,6 +35,7 @@ class DMIDE_ObjTree(wx.TreeCtrl):
 
 		build_path = ''
 
+		# FIXME: this is bad. wtf!
 		if os.name in ['posix', 'os2', 'mac', 'ce']:
 			build_path = '/usr/local/byond/bin'
 			dm_path = 'DreamMaker'

@@ -5,7 +5,7 @@
 if __name__ == '__main__':
 
 	try:
-
+		'''
 		# if possible, optimize with psyco
 		try:
 			#import psyco
@@ -13,6 +13,7 @@ if __name__ == '__main__':
 			print 'Optimizing with psyco'
 		except ImportError:
 			pass
+		'''
 
 		# all the goodies are in here
 		from core import sys, os, wx, DMIDE_Window, DMIDE_ArtFactory

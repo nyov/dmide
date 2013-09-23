@@ -54,10 +54,21 @@ def split(line, split = ','):
 	return texts
 
 
-class Map:
+class Map(object):
 	def __init__(self):
 		self.tiles = [] # 3d list of tiles z, y, x
 		self.definitions = {} # dictionary of mapobj definitions
+
+		# FIXME: init Map() with all data present
+		#self.map_size = (len(self.tiles[0][0]), len(self.tiles[0]))
+
+	def __repr__(self):
+		return 'Map(tiles=%r,definitions=%r)' % (self.tiles, self.definitions)
+
+	def __str__(self):
+		self.map_size = (len(self.tiles[0][0]), len(self.tiles[0]))
+		return 'DM Map (size: %s x %s)' % (self.map_size)
+
 
 class DMPInstance(object):
 	def __init__(self, type):
@@ -89,11 +100,9 @@ class DMPInstance(object):
 		return self.type
 
 
-def DMPREAD(dmp):
-	dmppath = dmp
-	dmp = open(dmp, 'r').read()
+def DMPREAD(file):
+	dmp = open(file, 'U').read().split('\n') # 'U': make sure we get '\n' as newline
 
-	dmp = dmp.split('\n')
 	def_re = re.compile(r'"(.+)" = \((.*)\)')
 	z_re = re.compile(r'\((\d),(\d),(\d)\) = \{\"')
 	mapobj = Map()
@@ -141,7 +150,7 @@ def DMPREAD(dmp):
 		def_len = len(mapobj.definitions.keys()[0])
 	except IndexError:
 		# empty map
-		print '[DMP] Empty map `%s`' % dmppath
+		print '[DMP] Empty map `%s`' % file
 		return []
 
 	y_list = []

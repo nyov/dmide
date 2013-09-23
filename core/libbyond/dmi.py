@@ -52,22 +52,30 @@ DMI_NORTHEAST = 6
 DMI_NORTHWEST = 7
 
 
-class Icon:
+class Icon(object):
 	# Each Icon holds the information for each icon in a DMI - which includes each dir and frame
 
 	def __init__(self):
-		self.state = '' #icon state
-		self.dirs = 1   #number of dirs
+		self.origin = None
+		self.width = None
+		self.height = None
+		self.state = '' # icon state name
+		self.dirs = 1   # number of dirs (directions)
 		self.frames = 1 # number of frames
 		self.icons = [] # contains all the icons for dirs and frames
 		self.delays = [] # delay numbers, one for each frame
 		self.loops = 0 # times to loop
 		self.rewind = 0 # rewind flag
 		self.movement = 0 # movement flag
+		self.hotspot = [] # hotspots flag
+
+	def __repr__(self):
+		return 'Icon(origin=%r,width=%r,height=%r,state=%r,dirs=%r,frames=%r,icons=%r,delays=%r,loops=%r,rewind=%r,movement=%r,hotspot=%r)' % \
+			(self.origin, self.width, self.height, self.state, self.dirs, self.frames, self.icons, self.delays, self.loops, self.rewind, self.movement, self.hotspot)
 
 	def __str__(self):
-		return 'State: "%s", dirs: %i, frames: %i, icons: %i,\n  delays: %s, loops: %i, rewind: %i' % (self.state, self.dirs, self.frames, len(flatten_array(self.icons)),
-																																			  self.delays, self.loops, self.rewind)
+		return 'DMI Icon (file: %s, size: %sx%s, state: "%s", dirs: %i, frames: %i, icons: %i, delays: %s, loops: %i, rewind: %i, movement: %i, hotspots: %i)' % \
+			(self.origin, self.width, self.height, self.state, self.dirs, self.frames, len(flatten_array(self.icons)), self.delays, self.loops, self.rewind, self.movement, len(flatten_array(self.hotspot)))
 
 	def copy(self, deep=True):
 		icon = Icon()
@@ -136,7 +144,7 @@ def DMIINFO(info):
 	def split_delays(delay):
 		# delays are saved as 1,2,1,1 - we want to split this into a list
 		if not ',' in delay and str(int(delay)) == delay:
-			return delay
+			return int(delay)
 
 		return [int(x) for x in delay.split(',')]
 
@@ -159,10 +167,14 @@ def DMIINFO(info):
 				state = unicode(value, 'utf-8')
 			except:
 				value
-			x += 1
-			dirs = int(groups[x][1])
-			x += 1
-			frames = int(groups[x][1])
+
+			# FIXME: make order of occurance unimportant, do a loop
+			if len(groups) > x + 1 and groups[x + 1][0] == '\tdirs': # this should always exist
+				x += 1
+				dirs = int(groups[x][1])
+			if len(groups) > x + 1 and groups[x + 1][0] == '\tframes': # this should always exist
+				x += 1
+				frames = int(groups[x][1])
 			delays = [1]
 			if len(groups) > x + 1 and groups[x + 1][0] == '\tdelay':
 				x += 1
@@ -179,8 +191,14 @@ def DMIINFO(info):
 			if len(groups) > x + 1 and groups[x + 1][0] == '\tmovement':
 				x += 1
 				movement = int(groups[x][1])
+			# seen this, but what it's used for is unknown:
+			# hotspot = 1,14,1
+			hotspot = []
+			if len(groups) > x + 1 and groups[x + 1][0] == '\thotspot':
+				x += 1
+				hotspot = split_delays(groups[x][1])
 
-			icon_states.append( (state, dirs, frames, delays, rewind, loops, movement) )
+			icon_states.append( (state, dirs, frames, delays, rewind, loops, movement, hotspot) )
 
 	return icon_states, (width, height)
 
@@ -194,19 +212,26 @@ def DMIREAD(path):
 		dmis = []
 
 		if width < 0 or height < 0:
-			width, height = dmi.size[1], dmi.size[1]
+			width, height = dmi.size
 
-		for x in xrange(0, dmi.size[0], width):
-			dmis.append(dmi.crop((x, 0, x + width, height)))
+		# actual image size
+		fullwidth, fullheight = dmi.size
+
+		for y in xrange(0, fullheight, height):
+			for x in xrange(0, fullwidth, width):
+				# Image.crop((left, top, right, bottom))
+				dmis.append(dmi.crop((x, y, x + width, y + height)))
 
 		return dmis
 
 	try:
-		print 'DMIREAD:', os.path.split(path)[-1]
+		dmifile =  os.path.split(path)[-1]
+		print 'DMIREAD:', dmifile
 		try:
 			dmi = Image.open(path).convert('RGBA')
 			#print dmi.info['Description']
 			states, (width, height) = DMIINFO(dmi.info['Description'])
+			#print 'icon, states: %s (width: %s; height: %s)' % (states, width, height)
 
 			if width == -1:
 				frames = 0
@@ -245,7 +270,11 @@ def DMIREAD(path):
 				state = states[index]
 
 				icon = Icon()
+				icon.origin = dmifile
+				# maybe also the path from project's root?
 				icon.icons = [[image]]
+				icon.width = width
+				icon.height = height
 				icon.state = state[0][1:-1]
 				icon.dirs = state[1]
 				icon.frames = state[2]
@@ -253,6 +282,9 @@ def DMIREAD(path):
 				icon.rewind = state[4]
 				icon.loops = state[5]
 				icon.movement = state[6]
+				icon.hotspot = state[7]
+
+				print 'DEBUG: %s' % icon
 
 				if icon.dirs > 1:
 					for x in xrange(1, icon.dirs):

@@ -41,6 +41,7 @@ class DMIDE_DMPEditor(wx.ScrolledWindow):
 
 	def Open(self, path):
 		self.map = dmp.DMPREAD(path)
+		print 'DEBUG: map is: %s' % self.map
 		self.images = {}
 		self.map_size = (len(self.map.tiles[0][0]), len(self.map.tiles[0]))
 		self.dimensions = (self.tile_size[0] * self.map_size[0], self.tile_size[1] * self.map_size[1])
